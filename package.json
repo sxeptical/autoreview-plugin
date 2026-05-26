@@ -1,0 +1,17 @@
+{
+  "name": "@sxeptical/autoreview-plugin",
+  "version": "1.0.0",
+  "description": "Lightweight Tier 1 Auto-review plugin for OpenCode — intercepts shell commands, git commands, and filesystem writes for automated risk assessment",
+  "type": "module",
+  "main": "./out/index.js",
+  "source": "./index.ts",
+  "files": ["out/", "index.ts", "reviewer.ts", "action-hook.ts", "approval.ts"],
+  "keywords": ["opencode", "opencode-plugin", "auto-review", "security", "code-review"],
+  "license": "MIT",
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.0.0"
+  },
+  "scripts": {
+    "build": "bun build index.ts --outdir=out --target=node --format=esm"
+  }
+}
