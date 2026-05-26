@@ -1,4 +1,4 @@
-# autreview-plugin
+# autoreview-plugin
 
 Lightweight Auto-review plugin for [OpenCode](https://opencode.ai) — intercepts shell commands, git commands, and filesystem writes for automated risk assessment.
 
