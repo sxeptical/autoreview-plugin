@@ -1,7 +1,7 @@
 {
   "name": "@sxeptical/autoreview-plugin",
   "version": "1.0.0",
-  "description": "Lightweight Tier 1 Auto-review plugin for OpenCode — intercepts shell commands, git commands, and filesystem writes for automated risk assessment",
+  "description": "Lightweight Auto-review plugin for OpenCode — intercepts shell commands, git commands, and filesystem writes for automated risk assessment",
   "type": "module",
   "main": "./out/index.js",
   "source": "./index.ts",
