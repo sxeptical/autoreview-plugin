@@ -31,6 +31,8 @@ export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) 
         if (cmd && cmd !== "*") {
           const decision = reviewAction(buildBashContext(cmd, permission.id));
           output.status = applyDecision(decision);
+        } else {
+          output.status = "allow";
         }
       }
     },
@@ -42,7 +44,7 @@ export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) 
         const cmd = String(output.args.command);
         const decision = reviewAction(buildBashContext(cmd, callID));
 
-        if (decision.decision === "deny") {
+        if (decision.decision === "deny" || decision.decision === "require_human") {
           applyDecision(decision);
           output.args.command = `echo "[auto-review] BLOCKED: ${decision.reason}" && exit 1`;
         }
@@ -58,7 +60,7 @@ export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) 
           output.args,
         ));
 
-        if (decision.decision === "deny") {
+        if (decision.decision === "deny" || decision.decision === "require_human") {
           applyDecision(decision);
           output.args = {
             filePath: output.args.filePath,

@@ -36,11 +36,20 @@ const DANGEROUS_PATTERNS: RiskRule[] = [
   { pattern: /git\s+clean\s+-[fdx]+/, decision: "require_human", reason: "git clean removes untracked files" },
   { pattern: />\s*~\/.ssh\//, decision: "deny", reason: "writing to SSH config directory" },
   { pattern: /\.env(\.\w+)?$/, decision: "require_human", reason: "modifying environment variable file" },
+  { pattern: /npm\s+(publish|unpublish|deprecate)/, decision: "require_human", reason: "npm publish/unpublish/deprecate affects registry" },
+  { pattern: /npx\s+(-y\s+)?[^\s]+\s+-/, decision: "require_human", reason: "npx with flags to an unknown package" },
 ];
 
 const SAFE_PATTERNS: RiskRule[] = [
   { pattern: /^(ls|dir|pwd|echo|cat|head|tail|wc|date|which|whoami|uname)\s/, decision: "approve", reason: "read-only/display command" },
-  { pattern: /^(node|npm|npx|yarn|pnpm|bun)\s+/, decision: "approve", reason: "node/npm tooling" },
+  { pattern: /^node\s+(-e|-c|-p)\s/, decision: "approve", reason: "node eval/check/print" },
+  { pattern: /^node\s+--(version|help)/, decision: "approve", reason: "node version/help" },
+  { pattern: /^npm\s+(install|ci|test|run|start|build|dev|lint|typecheck|format)\b/, decision: "approve", reason: "common npm dev workflow" },
+  { pattern: /^npm\s+--(version|help)/, decision: "approve", reason: "npm version/help" },
+  { pattern: /^npx\s+(tsc|eslint|prettier|vitest|jest|playwright|tsgo)\b/, decision: "approve", reason: "known safe npx tool" },
+  { pattern: /^yarn\s+(install|test|run|build|dev|lint|typecheck)\b/, decision: "approve", reason: "common yarn dev workflow" },
+  { pattern: /^pnpm\s+(install|test|run|build|dev|lint|typecheck)\b/, decision: "approve", reason: "common pnpm dev workflow" },
+  { pattern: /^bun\s+(install|test|run|build|dev|lint)\b/, decision: "approve", reason: "common bun dev workflow" },
   { pattern: /^git\s+status\s*$/, decision: "approve", reason: "git status is safe" },
   { pattern: /^git\s+diff\s*/, decision: "approve", reason: "git diff is read-only" },
   { pattern: /^git\s+log\s*/, decision: "approve", reason: "git log is read-only" },
@@ -113,9 +122,8 @@ function reviewEditAction(permission: Permission, args?: Record<string, unknown>
   }
 
   const action = args as { oldString?: string; newString?: string } | undefined;
-  if (action?.oldString && action?.newString && action.newString.includes(action.oldString)) {
-    const deleted = action.newString.replace(action.oldString, "");
-    if (deleted.trim().length === 0 && action.newString.length < action.oldString.length) {
+  if (action?.oldString && action?.newString !== undefined) {
+    if (action.oldString.length > 100 && action.newString.length < action.oldString.length * 0.25) {
       return { decision: "require_human", reason: "edit appears to delete significant content" };
     }
   }

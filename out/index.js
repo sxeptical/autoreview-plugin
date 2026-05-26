@@ -1,4 +1,4 @@
-// .config/opencode/plugins/auto-review/reviewer.ts
+// reviewer.ts
 var DANGEROUS_PATTERNS = [
   { pattern: /rm\s+(-[rf]+\s+)*(\/|\/etc|\/usr|\/var|\/home|\*)/, decision: "deny", reason: "destructive recursive deletion on critical paths" },
   { pattern: /sudo\s+/, decision: "require_human", reason: "privilege escalation via sudo" },
@@ -16,11 +16,20 @@ var DANGEROUS_PATTERNS = [
   { pattern: /git\s+reset\s+--hard/, decision: "require_human", reason: "hard reset discards working tree changes" },
   { pattern: /git\s+clean\s+-[fdx]+/, decision: "require_human", reason: "git clean removes untracked files" },
   { pattern: />\s*~\/.ssh\//, decision: "deny", reason: "writing to SSH config directory" },
-  { pattern: /\.env(\.\w+)?$/, decision: "require_human", reason: "modifying environment variable file" }
+  { pattern: /\.env(\.\w+)?$/, decision: "require_human", reason: "modifying environment variable file" },
+  { pattern: /npm\s+(publish|unpublish|deprecate)/, decision: "require_human", reason: "npm publish/unpublish/deprecate affects registry" },
+  { pattern: /npx\s+(-y\s+)?[^\s]+\s+-/, decision: "require_human", reason: "npx with flags to an unknown package" }
 ];
 var SAFE_PATTERNS = [
   { pattern: /^(ls|dir|pwd|echo|cat|head|tail|wc|date|which|whoami|uname)\s/, decision: "approve", reason: "read-only/display command" },
-  { pattern: /^(node|npm|npx|yarn|pnpm|bun)\s+/, decision: "approve", reason: "node/npm tooling" },
+  { pattern: /^node\s+(-e|-c|-p)\s/, decision: "approve", reason: "node eval/check/print" },
+  { pattern: /^node\s+--(version|help)/, decision: "approve", reason: "node version/help" },
+  { pattern: /^npm\s+(install|ci|test|run|start|build|dev|lint|typecheck|format)\b/, decision: "approve", reason: "common npm dev workflow" },
+  { pattern: /^npm\s+--(version|help)/, decision: "approve", reason: "npm version/help" },
+  { pattern: /^npx\s+(tsc|eslint|prettier|vitest|jest|playwright|tsgo)\b/, decision: "approve", reason: "known safe npx tool" },
+  { pattern: /^yarn\s+(install|test|run|build|dev|lint|typecheck)\b/, decision: "approve", reason: "common yarn dev workflow" },
+  { pattern: /^pnpm\s+(install|test|run|build|dev|lint|typecheck)\b/, decision: "approve", reason: "common pnpm dev workflow" },
+  { pattern: /^bun\s+(install|test|run|build|dev|lint)\b/, decision: "approve", reason: "common bun dev workflow" },
   { pattern: /^git\s+status\s*$/, decision: "approve", reason: "git status is safe" },
   { pattern: /^git\s+diff\s*/, decision: "approve", reason: "git diff is read-only" },
   { pattern: /^git\s+log\s*/, decision: "approve", reason: "git log is read-only" },
@@ -80,9 +89,8 @@ function reviewEditAction(permission, args) {
     return { decision: "require_human", reason: `editing file with unusual extension: ${ext}` };
   }
   const action = args;
-  if (action?.oldString && action?.newString && action.newString.includes(action.oldString)) {
-    const deleted = action.newString.replace(action.oldString, "");
-    if (deleted.trim().length === 0 && action.newString.length < action.oldString.length) {
+  if (action?.oldString && action?.newString !== undefined) {
+    if (action.oldString.length > 100 && action.newString.length < action.oldString.length * 0.25) {
       return { decision: "require_human", reason: "edit appears to delete significant content" };
     }
   }
@@ -98,7 +106,7 @@ function reviewExternalDirectoryAction(permission) {
   return { decision: "require_human", reason: `external directory outside temp/cache: ${path}` };
 }
 
-// .config/opencode/plugins/auto-review/approval.ts
+// approval.ts
 var AUDIT_ENABLED = true;
 function applyDecision(decision) {
   switch (decision.decision) {
@@ -127,7 +135,7 @@ function logEscalation(decision) {
   console.log(`[auto-review] ESCALATED: ${decision.reason}`);
 }
 
-// .config/opencode/plugins/auto-review/action-hook.ts
+// action-hook.ts
 var REVIEWED_CALLS = new Set;
 function trackReviewed(callID) {
   REVIEWED_CALLS.add(callID);
@@ -170,7 +178,7 @@ function buildEditContext(filePath, callID, args) {
   };
 }
 
-// .config/opencode/plugins/auto-review/index.ts
+// index.ts
 var AutoReviewPlugin = async ({ client, directory, worktree }) => {
   return {
     "permission.ask": async (permission, output) => {
@@ -187,6 +195,8 @@ var AutoReviewPlugin = async ({ client, directory, worktree }) => {
         if (cmd && cmd !== "*") {
           const decision = reviewAction(buildBashContext(cmd, permission.id));
           output.status = applyDecision(decision);
+        } else {
+          output.status = "allow";
         }
       }
     },
@@ -195,7 +205,7 @@ var AutoReviewPlugin = async ({ client, directory, worktree }) => {
       if (tool === "bash" && output.args?.command) {
         const cmd = String(output.args.command);
         const decision = reviewAction(buildBashContext(cmd, callID));
-        if (decision.decision === "deny") {
+        if (decision.decision === "deny" || decision.decision === "require_human") {
           applyDecision(decision);
           output.args.command = `echo "[auto-review] BLOCKED: ${decision.reason}" && exit 1`;
         }
@@ -204,7 +214,7 @@ var AutoReviewPlugin = async ({ client, directory, worktree }) => {
       }
       if (tool === "edit" && output.args?.filePath) {
         const decision = reviewAction(buildEditContext(String(output.args.filePath), callID, output.args));
-        if (decision.decision === "deny") {
+        if (decision.decision === "deny" || decision.decision === "require_human") {
           applyDecision(decision);
           output.args = {
             filePath: output.args.filePath,
