@@ -5,11 +5,16 @@ import {
   trackReviewed,
   isReviewed,
   clearReviewed,
+  trackReviewedDecision,
+  getReviewedDecision,
+  clearReviewedDecision,
   buildBashContext,
   buildEditContext,
 } from "./action-hook";
 
 export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) => {
+  const permissionCallID = (permission: { id: string; callID?: string }) => permission.callID ?? permission.id;
+
   return {
     "permission.ask": async (permission, output) => {
       if (permission.type === "edit" || permission.type === "external_directory") {
@@ -17,6 +22,7 @@ export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) 
           permission,
           toolName: permission.type,
         });
+        trackReviewedDecision(permissionCallID(permission), decision.decision);
         output.status = applyDecision(decision);
         return;
       }
@@ -30,10 +36,15 @@ export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) 
 
         if (cmd && cmd !== "*") {
           const decision = reviewAction(buildBashContext(cmd, permission.id));
+          trackReviewedDecision(permissionCallID(permission), decision.decision);
           output.status = applyDecision(decision);
-        } else {
-          output.status = "allow";
+          return;
         }
+
+        // If OpenCode only provides wildcard pattern during permission check,
+        // force a human gate and let runtime check inspect the exact command.
+        trackReviewedDecision(permissionCallID(permission), "require_human");
+        output.status = "ask";
       }
     },
 
@@ -43,10 +54,12 @@ export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) 
       if (tool === "bash" && output.args?.command) {
         const cmd = String(output.args.command);
         const decision = reviewAction(buildBashContext(cmd, callID));
+        const preReviewedDecision = getReviewedDecision(callID);
 
-        if (decision.decision === "deny" || decision.decision === "require_human") {
-          applyDecision(decision);
-          output.args.command = `echo "[auto-review] BLOCKED: ${decision.reason}" && exit 1`;
+        if (decision.decision === "deny") {
+          throw new Error(`auto-review blocked command: ${decision.reason}`);
+        } else if (decision.decision === "require_human" && preReviewedDecision !== "require_human") {
+          throw new Error(`auto-review requires manual approval: ${decision.reason}`);
         }
 
         trackReviewed(callID);
@@ -59,25 +72,24 @@ export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) 
           callID,
           output.args,
         ));
+        const preReviewedDecision = getReviewedDecision(callID);
 
-        if (decision.decision === "deny" || decision.decision === "require_human") {
-          applyDecision(decision);
-          output.args = {
-            filePath: output.args.filePath,
-            oldString: "",
-            newString: "",
-          };
+        if (decision.decision === "deny") {
+          throw new Error(`auto-review blocked edit: ${decision.reason}`);
+        } else if (decision.decision === "require_human" && preReviewedDecision !== "require_human") {
+          throw new Error(`auto-review requires manual approval: ${decision.reason}`);
         }
       }
     },
 
     "tool.execute.after": async (input, output) => {
+      clearReviewedDecision(input.callID);
       if (!isReviewed(input.callID)) return;
       clearReviewed(input.callID);
 
       if (input.tool === "bash") {
         const outputText = String(output.output || "");
-        if (outputText.includes("[auto-review] BLOCKED:")) {
+        if (outputText === "") {
           output.title = "auto-review: command blocked";
         }
       }

@@ -36,20 +36,13 @@ const DANGEROUS_PATTERNS: RiskRule[] = [
   { pattern: /git\s+clean\s+-[fdx]+/, decision: "require_human", reason: "git clean removes untracked files" },
   { pattern: />\s*~\/.ssh\//, decision: "deny", reason: "writing to SSH config directory" },
   { pattern: /\.env(\.\w+)?$/, decision: "require_human", reason: "modifying environment variable file" },
-  { pattern: /npm\s+(publish|unpublish|deprecate)/, decision: "require_human", reason: "npm publish/unpublish/deprecate affects registry" },
-  { pattern: /npx\s+(-y\s+)?[^\s]+\s+-/, decision: "require_human", reason: "npx with flags to an unknown package" },
 ];
 
 const SAFE_PATTERNS: RiskRule[] = [
   { pattern: /^(ls|dir|pwd|echo|cat|head|tail|wc|date|which|whoami|uname)\s/, decision: "approve", reason: "read-only/display command" },
-  { pattern: /^node\s+(-e|-c|-p)\s/, decision: "approve", reason: "node eval/check/print" },
-  { pattern: /^node\s+--(version|help)/, decision: "approve", reason: "node version/help" },
-  { pattern: /^npm\s+(install|ci|test|run|start|build|dev|lint|typecheck|format)\b/, decision: "approve", reason: "common npm dev workflow" },
-  { pattern: /^npm\s+--(version|help)/, decision: "approve", reason: "npm version/help" },
-  { pattern: /^npx\s+(tsc|eslint|prettier|vitest|jest|playwright|tsgo)\b/, decision: "approve", reason: "known safe npx tool" },
-  { pattern: /^yarn\s+(install|test|run|build|dev|lint|typecheck)\b/, decision: "approve", reason: "common yarn dev workflow" },
-  { pattern: /^pnpm\s+(install|test|run|build|dev|lint|typecheck)\b/, decision: "approve", reason: "common pnpm dev workflow" },
-  { pattern: /^bun\s+(install|test|run|build|dev|lint)\b/, decision: "approve", reason: "common bun dev workflow" },
+  { pattern: /^node\s+(-v|--version)(\s|$)/, decision: "approve", reason: "node version check" },
+  { pattern: /^(npm|yarn|pnpm|bun)\s+(list|ls|view|info|why|outdated|doctor)(\s|$)/, decision: "approve", reason: "package metadata/read-only command" },
+  { pattern: /^(npm|yarn|pnpm|bun)\s+run\s+(type|typecheck|lint|test|build|dev|start)(\s|$)/, decision: "approve", reason: "common package script execution" },
   { pattern: /^git\s+status\s*$/, decision: "approve", reason: "git status is safe" },
   { pattern: /^git\s+diff\s*/, decision: "approve", reason: "git diff is read-only" },
   { pattern: /^git\s+log\s*/, decision: "approve", reason: "git log is read-only" },
@@ -91,17 +84,17 @@ function reviewBashCommand(command: string): ReviewDecision | null {
     }
   }
 
+  if (command.includes("|") || command.includes("&&") || command.includes(";")) {
+    return { decision: "require_human", reason: "compound command with pipes or chains" };
+  }
+
   for (const rule of SAFE_PATTERNS) {
     if (rule.pattern.test(command)) {
       return { decision: rule.decision, reason: rule.reason };
     }
   }
 
-  if (command.includes("|") || command.includes("&&") || command.includes(";")) {
-    return { decision: "require_human", reason: "compound command with pipes or chains" };
-  }
-
-  return null;
+  return { decision: "require_human", reason: "command is not allowlisted by auto-review" };
 }
 
 function reviewEditAction(permission: Permission, args?: Record<string, unknown>): ReviewDecision | null {
@@ -122,9 +115,16 @@ function reviewEditAction(permission: Permission, args?: Record<string, unknown>
   }
 
   const action = args as { oldString?: string; newString?: string } | undefined;
-  if (action?.oldString && action?.newString !== undefined) {
-    if (action.oldString.length > 100 && action.newString.length < action.oldString.length * 0.25) {
-      return { decision: "require_human", reason: "edit appears to delete significant content" };
+  if (typeof action?.oldString === "string" && typeof action?.newString === "string") {
+    const oldLen = action.oldString.trim().length;
+    const newLen = action.newString.trim().length;
+
+    if (oldLen > 0 && newLen === 0) {
+      return { decision: "require_human", reason: "edit clears an existing code/content block" };
+    }
+
+    if (oldLen >= 300 && newLen < oldLen * 0.2) {
+      return { decision: "require_human", reason: "edit appears to remove most of a large content block" };
     }
   }
 
