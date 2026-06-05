@@ -4,6 +4,7 @@ import { Reviewer } from "../services/Reviewer.js"
 import { Approval } from "../services/Approval.js"
 import { ReviewedState } from "../services/ReviewedState.js"
 import { BlockedCommandError, BlockedEditError, RequiresHumanApprovalError } from "../domain/Errors.js"
+import { ActionContext } from "../domain/ActionContext.js"
 
 type ApprovalOutput = {
   status: "allow" | "deny" | "ask"
@@ -22,6 +23,13 @@ type ToolOutput = {
 
 const permissionCallID = (permission: { id: string; callID?: string }) => permission.callID ?? permission.id
 
+const firstPattern = (pattern: unknown): string | undefined =>
+  typeof pattern === "string"
+    ? pattern
+    : Array.isArray(pattern)
+      ? pattern[0]
+      : undefined
+
 export function handlePermissionAsk(
   permission: Permission,
   output: ApprovalOutput
@@ -32,9 +40,10 @@ export function handlePermissionAsk(
     const state = yield* ReviewedState
 
     if (permission.type === "edit" || permission.type === "external_directory") {
-      const context = permission.type === "edit"
-        ? yield* reviewer.reviewEdit(String(permission.pattern ?? ""), {})
-        : yield* reviewer.reviewExternalDirectory(String(permission.pattern ?? ""))
+      const context = yield* reviewer.reviewAction(new ActionContext({
+        permission: permission as never,
+        toolName: permission.type,
+      }))
       
       yield* state.trackDecision(permissionCallID(permission), context.decision)
       const status = yield* approval.applyDecision(context)
@@ -43,14 +52,14 @@ export function handlePermissionAsk(
     }
 
     if (permission.type === "bash") {
-      const cmd = typeof permission.pattern === "string"
-        ? permission.pattern
-        : Array.isArray(permission.pattern)
-          ? permission.pattern[0]
-          : undefined
+      const cmd = firstPattern(permission.pattern)
 
       if (cmd && cmd !== "*") {
-        const decision = yield* reviewer.reviewBash(cmd)
+        const decision = yield* reviewer.reviewAction(new ActionContext({
+          permission: permission as never,
+          toolName: "bash",
+          command: cmd,
+        }))
         yield* state.trackDecision(permissionCallID(permission), decision.decision)
         const status = yield* approval.applyDecision(decision)
         output.status = status

@@ -16,11 +16,11 @@ const runtime = ManagedRuntime.make(AppLayer)
 export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) => {
   return {
     "permission.ask": (permission, output) => {
-      runtime.runPromise(handlePermissionAsk(permission, output))
+      return runtime.runPromise(handlePermissionAsk(permission, output))
     },
 
     "tool.execute.before": (input, output) => {
-      runtime.runPromise(
+      return runtime.runPromise(
         handleToolExecuteBefore(input, output).pipe(
           Effect.catchAll((error) => {
             if (error instanceof BlockedCommandError) {
@@ -39,7 +39,7 @@ export const AutoReviewPlugin: Plugin = async ({ client, directory, worktree }) 
     },
 
     "tool.execute.after": (input, output) => {
-      runtime.runPromise(handleToolExecuteAfter(input, output))
+      return runtime.runPromise(handleToolExecuteAfter(input, output))
     },
   } satisfies Hooks
 }

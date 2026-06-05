@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { Effect } from "effect"
+import { ActionContext } from "../src/domain/ActionContext.js"
 import { Reviewer, ReviewerLive } from "../src/services/Reviewer.js"
 
 describe("Reviewer Service", () => {
@@ -55,5 +56,26 @@ describe("Reviewer Service", () => {
       const result = yield* reviewer.reviewEdit("/home/user/project/file.ts")
       
       expect(result.decision).toBe("approve")
+    }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
+
+  it("reviews an ActionContext", () =>
+    Effect.gen(function* () {
+      const reviewer = yield* Reviewer
+
+      const result = yield* reviewer.reviewAction(new ActionContext({
+        permission: {
+          id: "call-1",
+          type: "bash",
+          sessionID: "session-1",
+          messageID: "message-1",
+          title: "bash command",
+          metadata: {},
+          time: { created: Date.now() },
+        },
+        toolName: "bash",
+        command: "rm -rf /etc",
+      }))
+
+      expect(result.decision).toBe("deny")
     }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
 })

@@ -1,4 +1,5 @@
 import { Context, Effect, Layer } from "effect"
+import { ActionContext } from "../domain/ActionContext.js"
 import { ReviewDecision } from "../domain/ReviewDecision.js"
 import { matchDangerousPattern } from "../rules/dangerous.js"
 import { matchSafePattern } from "../rules/safe.js"
@@ -13,8 +14,16 @@ export class Reviewer extends Context.Tag("Reviewer")<
     readonly reviewBash: (command: string) => Effect.Effect<ReviewDecision, never>
     readonly reviewEdit: (path: string, args?: Record<string, unknown>) => Effect.Effect<ReviewDecision, never>
     readonly reviewExternalDirectory: (path: string) => Effect.Effect<ReviewDecision, never>
+    readonly reviewAction: (context: ActionContext) => Effect.Effect<ReviewDecision, never>
   }
 >() {}
+
+const firstPattern = (pattern: unknown): string | undefined =>
+  typeof pattern === "string"
+    ? pattern
+    : Array.isArray(pattern)
+      ? pattern[0]
+      : undefined
 
 function reviewBashCommand(command: string): ReviewDecision {
   const dangerousMatch = matchDangerousPattern(command)
@@ -70,11 +79,38 @@ function reviewExternalDirectoryAction(path: string): ReviewDecision {
   return new ReviewDecision({ decision: "require_human", reason: `external directory outside temp/cache: ${path}` })
 }
 
+function reviewActionContext(context: ActionContext): ReviewDecision {
+  const { permission, command, args } = context
+
+  if (permission.type === "bash" && command) {
+    return reviewBashCommand(command)
+  }
+
+  if (permission.type === "edit") {
+    const path = firstPattern(permission.pattern)
+    if (!path) {
+      return new ReviewDecision({ decision: "approve", reason: "action matches no risk rules" })
+    }
+    return reviewEditAction(path, args)
+  }
+
+  if (permission.type === "external_directory") {
+    const path = firstPattern(permission.pattern)
+    if (!path) {
+      return new ReviewDecision({ decision: "approve", reason: "no specific path to review" })
+    }
+    return reviewExternalDirectoryAction(path)
+  }
+
+  return new ReviewDecision({ decision: "approve", reason: "action matches no risk rules" })
+}
+
 export const ReviewerLive = Layer.succeed(
   Reviewer,
   {
     reviewBash: (command: string) => Effect.sync(() => reviewBashCommand(command)),
     reviewEdit: (path: string, args?: Record<string, unknown>) => Effect.sync(() => reviewEditAction(path, args)),
     reviewExternalDirectory: (path: string) => Effect.sync(() => reviewExternalDirectoryAction(path)),
+    reviewAction: (context: ActionContext) => Effect.sync(() => reviewActionContext(context)),
   }
 )
