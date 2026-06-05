@@ -4,14 +4,24 @@
   "description": "Lightweight Auto-review plugin for OpenCode — intercepts shell commands, git commands, and filesystem writes for automated risk assessment",
   "type": "module",
   "main": "./out/index.js",
-  "source": "./index.ts",
-  "files": ["out/", "index.ts", "reviewer.ts", "action-hook.ts", "approval.ts"],
+  "source": "./src/index.ts",
+  "files": ["out/", "src/"],
   "keywords": ["opencode", "opencode-plugin", "auto-review", "security", "code-review"],
   "license": "MIT",
   "peerDependencies": {
     "@opencode-ai/plugin": ">=1.0.0"
   },
+  "dependencies": {
+    "effect": "^3.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^1.3.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
   "scripts": {
-    "build": "bun build index.ts --outdir=out --target=node --format=esm"
+    "build": "bun build src/index.ts --outdir=out --target=node --format=esm",
+    "test": "vitest run",
+    "test:watch": "vitest"
   }
 }
