@@ -24201,6 +24201,7 @@ var EDIT_SENSITIVE_PATHS = ["/etc/", "/usr/", "/var/", "/boot/", "~/.ssh/", "~/.
 
 class Reviewer extends exports_Context.Tag("Reviewer")() {
 }
+var firstPattern = (pattern2) => typeof pattern2 === "string" ? pattern2 : Array.isArray(pattern2) ? pattern2[0] : undefined;
 function reviewBashCommand(command) {
   const dangerousMatch = matchDangerousPattern(command);
   if (dangerousMatch) {
@@ -24243,10 +24244,32 @@ function reviewExternalDirectoryAction(path) {
   }
   return new ReviewDecision({ decision: "require_human", reason: `external directory outside temp/cache: ${path}` });
 }
+function reviewActionContext(context5) {
+  const { permission, command, args: args2 } = context5;
+  if (permission.type === "bash" && command) {
+    return reviewBashCommand(command);
+  }
+  if (permission.type === "edit") {
+    const path = firstPattern(permission.pattern);
+    if (!path) {
+      return new ReviewDecision({ decision: "approve", reason: "action matches no risk rules" });
+    }
+    return reviewEditAction(path, args2);
+  }
+  if (permission.type === "external_directory") {
+    const path = firstPattern(permission.pattern);
+    if (!path) {
+      return new ReviewDecision({ decision: "approve", reason: "no specific path to review" });
+    }
+    return reviewExternalDirectoryAction(path);
+  }
+  return new ReviewDecision({ decision: "approve", reason: "action matches no risk rules" });
+}
 var ReviewerLive = exports_Layer.succeed(Reviewer, {
   reviewBash: (command) => exports_Effect.sync(() => reviewBashCommand(command)),
   reviewEdit: (path, args2) => exports_Effect.sync(() => reviewEditAction(path, args2)),
-  reviewExternalDirectory: (path) => exports_Effect.sync(() => reviewExternalDirectoryAction(path))
+  reviewExternalDirectory: (path) => exports_Effect.sync(() => reviewExternalDirectoryAction(path)),
+  reviewAction: (context5) => exports_Effect.sync(() => reviewActionContext(context5))
 });
 
 // src/services/Approval.ts
@@ -24302,24 +24325,54 @@ class RequiresHumanApprovalError extends exports_Data.TaggedError("RequiresHuman
 class BlockedEditError extends exports_Data.TaggedError("BlockedEditError") {
 }
 
+// src/domain/ActionContext.ts
+var PermissionSchema = exports_Schema.Struct({
+  id: exports_Schema.String,
+  type: exports_Schema.Union(exports_Schema.Literal("bash"), exports_Schema.Literal("edit"), exports_Schema.Literal("external_directory")),
+  sessionID: exports_Schema.String,
+  messageID: exports_Schema.String,
+  title: exports_Schema.String,
+  metadata: exports_Schema.Record({ key: exports_Schema.String, value: exports_Schema.Unknown }),
+  time: exports_Schema.Struct({
+    created: exports_Schema.Number
+  }),
+  pattern: exports_Schema.optional(exports_Schema.Union(exports_Schema.String, exports_Schema.Array(exports_Schema.String)))
+});
+
+class ActionContext extends exports_Schema.Class("ActionContext")({
+  permission: PermissionSchema,
+  toolName: exports_Schema.String,
+  command: exports_Schema.optional(exports_Schema.String),
+  args: exports_Schema.optional(exports_Schema.Record({ key: exports_Schema.String, value: exports_Schema.Unknown }))
+}) {
+}
+
 // src/plugin/hooks.ts
 var permissionCallID = (permission) => permission.callID ?? permission.id;
+var firstPattern2 = (pattern2) => typeof pattern2 === "string" ? pattern2 : Array.isArray(pattern2) ? pattern2[0] : undefined;
 function handlePermissionAsk(permission, output) {
   return exports_Effect.gen(function* () {
     const reviewer = yield* Reviewer;
     const approval = yield* Approval;
     const state = yield* ReviewedState;
     if (permission.type === "edit" || permission.type === "external_directory") {
-      const context5 = permission.type === "edit" ? yield* reviewer.reviewEdit(String(permission.pattern ?? ""), {}) : yield* reviewer.reviewExternalDirectory(String(permission.pattern ?? ""));
+      const context5 = yield* reviewer.reviewAction(new ActionContext({
+        permission,
+        toolName: permission.type
+      }));
       yield* state.trackDecision(permissionCallID(permission), context5.decision);
       const status = yield* approval.applyDecision(context5);
       output.status = status;
       return;
     }
     if (permission.type === "bash") {
-      const cmd = typeof permission.pattern === "string" ? permission.pattern : Array.isArray(permission.pattern) ? permission.pattern[0] : undefined;
+      const cmd = firstPattern2(permission.pattern);
       if (cmd && cmd !== "*") {
-        const decision = yield* reviewer.reviewBash(cmd);
+        const decision = yield* reviewer.reviewAction(new ActionContext({
+          permission,
+          toolName: "bash",
+          command: cmd
+        }));
         yield* state.trackDecision(permissionCallID(permission), decision.decision);
         const status = yield* approval.applyDecision(decision);
         output.status = status;
@@ -24380,10 +24433,10 @@ var runtime5 = exports_ManagedRuntime.make(AppLayer);
 var AutoReviewPlugin = async ({ client, directory, worktree }) => {
   return {
     "permission.ask": (permission, output) => {
-      runtime5.runPromise(handlePermissionAsk(permission, output));
+      return runtime5.runPromise(handlePermissionAsk(permission, output));
     },
     "tool.execute.before": (input, output) => {
-      runtime5.runPromise(handleToolExecuteBefore(input, output).pipe(exports_Effect.catchAll((error) => {
+      return runtime5.runPromise(handleToolExecuteBefore(input, output).pipe(exports_Effect.catchAll((error) => {
         if (error instanceof BlockedCommandError) {
           throw new Error(`auto-review blocked command: ${error.reason}`);
         }
@@ -24397,7 +24450,7 @@ var AutoReviewPlugin = async ({ client, directory, worktree }) => {
       })));
     },
     "tool.execute.after": (input, output) => {
-      runtime5.runPromise(handleToolExecuteAfter(input, output));
+      return runtime5.runPromise(handleToolExecuteAfter(input, output));
     }
   };
 };
