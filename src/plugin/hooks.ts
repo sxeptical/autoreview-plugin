@@ -104,6 +104,8 @@ export function handleToolExecuteBefore(
       } else if (decision.decision === "require_human" && preReviewedDecision !== "require_human") {
         return yield* Effect.fail(new RequiresHumanApprovalError({ reason: decision.reason }))
       }
+
+      yield* state.track(input.callID)
     }
   })
 }

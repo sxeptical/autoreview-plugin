@@ -36,4 +36,32 @@ describe("Dangerous Patterns", () => {
     const result = matchDangerousPattern("ls -la")
     expect(result).toBeNull()
   })
+
+  it("catches rm -rf $HOME", () => {
+    expect(matchDangerousPattern("rm -rf $HOME/project")?.decision).toBe("deny")
+  })
+
+  it("catches rm -rf quoted $HOME", () => {
+    expect(matchDangerousPattern('rm -rf "$HOME/project"')?.decision).toBe("deny")
+  })
+
+  it("catches git reset --hard", () => {
+    expect(matchDangerousPattern("git reset --hard")?.decision).toBe("require_human")
+  })
+
+  it("catches npm publish", () => {
+    expect(matchDangerousPattern("npm publish")?.decision).toBe("require_human")
+  })
+
+  it("catches npm unpublish", () => {
+    expect(matchDangerousPattern("npm unpublish foo")?.decision).toBe("require_human")
+  })
+
+  it("catches git stash drop", () => {
+    expect(matchDangerousPattern("git stash drop")?.decision).toBe("require_human")
+  })
+
+  it("catches DROP TABLE", () => {
+    expect(matchDangerousPattern("DROP TABLE users")?.decision).toBe("deny")
+  })
 })

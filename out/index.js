@@ -24133,6 +24133,9 @@ class ArrayFormatterIssue extends (/* @__PURE__ */ Struct({
   description: "Represents an issue returned by the ArrayFormatter formatter"
 })) {
 }
+// src/services/Reviewer.ts
+import * as path from "node:path";
+
 // src/domain/ReviewDecision.ts
 var DecisionType = exports_Schema.Union(exports_Schema.Literal("approve"), exports_Schema.Literal("deny"), exports_Schema.Literal("require_human"));
 
@@ -24144,7 +24147,8 @@ class ReviewDecision extends exports_Schema.Class("ReviewDecision")({
 
 // src/rules/dangerous.ts
 var DANGEROUS_PATTERNS = [
-  { pattern: /rm\s+(-[rf]+\s+)*(\/|\/etc|\/usr|\/var|\/home|\*)/, decision: "deny", reason: "destructive recursive deletion on critical paths" },
+  { pattern: /rm\s+(-[rfivd]+\s+)*["']?(~|\$HOME|\$USER|\/|\/etc|\/usr|\/var|\/home|\*)["']?/, decision: "deny", reason: "destructive recursive deletion on critical paths" },
+  { pattern: /rm\s+(-[rfivd]+\s+)*\$\{?(HOME|USER)\}?/, decision: "deny", reason: "rm against $HOME/$USER" },
   { pattern: /sudo\s+/, decision: "require_human", reason: "privilege escalation via sudo" },
   { pattern: /chmod\s+777/, decision: "deny", reason: "world-writable permissions (777) are unsafe" },
   { pattern: /chown\s+(-R\s+)?[^:\s]+:[^:\s]+\s+\//, decision: "require_human", reason: "chown on root-level paths" },
@@ -24159,8 +24163,11 @@ var DANGEROUS_PATTERNS = [
   { pattern: /git\s+push\s+.*--force.*master/, decision: "require_human", reason: "force pushing to master branch" },
   { pattern: /git\s+reset\s+--hard/, decision: "require_human", reason: "hard reset discards working tree changes" },
   { pattern: /git\s+clean\s+-[fdx]+/, decision: "require_human", reason: "git clean removes untracked files" },
+  { pattern: /git\s+stash\s+(drop|clear|pop)/, decision: "require_human", reason: "git stash drop/clear/pop discards stashed work" },
   { pattern: />\s*~\/.ssh\//, decision: "deny", reason: "writing to SSH config directory" },
-  { pattern: /\.env(\.\w+)?$/, decision: "require_human", reason: "modifying environment variable file" }
+  { pattern: /\.env(\.\w+)?$/, decision: "require_human", reason: "modifying environment variable file" },
+  { pattern: /npm\s+(publish|unpublish|deprecate)/, decision: "require_human", reason: "npm publish/unpublish/deprecate affects registry" },
+  { pattern: /\b(rm|del|format|drop|truncate)\b.*\b(database|table|schema)\b/i, decision: "deny", reason: "database destructive operation" }
 ];
 function matchDangerousPattern(command) {
   for (const rule of DANGEROUS_PATTERNS) {
@@ -24173,18 +24180,21 @@ function matchDangerousPattern(command) {
 
 // src/rules/safe.ts
 var SAFE_PATTERNS = [
-  { pattern: /^(ls|dir|pwd|echo|cat|head|tail|wc|date|which|whoami|uname)\s/, decision: "approve", reason: "read-only/display command" },
+  { pattern: /^(ls|dir|pwd|echo|cat|head|tail|wc|date|which|whoami|uname|env|true|false)(\s+--?[a-zA-Z0-9-]+)*\s*$/, decision: "approve", reason: "bare read-only/display command with optional flags" },
+  { pattern: /^(ls|dir|pwd|echo|cat|head|tail|wc|date|which|whoami|uname)\s+--?[a-zA-Z0-9-]+(\s+[^|&;<>`$\n]+)*\s*$/, decision: "approve", reason: "read-only/display command with flags and args" },
+  { pattern: /^(ls|dir|pwd|echo|cat|head|tail|wc|date|which|whoami|uname)\s+[^|&;<>`$\n-][^|&;<>`$\n]*$/, decision: "approve", reason: "read-only/display command with non-flag args" },
+  { pattern: /^(ls|dir|pwd|echo|cat|head|tail|wc|date|which|whoami|uname)\s*$/, decision: "approve", reason: "bare read-only/display command" },
   { pattern: /^node\s+(-v|--version)(\s|$)/, decision: "approve", reason: "node version check" },
-  { pattern: /^(npm|yarn|pnpm|bun)\s+(list|ls|view|info|why|outdated|doctor)(\s|$)/, decision: "approve", reason: "package metadata/read-only command" },
-  { pattern: /^(npm|yarn|pnpm|bun)\s+run\s+(type|typecheck|lint|test|build|dev|start)(\s|$)/, decision: "approve", reason: "common package script execution" },
+  { pattern: /^(npm|yarn|pnpm|bun)\s+(list|ls|view|info|why|outdated|doctor)(\s+--?[a-zA-Z0-9-]+)*\s*$/, decision: "approve", reason: "package metadata/read-only command" },
+  { pattern: /^(npm|yarn|pnpm|bun)\s+run\s+(type|typecheck|test|lint|build|check|format)(\s+--?[a-zA-Z0-9-]+)*\s*$/, decision: "approve", reason: "read-mostly package script" },
   { pattern: /^git\s+status\s*$/, decision: "approve", reason: "git status is safe" },
-  { pattern: /^git\s+diff\s*/, decision: "approve", reason: "git diff is read-only" },
-  { pattern: /^git\s+log\s*/, decision: "approve", reason: "git log is read-only" },
-  { pattern: /^git\s+branch\s*/, decision: "approve", reason: "git branch listing is safe" },
-  { pattern: /^git\s+stash\s*/, decision: "approve", reason: "git stash is safe" },
-  { pattern: /^(type|typecheck|lint|test|build|dev|start)\s*$/, decision: "approve", reason: "common dev script" },
-  { pattern: /^(mkdir|touch)\s/, decision: "approve", reason: "simple file/dir creation" },
-  { pattern: /^(python|python3|node)\s+-c\s/, decision: "approve", reason: "inline script execution" }
+  { pattern: /^git\s+diff(\s+--?[a-zA-Z0-9-]+)*\s*$/, decision: "approve", reason: "git diff is read-only" },
+  { pattern: /^git\s+log(\s+--?[a-zA-Z0-9-]+)*\s*$/, decision: "approve", reason: "git log is read-only" },
+  { pattern: /^git\s+branch(\s+--?[a-zA-Z0-9-]+)*\s*$/, decision: "approve", reason: "git branch listing is safe" },
+  { pattern: /^git\s+show(\s+--?[a-zA-Z0-9-]+)*\s*$/, decision: "approve", reason: "git show is read-only" },
+  { pattern: /^(type|typecheck|lint|test|check|format)\s*$/, decision: "approve", reason: "common dev script" },
+  { pattern: /^(mkdir|touch)(\s+--?[a-zA-Z0-9-]+)*\s+[^|&;<>`$\n]+$/, decision: "approve", reason: "simple file/dir creation with flags" },
+  { pattern: /^(cp|mv)(\s+--?[a-zA-Z0-9-]+)*\s+[^|&;<>`$\n]+(\s+[^|&;<>`$\n]+)+\s*$/, decision: "approve", reason: "simple local file copy/move" }
 ];
 function matchSafePattern(command) {
   for (const rule of SAFE_PATTERNS) {
@@ -24195,20 +24205,103 @@ function matchSafePattern(command) {
   return null;
 }
 
+// src/rules/shell-expansion.ts
+var SHELL_EXPANSION_PATTERNS = [
+  { pattern: /\$\(/, decision: "require_human", reason: "command substitution via $() hides execution" },
+  { pattern: /`/, decision: "require_human", reason: "command substitution via backticks hides execution" },
+  { pattern: /\|\|/, decision: "require_human", reason: "logical OR chain can mask fallback execution" },
+  { pattern: /\n/, decision: "require_human", reason: "embedded newline can chain commands" },
+  { pattern: /\s2>&1\s*\|/, decision: "require_human", reason: "redirection into pipe can mask execution" },
+  { pattern: /<\(/, decision: "require_human", reason: "process substitution hides execution" },
+  { pattern: /\bsh\s+-c\b/, decision: "require_human", reason: "sh -c executes arbitrary string as shell" },
+  { pattern: /\bbash\s+-c\b/, decision: "require_human", reason: "bash -c executes arbitrary string as shell" },
+  { pattern: /\bzsh\s+-c\b/, decision: "require_human", reason: "zsh -c executes arbitrary string as shell" },
+  { pattern: /\beval\s+/, decision: "require_human", reason: "eval executes constructed string" },
+  { pattern: /\bexec\s+/, decision: "require_human", reason: "exec replaces shell with new process" },
+  { pattern: /\bsource\s+/, decision: "require_human", reason: "source executes file in current shell" }
+];
+function matchShellExpansionPattern(command) {
+  for (const rule of SHELL_EXPANSION_PATTERNS) {
+    if (rule.pattern.test(command)) {
+      return { decision: rule.decision, reason: rule.reason };
+    }
+  }
+  return null;
+}
+
 // src/services/Reviewer.ts
-var EDIT_SAFE_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".json", ".jsonc", ".md", ".css", ".html", ".yaml", ".yml", ".toml", ".py", ".rb", ".go", ".rs", ".java", ".kt", ".swift", ".c", ".cpp", ".h", ".hpp"];
-var EDIT_SENSITIVE_PATHS = ["/etc/", "/usr/", "/var/", "/boot/", "~/.ssh/", "~/.gnupg/", ".env", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", ".git/config"];
+var EDIT_SAFE_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".css", ".html", ".md"];
+var EDIT_SENSITIVE_PATHS = [
+  "/etc/",
+  "/usr/",
+  "/var/",
+  "/boot/",
+  "~/.ssh/",
+  "~/.gnupg/",
+  ".env",
+  "package.json",
+  "package-lock.json",
+  "yarn.lock",
+  "pnpm-lock.yaml",
+  ".git/config",
+  ".git/hooks/",
+  ".github/workflows/",
+  ".gitlab-ci.yml",
+  ".circleci/",
+  "Dockerfile",
+  "docker-compose.yml",
+  "docker-compose.yaml",
+  ".npmrc",
+  ".yarnrc",
+  ".pnpmrc",
+  ".aws/",
+  ".kube/config",
+  "tsconfig.json",
+  "tsconfig.base.json",
+  "next.config.js",
+  "vite.config.ts",
+  "vite.config.js",
+  "webpack.config.js",
+  ".eslintrc",
+  ".prettierrc"
+];
+var EDIT_SENSITIVE_FILE_PATTERNS = [
+  /(^|\/)auth\.[a-z]+$/i,
+  /(^|\/)auth[_-]/i,
+  /(^|\/)login[_-]?[a-z]*\.[a-z]+$/i,
+  /(^|\/)permission[s]?\.[a-z]+$/i,
+  /(^|\/)security[_-]/i,
+  /(^|\/)secret[s]?\.[a-z]+$/i,
+  /(^|\/)credential[s]?\.[a-z]+$/i,
+  /(^|\/)token[s]?\.[a-z]+$/i,
+  /(^|\/)api[_-]?key/i,
+  /(^|\/)certificate[s]?/i
+];
 
 class Reviewer extends exports_Context.Tag("Reviewer")() {
 }
 var firstPattern = (pattern2) => typeof pattern2 === "string" ? pattern2 : Array.isArray(pattern2) ? pattern2[0] : undefined;
+var expandHome = (p) => {
+  if (p.startsWith("~/")) {
+    return path.join(process.env.HOME || "", p.slice(2));
+  }
+  return p;
+};
+function normalizeEditPath(input, repoRoot) {
+  const trimmed2 = input.trim();
+  const expanded = expandHome(trimmed2);
+  const absolute = path.isAbsolute(expanded) ? expanded : repoRoot ? path.resolve(repoRoot, expanded) : path.resolve(expanded);
+  const real = path.relative(repoRoot || "/", absolute).split(path.sep).join("/");
+  return real.replace(/^\.\//, "");
+}
 function reviewBashCommand(command) {
   const dangerousMatch = matchDangerousPattern(command);
   if (dangerousMatch) {
     return new ReviewDecision(dangerousMatch);
   }
-  if (command.includes("|") || command.includes("&&") || command.includes(";")) {
-    return new ReviewDecision({ decision: "require_human", reason: "compound command with pipes or chains" });
+  const expansionMatch = matchShellExpansionPattern(command);
+  if (expansionMatch) {
+    return new ReviewDecision(expansionMatch);
   }
   const safeMatch = matchSafePattern(command);
   if (safeMatch) {
@@ -24216,15 +24309,27 @@ function reviewBashCommand(command) {
   }
   return new ReviewDecision({ decision: "require_human", reason: "command is not allowlisted by auto-review" });
 }
-function reviewEditAction(path, args2) {
+function reviewEditAction(rawPath, args2, repoRoot) {
+  const normalized = normalizeEditPath(rawPath, repoRoot);
+  if (normalized.split("/").includes("..") || path.isAbsolute(rawPath) && !rawPath.startsWith(repoRoot || "")) {
+    return new ReviewDecision({ decision: "require_human", reason: "path escapes repo root" });
+  }
   for (const sensitive of EDIT_SENSITIVE_PATHS) {
-    if (path.includes(sensitive)) {
+    if (normalized.includes(sensitive)) {
       return new ReviewDecision({ decision: "require_human", reason: `editing sensitive path: ${sensitive}` });
     }
   }
-  const ext = path.substring(path.lastIndexOf("."));
+  for (const pattern2 of EDIT_SENSITIVE_FILE_PATTERNS) {
+    if (pattern2.test(normalized)) {
+      return new ReviewDecision({ decision: "require_human", reason: `editing security-related file: ${path.basename(normalized)}` });
+    }
+  }
+  if (!normalized.includes(".")) {
+    return new ReviewDecision({ decision: "require_human", reason: "editing file with no extension" });
+  }
+  const ext = normalized.substring(normalized.lastIndexOf("."));
   if (!EDIT_SAFE_EXTENSIONS.includes(ext)) {
-    return new ReviewDecision({ decision: "require_human", reason: `editing file with unusual extension: ${ext}` });
+    return new ReviewDecision({ decision: "require_human", reason: `editing file with disallowed extension: ${ext}` });
   }
   if (args2 && typeof args2.oldString === "string" && typeof args2.newString === "string") {
     const oldLen = args2.oldString.trim().length;
@@ -24236,39 +24341,43 @@ function reviewEditAction(path, args2) {
       return new ReviewDecision({ decision: "require_human", reason: "edit appears to remove most of a large content block" });
     }
   }
-  return new ReviewDecision({ decision: "approve", reason: "edit is safe" });
+  return new ReviewDecision({ decision: "approve", reason: "edit passed all risk checks" });
 }
-function reviewExternalDirectoryAction(path) {
-  if (path.startsWith("/tmp") || path.startsWith("/var/folders") || path.includes("/.cache/")) {
+function reviewExternalDirectoryAction(rawPath, repoRoot) {
+  const normalized = normalizeEditPath(rawPath, repoRoot);
+  if (normalized.startsWith("/tmp") || normalized.startsWith("/var/folders") || normalized.includes("/.cache/")) {
     return new ReviewDecision({ decision: "approve", reason: "temp/cache directory access" });
   }
-  return new ReviewDecision({ decision: "require_human", reason: `external directory outside temp/cache: ${path}` });
+  if (normalized.split("/").includes("..") || path.isAbsolute(rawPath) && !rawPath.startsWith(repoRoot || "")) {
+    return new ReviewDecision({ decision: "require_human", reason: "path escapes repo root" });
+  }
+  return new ReviewDecision({ decision: "require_human", reason: `external directory outside temp/cache: ${normalized}` });
 }
-function reviewActionContext(context5) {
+function reviewActionContext(context5, repoRoot) {
   const { permission, command, args: args2 } = context5;
   if (permission.type === "bash" && command) {
     return reviewBashCommand(command);
   }
   if (permission.type === "edit") {
-    const path = firstPattern(permission.pattern);
-    if (!path) {
-      return new ReviewDecision({ decision: "approve", reason: "action matches no risk rules" });
-    }
-    return reviewEditAction(path, args2);
-  }
-  if (permission.type === "external_directory") {
-    const path = firstPattern(permission.pattern);
-    if (!path) {
+    const p = firstPattern(permission.pattern);
+    if (!p) {
       return new ReviewDecision({ decision: "approve", reason: "no specific path to review" });
     }
-    return reviewExternalDirectoryAction(path);
+    return reviewEditAction(p, args2, repoRoot);
   }
-  return new ReviewDecision({ decision: "approve", reason: "action matches no risk rules" });
+  if (permission.type === "external_directory") {
+    const p = firstPattern(permission.pattern);
+    if (!p) {
+      return new ReviewDecision({ decision: "approve", reason: "no specific path to review" });
+    }
+    return reviewExternalDirectoryAction(p, repoRoot);
+  }
+  return new ReviewDecision({ decision: "require_human", reason: "action type is not handled by auto-review" });
 }
 var ReviewerLive = exports_Layer.succeed(Reviewer, {
   reviewBash: (command) => exports_Effect.sync(() => reviewBashCommand(command)),
-  reviewEdit: (path, args2) => exports_Effect.sync(() => reviewEditAction(path, args2)),
-  reviewExternalDirectory: (path) => exports_Effect.sync(() => reviewExternalDirectoryAction(path)),
+  reviewEdit: (path2, args2) => exports_Effect.sync(() => reviewEditAction(path2, args2)),
+  reviewExternalDirectory: (path2) => exports_Effect.sync(() => reviewExternalDirectoryAction(path2)),
   reviewAction: (context5) => exports_Effect.sync(() => reviewActionContext(context5))
 });
 
@@ -24407,6 +24516,7 @@ function handleToolExecuteBefore(input, output) {
       } else if (decision.decision === "require_human" && preReviewedDecision !== "require_human") {
         return yield* exports_Effect.fail(new RequiresHumanApprovalError({ reason: decision.reason }));
       }
+      yield* state.track(input.callID);
     }
   });
 }
