@@ -152,4 +152,84 @@ describe("Reviewer Service", () => {
         expect(result.decision).toBe("require_human")
       }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
   })
+
+  describe("absolute system path boundary matching (Fix 3)", () => {
+    const cases: Array<[string, string]> = [
+      ["/etc/passwd → require_human", "/etc/passwd"],
+      ["/usr/local/bin/thing → require_human", "/usr/local/bin/thing"],
+      ["/boot/grub.cfg → require_human", "/boot/grub.cfg"],
+    ]
+
+    for (const [label, p] of cases) {
+      it(label, () =>
+        Effect.gen(function* () {
+          const reviewer = yield* Reviewer
+          const result = yield* reviewer.reviewEdit(p)
+          expect(result.decision).toBe("require_human")
+        }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
+    }
+  })
+
+  describe("macOS /private/var/folders not false-positived (Fix 3)", () => {
+    it("does not flag /private/var/folders/… as sensitive", () =>
+      Effect.gen(function* () {
+        const reviewer = yield* Reviewer
+        // A path under /private/var/folders should NOT be flagged as a
+        // sensitive system path (it's macOS temp storage, not /var/log).
+        const result = yield* reviewer.reviewEdit("/private/var/folders/abc/T/file.ts")
+        expect(result.decision).toBe("approve")
+      }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
+  })
+
+  describe("external directory temp/cache (Fix 3 + Fix 4)", () => {
+    const tempCases: Array<[string, string]> = [
+      ["/tmp/something", "/tmp/something"],
+      ["/private/var/folders/abc/T/cache", "/private/var/folders/abc/T/cache"],
+      ["~/.cache/something", "~/.cache/something"],
+    ]
+
+    for (const [label, p] of tempCases) {
+      it(`approves temp path: ${label}`, () =>
+        Effect.gen(function* () {
+          const reviewer = yield* Reviewer
+          const result = yield* reviewer.reviewExternalDirectory(p)
+          expect(result.decision).toBe("approve")
+        }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
+    }
+  })
+
+  describe("repo root escape detection (Fix 4)", () => {
+    it("detects path escaping repo root via relative traversal", () =>
+      Effect.gen(function* () {
+        const reviewer = yield* Reviewer
+        // With repoRoot=/workspace, this resolves to /etc/passwd which
+        // is outside the repo.
+        const result = yield* reviewer.reviewEdit("src/../../etc/passwd", undefined, "/workspace")
+        expect(result.decision).toBe("require_human")
+        expect(result.reason).toContain("escapes repo root")
+      }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
+
+    it("accepts path within repo root", () =>
+      Effect.gen(function* () {
+        const reviewer = yield* Reviewer
+        const result = yield* reviewer.reviewEdit("src/index.ts", undefined, "/workspace")
+        expect(result.decision).toBe("approve")
+      }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
+  })
+
+  describe("write tool path review via reviewEdit", () => {
+    it("reviews write tool filePath the same as edit", () =>
+      Effect.gen(function* () {
+        const reviewer = yield* Reviewer
+        const result = yield* reviewer.reviewEdit("src/app.ts")
+        expect(result.decision).toBe("approve")
+      }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
+
+    it("escalates write to sensitive config file", () =>
+      Effect.gen(function* () {
+        const reviewer = yield* Reviewer
+        const result = yield* reviewer.reviewEdit("tsconfig.json")
+        expect(result.decision).toBe("require_human")
+      }).pipe(Effect.provide(ReviewerLive), Effect.runPromise))
+  })
 })

@@ -12,6 +12,7 @@
     "@opencode-ai/plugin": ">=1.0.0"
   },
   "dependencies": {
+    "@opencode-ai/sdk": ">=1.0.0",
     "effect": "^3.0.0"
   },
   "devDependencies": {
@@ -21,6 +22,7 @@
   },
   "scripts": {
     "build": "bun build src/index.ts --outdir=out --target=node --format=esm",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
   }

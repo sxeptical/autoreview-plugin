@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 var __defProp = Object.defineProperty;
 var __returnValue = (v) => v;
 function __exportSetter(name, newValue) {
@@ -12,6 +13,7 @@ var __export = (target, all) => {
       set: __exportSetter.bind(all, name)
     });
 };
+var __require = /* @__PURE__ */ createRequire(import.meta.url);
 // node_modules/effect/dist/esm/Context.js
 var exports_Context = {};
 __export(exports_Context, {
@@ -24265,6 +24267,15 @@ var EDIT_SENSITIVE_PATHS = [
   ".eslintrc",
   ".prettierrc"
 ];
+var ABSOLUTE_SYSTEM_ROOTS = [
+  "/etc/",
+  "/usr/",
+  "/var/",
+  "/boot/",
+  "/private/etc/",
+  "/private/var/",
+  "/private/boot/"
+];
 var EDIT_SENSITIVE_FILE_PATTERNS = [
   /(^|\/)auth\.[a-z]+$/i,
   /(^|\/)auth[_-]/i,
@@ -24287,6 +24298,27 @@ var expandHome = (p) => {
   }
   return p;
 };
+function safeRealpath(p) {
+  try {
+    return __require("node:fs").realpathSync(p);
+  } catch {
+    return p;
+  }
+}
+function isSystemSensitivePath(absolutePath) {
+  const candidates = [absolutePath];
+  try {
+    candidates.push(__require("node:fs").realpathSync(absolutePath));
+  } catch {}
+  for (const candidate of candidates) {
+    for (const root of ABSOLUTE_SYSTEM_ROOTS) {
+      if (candidate.startsWith(root) && !candidate.includes("/var/folders")) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 function normalizeEditPath(input, repoRoot) {
   const trimmed2 = input.trim();
   const expanded = expandHome(trimmed2);
@@ -24311,10 +24343,27 @@ function reviewBashCommand(command) {
 }
 function reviewEditAction(rawPath, args2, repoRoot) {
   const normalized = normalizeEditPath(rawPath, repoRoot);
-  if (normalized.split("/").includes("..") || path.isAbsolute(rawPath) && !rawPath.startsWith(repoRoot || "")) {
-    return new ReviewDecision({ decision: "require_human", reason: "path escapes repo root" });
+  const resolved = path.isAbsolute(rawPath) ? safeRealpath(rawPath) : repoRoot ? path.resolve(repoRoot, rawPath) : path.resolve(rawPath);
+  if (repoRoot) {
+    const realRepoRoot = safeRealpath(repoRoot);
+    if (!resolved.startsWith(realRepoRoot)) {
+      return new ReviewDecision({ decision: "require_human", reason: "path escapes repo root" });
+    }
+  } else {
+    const relFromRoot = path.relative("/", resolved);
+    if (relFromRoot.split(path.sep).includes("..")) {
+      return new ReviewDecision({ decision: "require_human", reason: "path escapes repo root" });
+    }
+  }
+  if (path.isAbsolute(rawPath)) {
+    const real = path.isAbsolute(rawPath) ? resolved : rawPath;
+    if (isSystemSensitivePath(real)) {
+      return new ReviewDecision({ decision: "require_human", reason: "editing sensitive system path" });
+    }
   }
   for (const sensitive of EDIT_SENSITIVE_PATHS) {
+    if (sensitive.startsWith("/"))
+      continue;
     if (normalized.includes(sensitive)) {
       return new ReviewDecision({ decision: "require_human", reason: `editing sensitive path: ${sensitive}` });
     }
@@ -24343,13 +24392,34 @@ function reviewEditAction(rawPath, args2, repoRoot) {
   }
   return new ReviewDecision({ decision: "approve", reason: "edit passed all risk checks" });
 }
+function isTempOrCachePath(absolutePath) {
+  if (absolutePath.startsWith("/tmp") || absolutePath.startsWith("/private/tmp")) {
+    return true;
+  }
+  if (absolutePath.startsWith("/var/folders") || absolutePath.startsWith("/private/var/folders")) {
+    return true;
+  }
+  if (absolutePath.includes("/.cache/")) {
+    return true;
+  }
+  return false;
+}
 function reviewExternalDirectoryAction(rawPath, repoRoot) {
   const normalized = normalizeEditPath(rawPath, repoRoot);
-  if (normalized.startsWith("/tmp") || normalized.startsWith("/var/folders") || normalized.includes("/.cache/")) {
+  const absolutePath = path.isAbsolute(rawPath) ? safeRealpath(rawPath) : repoRoot ? path.resolve(repoRoot, rawPath) : path.resolve(rawPath);
+  if (isTempOrCachePath(absolutePath)) {
     return new ReviewDecision({ decision: "approve", reason: "temp/cache directory access" });
   }
-  if (normalized.split("/").includes("..") || path.isAbsolute(rawPath) && !rawPath.startsWith(repoRoot || "")) {
-    return new ReviewDecision({ decision: "require_human", reason: "path escapes repo root" });
+  if (repoRoot) {
+    const realRepoRoot = safeRealpath(repoRoot);
+    if (!absolutePath.startsWith(realRepoRoot)) {
+      return new ReviewDecision({ decision: "require_human", reason: "path escapes repo root" });
+    }
+  } else {
+    const relFromRoot = path.relative("/", absolutePath);
+    if (relFromRoot.split(path.sep).includes("..")) {
+      return new ReviewDecision({ decision: "require_human", reason: "path escapes repo root" });
+    }
   }
   return new ReviewDecision({ decision: "require_human", reason: `external directory outside temp/cache: ${normalized}` });
 }
@@ -24376,9 +24446,9 @@ function reviewActionContext(context5, repoRoot) {
 }
 var ReviewerLive = exports_Layer.succeed(Reviewer, {
   reviewBash: (command) => exports_Effect.sync(() => reviewBashCommand(command)),
-  reviewEdit: (path2, args2) => exports_Effect.sync(() => reviewEditAction(path2, args2)),
-  reviewExternalDirectory: (path2) => exports_Effect.sync(() => reviewExternalDirectoryAction(path2)),
-  reviewAction: (context5) => exports_Effect.sync(() => reviewActionContext(context5))
+  reviewEdit: (path2, args2, repoRoot) => exports_Effect.sync(() => reviewEditAction(path2, args2, repoRoot)),
+  reviewExternalDirectory: (path2, repoRoot) => exports_Effect.sync(() => reviewExternalDirectoryAction(path2, repoRoot)),
+  reviewAction: (context5, repoRoot) => exports_Effect.sync(() => reviewActionContext(context5, repoRoot))
 });
 
 // src/services/Approval.ts
@@ -24424,6 +24494,10 @@ var ReviewedStateLive = exports_Layer.effect(ReviewedState, exports_Effect.gen(f
   };
 }));
 
+// src/domain/RepoConfig.ts
+class RepoConfig extends exports_Context.Tag("RepoConfig")() {
+}
+
 // src/domain/Errors.ts
 class BlockedCommandError extends exports_Data.TaggedError("BlockedCommandError") {
 }
@@ -24457,19 +24531,21 @@ class ActionContext extends exports_Schema.Class("ActionContext")({
 }
 
 // src/plugin/hooks.ts
-var permissionCallID = (permission) => permission.callID ?? permission.id;
+var trackingKey = (permission) => permission.callID ?? permission.id;
+var toolCallKey = (input) => input.callID;
 var firstPattern2 = (pattern2) => typeof pattern2 === "string" ? pattern2 : Array.isArray(pattern2) ? pattern2[0] : undefined;
 function handlePermissionAsk(permission, output) {
   return exports_Effect.gen(function* () {
     const reviewer = yield* Reviewer;
     const approval = yield* Approval;
     const state = yield* ReviewedState;
+    const { repoRoot } = yield* RepoConfig;
     if (permission.type === "edit" || permission.type === "external_directory") {
       const context5 = yield* reviewer.reviewAction(new ActionContext({
         permission,
         toolName: permission.type
-      }));
-      yield* state.trackDecision(permissionCallID(permission), context5.decision);
+      }), repoRoot);
+      yield* state.trackDecision(trackingKey(permission), context5.decision);
       const status = yield* approval.applyDecision(context5);
       output.status = status;
       return;
@@ -24481,13 +24557,13 @@ function handlePermissionAsk(permission, output) {
           permission,
           toolName: "bash",
           command: cmd
-        }));
-        yield* state.trackDecision(permissionCallID(permission), decision.decision);
+        }), repoRoot);
+        yield* state.trackDecision(trackingKey(permission), decision.decision);
         const status = yield* approval.applyDecision(decision);
         output.status = status;
         return;
       }
-      yield* state.trackDecision(permissionCallID(permission), "require_human");
+      yield* state.trackDecision(trackingKey(permission), "require_human");
       output.status = "ask";
     }
   });
@@ -24496,74 +24572,97 @@ function handleToolExecuteBefore(input, output) {
   return exports_Effect.gen(function* () {
     const reviewer = yield* Reviewer;
     const state = yield* ReviewedState;
+    const { repoRoot } = yield* RepoConfig;
+    const key = toolCallKey(input);
     if (input.tool === "bash" && output.args?.command) {
       const cmd = String(output.args.command);
       const decision = yield* reviewer.reviewBash(cmd);
-      const preReviewedDecision = yield* state.getDecision(input.callID);
+      const preReviewedDecision = yield* state.getDecision(key);
       if (decision.decision === "deny") {
         return yield* exports_Effect.fail(new BlockedCommandError({ reason: decision.reason }));
       } else if (decision.decision === "require_human" && preReviewedDecision !== "require_human") {
         return yield* exports_Effect.fail(new RequiresHumanApprovalError({ reason: decision.reason }));
       }
-      yield* state.track(input.callID);
+      yield* state.track(key);
       return;
     }
     if (input.tool === "edit" && output.args?.filePath) {
-      const decision = yield* reviewer.reviewEdit(String(output.args.filePath), output.args);
-      const preReviewedDecision = yield* state.getDecision(input.callID);
+      const decision = yield* reviewer.reviewEdit(String(output.args.filePath), output.args, repoRoot);
+      const preReviewedDecision = yield* state.getDecision(key);
       if (decision.decision === "deny") {
         return yield* exports_Effect.fail(new BlockedEditError({ reason: decision.reason }));
       } else if (decision.decision === "require_human" && preReviewedDecision !== "require_human") {
         return yield* exports_Effect.fail(new RequiresHumanApprovalError({ reason: decision.reason }));
       }
-      yield* state.track(input.callID);
+      yield* state.track(key);
+      return;
+    }
+    if (input.tool === "write") {
+      const filePath = String(output.args?.filePath ?? output.args?.path ?? "");
+      if (!filePath)
+        return;
+      const decision = yield* reviewer.reviewEdit(filePath, output.args, repoRoot);
+      const preReviewedDecision = yield* state.getDecision(key);
+      if (decision.decision === "deny") {
+        return yield* exports_Effect.fail(new BlockedEditError({ reason: decision.reason }));
+      } else if (decision.decision === "require_human" && preReviewedDecision !== "require_human") {
+        return yield* exports_Effect.fail(new RequiresHumanApprovalError({ reason: decision.reason }));
+      }
+      yield* state.track(key);
     }
   });
 }
 function handleToolExecuteAfter(input, output) {
   return exports_Effect.gen(function* () {
     const state = yield* ReviewedState;
-    yield* state.clearDecision(input.callID);
-    const isReviewed = yield* state.isReviewed(input.callID);
+    const key = toolCallKey(input);
+    yield* state.clearDecision(key);
+    const isReviewed = yield* state.isReviewed(key);
     if (!isReviewed)
       return;
-    yield* state.clear(input.callID);
-    if (input.tool === "bash" || input.tool === "edit") {
+    yield* state.clear(key);
+    if (input.tool === "bash" || input.tool === "edit" || input.tool === "write") {
       const outputText = String(output.output || "");
       if (outputText === "") {
-        output.title = input.tool === "bash" ? "auto-review: command blocked" : "auto-review: edit blocked";
+        output.title = input.tool === "bash" ? "auto-review: command blocked" : input.tool === "write" ? "auto-review: write blocked" : "auto-review: edit blocked";
       }
     }
   });
 }
 
 // src/index.ts
-var AppLayer = exports_Layer.mergeAll(ReviewerLive, ApprovalLive, ReviewedStateLive);
-var runtime5 = exports_ManagedRuntime.make(AppLayer);
+function resolveHookError(error) {
+  if (error instanceof BlockedCommandError) {
+    throw new Error(`auto-review blocked command: ${error.reason}`);
+  }
+  if (error instanceof BlockedEditError) {
+    throw new Error(`auto-review blocked edit: ${error.reason}`);
+  }
+  if (error instanceof RequiresHumanApprovalError) {
+    throw new Error(`auto-review requires manual approval: ${error.reason}`);
+  }
+  throw error;
+}
 var AutoReviewPlugin = async ({ client, directory, worktree }) => {
+  const repoRoot = worktree || directory;
+  const appLayer = exports_Layer.mergeAll(ReviewerLive, ApprovalLive, ReviewedStateLive, exports_Layer.succeed(RepoConfig, { repoRoot }));
+  const runtime5 = exports_ManagedRuntime.make(appLayer);
   return {
     "permission.ask": (permission, output) => {
       return runtime5.runPromise(handlePermissionAsk(permission, output));
     },
     "tool.execute.before": (input, output) => {
-      return runtime5.runPromise(handleToolExecuteBefore(input, output).pipe(exports_Effect.catchAll((error) => {
-        if (error instanceof BlockedCommandError) {
-          throw new Error(`auto-review blocked command: ${error.reason}`);
-        }
-        if (error instanceof BlockedEditError) {
-          throw new Error(`auto-review blocked edit: ${error.reason}`);
-        }
-        if (error instanceof RequiresHumanApprovalError) {
-          throw new Error(`auto-review requires manual approval: ${error.reason}`);
-        }
-        throw error;
-      })));
+      return runtime5.runPromise(handleToolExecuteBefore(input, output)).catch(resolveHookError);
     },
     "tool.execute.after": (input, output) => {
       return runtime5.runPromise(handleToolExecuteAfter(input, output));
     }
   };
 };
+var server = AutoReviewPlugin;
+var src_default = AutoReviewPlugin;
 export {
+  server,
+  src_default as default,
   AutoReviewPlugin
 };
