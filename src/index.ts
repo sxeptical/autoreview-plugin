@@ -1,4 +1,4 @@
-import { Effect, Layer, ManagedRuntime } from "effect"
+import { Cause, Effect, Layer, ManagedRuntime, Option } from "effect"
 import type { Plugin, PluginModule, Hooks } from "@opencode-ai/plugin"
 import { ReviewerLive } from "./services/Reviewer.js"
 import { ApprovalLive } from "./services/Approval.js"
@@ -9,19 +9,59 @@ import {
   handleToolExecuteBefore,
   handleToolExecuteAfter,
 } from "./plugin/hooks.js"
-import { BlockedCommandError, BlockedEditError, RequiresHumanApprovalError } from "./domain/Errors.js"
 
-/** Resolves the error to a plain JS error for the OpenCode runtime to surface. */
-function resolveHookError(error: unknown): never {
-  if (error instanceof BlockedCommandError) {
-    throw new Error(`auto-review blocked command: ${error.reason}`)
+/** Symbol under which Effect stores the underlying Cause on a FiberFailure. */
+const FIBER_FAILURE_CAUSE = Symbol.for("effect/Runtime/FiberFailure/Cause")
+
+/**
+ * Known auto-review error tags mapped to their user-facing prefixes.
+ * The `_tag` values are produced by Effect's `Data.TaggedError` helper
+ * in `src/domain/Errors.ts`.
+ */
+const HOOK_ERROR_PREFIX: Record<string, string> = {
+  BlockedCommandError: "auto-review blocked command: ",
+  BlockedEditError: "auto-review blocked edit: ",
+  RequiresHumanApprovalError: "auto-review requires manual approval: ",
+}
+
+/**
+ * Resolves the error to a plain JS error for the OpenCode runtime to surface.
+ *
+ * Effect's `ManagedRuntime.runPromise()` wraps failures in a `FiberFailure`
+ * whose prototype chain does **not** include the original error.  We unwrap
+ * the underlying Cause via the well-known Symbol, extract the first failure,
+ * and map known `_tag`s to human-readable messages.
+ */
+/** @internal Exported for testing only. */
+export function resolveHookError(error: unknown): never {
+  // Fast path: direct instanceof check covers the rare case where
+  // the error is *not* wrapped (e.g. in tests that call hooks directly
+  // via Effect.runPromise).
+  for (const [tag, prefix] of Object.entries(HOOK_ERROR_PREFIX)) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      (error as Record<string, unknown>)._tag === tag
+    ) {
+      throw new Error(`${prefix}${(error as { reason: string }).reason}`)
+    }
   }
-  if (error instanceof BlockedEditError) {
-    throw new Error(`auto-review blocked edit: ${error.reason}`)
+
+  // Slow path: unwrap a FiberFailure-wrapped Effect cause.
+  if (typeof error === "object" && error !== null) {
+    const cause = (error as Record<symbol, unknown>)[FIBER_FAILURE_CAUSE]
+    if (cause && typeof cause === "object") {
+      const failureOpt = Cause.failureOption(cause as never)
+      if (Option.isSome(failureOpt)) {
+        const inner = failureOpt.value as Record<string, unknown>
+        const tag = inner._tag as string | undefined
+        if (tag && tag in HOOK_ERROR_PREFIX) {
+          throw new Error(`${HOOK_ERROR_PREFIX[tag]}${(inner as { reason: string }).reason}`)
+        }
+      }
+    }
   }
-  if (error instanceof RequiresHumanApprovalError) {
-    throw new Error(`auto-review requires manual approval: ${error.reason}`)
-  }
+
   throw error
 }
 

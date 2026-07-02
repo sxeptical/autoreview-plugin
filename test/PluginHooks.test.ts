@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest"
-import { Effect, Layer } from "effect"
-import { AutoReviewPlugin } from "../src/index.js"
+import { Effect, Layer, ManagedRuntime } from "effect"
+import { AutoReviewPlugin, resolveHookError } from "../src/index.js"
 import { handlePermissionAsk, handleToolExecuteBefore, trackingKey } from "../src/plugin/hooks.js"
 import { ApprovalLive } from "../src/services/Approval.js"
 import { ReviewedStateLive, ReviewedState } from "../src/services/ReviewedState.js"
 import { ReviewerLive } from "../src/services/Reviewer.js"
 import { RepoConfig } from "../src/domain/RepoConfig.js"
+import { BlockedCommandError, BlockedEditError, RequiresHumanApprovalError } from "../src/domain/Errors.js"
 
 const REPO_ROOT = "/workspace"
 
@@ -462,5 +463,177 @@ describe("repo root wiring through hooks (Fix 4 completion)", () => {
     )
     // Inside /home/user/project → allowed
     expect(outputInside.status).toBe("allow")
+  })
+})
+
+describe("resolveHookError FiberFailure unwrapping", () => {
+  const REPO_ROOT = "/workspace"
+
+  const AppLayer = Layer.mergeAll(
+    ReviewerLive,
+    ApprovalLive,
+    ReviewedStateLive,
+    Layer.succeed(RepoConfig, { repoRoot: REPO_ROOT }),
+  )
+
+  const makeRuntime = () => ManagedRuntime.make(AppLayer)
+
+  it("unwrap BlockedCommandError through FiberFailure via ManagedRuntime", async () => {
+    const runtime = makeRuntime()
+    try {
+      await runtime.runPromise(
+        handleToolExecuteBefore(
+          { tool: "bash", callID: "fiber-cmd-1" },
+          { args: { command: "rm -rf /" } },
+        ),
+      )
+      throw new Error("expected rejection")
+    } catch (err) {
+      const { Cause, Option } = await import("effect")
+      const causeSym = Object.getOwnPropertySymbols(err).find(
+        (s) => s.toString().includes("Cause"),
+      )
+      const cause = (err as Record<symbol, unknown>)[causeSym!]
+      const failureOpt = Cause.failureOption(cause as never)
+      expect(Option.isSome(failureOpt)).toBe(true)
+      expect((failureOpt.value as unknown as { _tag: string })._tag).toBe(
+        "BlockedCommandError",
+      )
+    }
+  })
+
+  it("unwrap RequiresHumanApprovalError through FiberFailure via ManagedRuntime", async () => {
+    const runtime = makeRuntime()
+    // Editing /etc/passwd outside /workspace triggers "require_human"
+    // (path escapes repo root), which maps to RequiresHumanApprovalError.
+    try {
+      await runtime.runPromise(
+        handleToolExecuteBefore(
+          { tool: "edit", callID: "fiber-edit-1" },
+          { args: { filePath: "/etc/passwd", oldString: "a", newString: "b" } },
+        ),
+      )
+      throw new Error("expected rejection")
+    } catch (err) {
+      const { Cause, Option } = await import("effect")
+      const causeSym = Object.getOwnPropertySymbols(err).find(
+        (s) => s.toString().includes("Cause"),
+      )
+      const cause = (err as Record<symbol, unknown>)[causeSym!]
+      const failureOpt = Cause.failureOption(cause as never)
+      expect(Option.isSome(failureOpt)).toBe(true)
+      expect((failureOpt.value as unknown as { _tag: string })._tag).toBe(
+        "RequiresHumanApprovalError",
+      )
+    }
+  })
+
+  it("direct resolveHookError handles all three error _tag types", async () => {
+    const { resolveHookError } = await import("../src/index.js")
+    const { ManagedRuntime: MRT, Layer: L } = await import("effect")
+    const { ReviewerLive: RL } = await import("../src/services/Reviewer.js")
+    const { ApprovalLive: AL } = await import("../src/services/Approval.js")
+    const { ReviewedStateLive: RSL } = await import("../src/services/ReviewedState.js")
+    const { RepoConfig: RC } = await import("../src/domain/RepoConfig.js")
+
+    const layer = L.mergeAll(
+      RL,
+      AL,
+      RSL,
+      L.succeed(RC, { repoRoot: REPO_ROOT }),
+    )
+    const rt = MRT.make(layer)
+
+    // BlockedCommandError: rm -rf / is a dangerous pattern
+    try {
+      await rt.runPromise(
+        handleToolExecuteBefore(
+          { tool: "bash", callID: "direct-cmd-1" },
+          { args: { command: "rm -rf /" } },
+        ),
+      )
+      throw new Error("expected")
+    } catch (err) {
+      expect(() => resolveHookError(err)).toThrow("auto-review blocked command:")
+    }
+
+    // RequiresHumanApprovalError: bash command not in safe list
+    try {
+      await rt.runPromise(
+        handleToolExecuteBefore(
+          { tool: "bash", callID: "direct-cmd-2" },
+          { args: { command: "custom-script.sh" } },
+        ),
+      )
+      throw new Error("expected")
+    } catch (err) {
+      expect(() => resolveHookError(err)).toThrow("auto-review requires manual approval:")
+    }
+  })
+
+  it("direct resolveHookError maps plain (non-wrapped) errors", async () => {
+    const { resolveHookError } = await import("../src/index.js")
+
+    const cmdErr = new BlockedCommandError({ reason: "test command block" })
+    expect(() => resolveHookError(cmdErr)).toThrow(
+      "auto-review blocked command: test command block",
+    )
+
+    const editErr = new BlockedEditError({ reason: "test edit block" })
+    expect(() => resolveHookError(editErr)).toThrow(
+      "auto-review blocked edit: test edit block",
+    )
+
+    const approvalErr = new RequiresHumanApprovalError({ reason: "test approval" })
+    expect(() => resolveHookError(approvalErr)).toThrow(
+      "auto-review requires manual approval: test approval",
+    )
+  })
+
+  it("direct resolveHookError re-throws unknown errors", async () => {
+    const { resolveHookError } = await import("../src/index.js")
+    const unknown = new Error("something else")
+    expect(() => resolveHookError(unknown)).toThrow("something else")
+  })
+})
+
+describe("AutoReviewPlugin tool.execute.before message format", () => {
+  const REPO_ROOT = "/workspace"
+
+  it("blocked command shows 'auto-review blocked command: ...'", async () => {
+    const hooks = await AutoReviewPlugin({
+      client: {},
+      directory: REPO_ROOT,
+      worktree: REPO_ROOT,
+    } as never)
+
+    await expect(
+      hooks["tool.execute.before"]!(
+        { tool: "bash", callID: "plugin-cmd-1" } as never,
+        { args: { command: "rm -rf /" } } as never,
+      ),
+    ).rejects.toThrow("auto-review blocked command:")
+  })
+
+  it("requires manual approval shows 'auto-review requires manual approval: ...'", async () => {
+    const hooks = await AutoReviewPlugin({
+      client: {},
+      directory: REPO_ROOT,
+      worktree: REPO_ROOT,
+    } as never)
+
+    // Editing /etc/passwd escapes repo root → RequiresHumanApprovalError
+    await expect(
+      hooks["tool.execute.before"]!(
+        { tool: "edit", callID: "plugin-edit-1" } as never,
+        {
+          args: {
+            filePath: "/etc/passwd",
+            oldString: "a",
+            newString: "b",
+          },
+        } as never,
+      ),
+    ).rejects.toThrow("auto-review requires manual approval:")
   })
 })

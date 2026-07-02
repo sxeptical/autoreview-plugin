@@ -14,29 +14,80 @@ var __export = (target, all) => {
     });
 };
 var __require = /* @__PURE__ */ createRequire(import.meta.url);
-// node_modules/effect/dist/esm/Context.js
-var exports_Context = {};
-__export(exports_Context, {
-  unsafeMake: () => unsafeMake,
-  unsafeGet: () => unsafeGet2,
-  pick: () => pick2,
-  omit: () => omit2,
-  mergeAll: () => mergeAll2,
-  merge: () => merge2,
-  make: () => make2,
-  isTag: () => isTag2,
-  isReference: () => isReference2,
-  isContext: () => isContext2,
-  getOrElse: () => getOrElse2,
-  getOption: () => getOption2,
-  get: () => get2,
-  empty: () => empty2,
-  add: () => add2,
-  TagTypeId: () => TagTypeId2,
-  Tag: () => Tag2,
-  ReferenceTypeId: () => ReferenceTypeId2,
-  Reference: () => Reference2,
-  GenericTag: () => GenericTag
+// node_modules/effect/dist/esm/Cause.js
+var exports_Cause = {};
+__export(exports_Cause, {
+  stripSomeDefects: () => stripSomeDefects2,
+  stripFailures: () => stripFailures2,
+  squashWith: () => squashWith,
+  squash: () => squash,
+  size: () => size5,
+  sequential: () => sequential2,
+  reduceWithContext: () => reduceWithContext2,
+  reduce: () => reduce8,
+  prettyErrors: () => prettyErrors2,
+  pretty: () => pretty2,
+  parallel: () => parallel2,
+  originalError: () => originalError,
+  match: () => match6,
+  map: () => map10,
+  linearize: () => linearize2,
+  keepDefects: () => keepDefects2,
+  isUnknownException: () => isUnknownException2,
+  isTimeoutException: () => isTimeoutException2,
+  isSequentialType: () => isSequentialType2,
+  isRuntimeException: () => isRuntimeException2,
+  isParallelType: () => isParallelType2,
+  isNoSuchElementException: () => isNoSuchElementException2,
+  isInterruptedOnly: () => isInterruptedOnly2,
+  isInterruptedException: () => isInterruptedException2,
+  isInterrupted: () => isInterrupted2,
+  isInterruptType: () => isInterruptType2,
+  isIllegalArgumentException: () => isIllegalArgumentException2,
+  isFailure: () => isFailure2,
+  isFailType: () => isFailType2,
+  isExceededCapacityException: () => isExceededCapacityException2,
+  isEmptyType: () => isEmptyType2,
+  isEmpty: () => isEmpty6,
+  isDieType: () => isDieType2,
+  isDie: () => isDie2,
+  isCause: () => isCause2,
+  interruptors: () => interruptors2,
+  interruptOption: () => interruptOption2,
+  interrupt: () => interrupt3,
+  flipCauseOption: () => flipCauseOption2,
+  flatten: () => flatten6,
+  flatMap: () => flatMap8,
+  find: () => find2,
+  filter: () => filter6,
+  failures: () => failures2,
+  failureOrCause: () => failureOrCause2,
+  failureOption: () => failureOption2,
+  fail: () => fail3,
+  empty: () => empty17,
+  dieOption: () => dieOption2,
+  die: () => die3,
+  defects: () => defects2,
+  contains: () => contains4,
+  as: () => as4,
+  andThen: () => andThen5,
+  YieldableError: () => YieldableError2,
+  UnknownExceptionTypeId: () => UnknownExceptionTypeId2,
+  UnknownException: () => UnknownException2,
+  TimeoutExceptionTypeId: () => TimeoutExceptionTypeId2,
+  TimeoutException: () => TimeoutException2,
+  RuntimeExceptionTypeId: () => RuntimeExceptionTypeId2,
+  RuntimeException: () => RuntimeException2,
+  NoSuchElementExceptionTypeId: () => NoSuchElementExceptionTypeId2,
+  NoSuchElementException: () => NoSuchElementException2,
+  InvalidPubSubCapacityExceptionTypeId: () => InvalidPubSubCapacityExceptionTypeId2,
+  InterruptedExceptionTypeId: () => InterruptedExceptionTypeId2,
+  InterruptedException: () => InterruptedException2,
+  IllegalArgumentExceptionTypeId: () => IllegalArgumentExceptionTypeId2,
+  IllegalArgumentException: () => IllegalArgumentException2,
+  ExceededCapacityExceptionTypeId: () => ExceededCapacityExceptionTypeId2,
+  ExceededCapacityException: () => ExceededCapacityException2,
+  CauseTypeId: () => CauseTypeId2
 });
 
 // node_modules/effect/dist/esm/Function.js
@@ -139,6 +190,39 @@ function pipe(a, ab, bc, cd, de, ef, fg, gh, hi) {
   }
 }
 
+// node_modules/effect/dist/esm/Equivalence.js
+var make = (isEquivalent) => (self, that) => self === that || isEquivalent(self, that);
+var isStrictEquivalent = (x, y) => x === y;
+var strict = () => isStrictEquivalent;
+var number = /* @__PURE__ */ strict();
+var mapInput = /* @__PURE__ */ dual(2, (self, f) => make((x, y) => self(f(x), f(y))));
+var Date2 = /* @__PURE__ */ mapInput(number, (date) => date.getTime());
+var array = (item) => make((self, that) => {
+  if (self.length !== that.length) {
+    return false;
+  }
+  for (let i = 0;i < self.length; i++) {
+    const isEq = item(self[i], that[i]);
+    if (!isEq) {
+      return false;
+    }
+  }
+  return true;
+});
+
+// node_modules/effect/dist/esm/internal/doNotation.js
+var let_ = (map) => dual(3, (self, name, f) => map(self, (a) => ({
+  ...a,
+  [name]: f(a)
+})));
+var bindTo = (map) => dual(2, (self, name) => map(self, (a) => ({
+  [name]: a
+})));
+var bind = (map, flatMap) => dual(3, (self, name, f) => flatMap(self, (a) => map(f(a), (b) => ({
+  ...a,
+  [name]: b
+}))));
+
 // node_modules/effect/dist/esm/GlobalValue.js
 var globalStoreId = `effect/GlobalValue`;
 var globalStore;
@@ -183,6 +267,32 @@ var isPromiseLike = (input) => hasProperty(input, "then") && isFunction2(input.t
 var getBugErrorMessage = (message) => `BUG: ${message} - please report an issue at https://github.com/Effect-TS/effect/issues`;
 
 // node_modules/effect/dist/esm/Utils.js
+var GenKindTypeId = /* @__PURE__ */ Symbol.for("effect/Gen/GenKind");
+var isGenKind = (u) => isObject(u) && (GenKindTypeId in u);
+
+class GenKindImpl {
+  value;
+  constructor(value) {
+    this.value = value;
+  }
+  get _F() {
+    return identity;
+  }
+  get _R() {
+    return (_) => _;
+  }
+  get _O() {
+    return (_) => _;
+  }
+  get _E() {
+    return (_) => _;
+  }
+  [GenKindTypeId] = GenKindTypeId;
+  [Symbol.iterator]() {
+    return new SingleShotGen(this);
+  }
+}
+
 class SingleShotGen {
   self;
   called = false;
@@ -211,6 +321,13 @@ class SingleShotGen {
     return new SingleShotGen(this.self);
   }
 }
+var adapter = () => function() {
+  let x = arguments[0];
+  for (let i = 1;i < arguments.length; i++) {
+    x = arguments[i](x);
+  }
+  return new GenKindImpl(x);
+};
 var defaultIncHi = 335903614;
 var defaultIncLo = 4150755663;
 var MUL_HI = 1481765933 >>> 0;
@@ -349,7 +466,7 @@ var hash = (self) => {
   }
   switch (typeof self) {
     case "number":
-      return number(self);
+      return number2(self);
     case "bigint":
       return string(self.toString(10));
     case "boolean":
@@ -383,14 +500,14 @@ var hash = (self) => {
 };
 var random = (self) => {
   if (!randomHashCache.has(self)) {
-    randomHashCache.set(self, number(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)));
+    randomHashCache.set(self, number2(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)));
   }
   return randomHashCache.get(self);
 };
 var combine = (b) => (self) => self * 53 ^ b;
 var optimize = (n) => n & 3221225471 | n >>> 1 & 1073741824;
 var isHash = (u) => hasProperty(u, symbol);
-var number = (n) => {
+var number2 = (n) => {
   if (n !== n || n === Infinity) {
     return 0;
   }
@@ -418,7 +535,7 @@ var structureKeys = (o, keys) => {
   return optimize(h);
 };
 var structure = (o) => structureKeys(o, Object.keys(o));
-var array = (arr) => {
+var array2 = (arr) => {
   let h = 6151;
   for (let i = 0;i < arr.length; i++) {
     h = pipe(h, combine(hash(arr[i])));
@@ -848,306 +965,11 @@ var some = (value) => {
   return a;
 };
 
-// node_modules/effect/dist/esm/internal/context.js
-var TagTypeId = /* @__PURE__ */ Symbol.for("effect/Context/Tag");
-var ReferenceTypeId = /* @__PURE__ */ Symbol.for("effect/Context/Reference");
-var STMSymbolKey = "effect/STM";
-var STMTypeId = /* @__PURE__ */ Symbol.for(STMSymbolKey);
-var TagProto = {
-  ...EffectPrototype,
-  _op: "Tag",
-  [STMTypeId]: effectVariance,
-  [TagTypeId]: {
-    _Service: (_) => _,
-    _Identifier: (_) => _
-  },
-  toString() {
-    return format(this.toJSON());
-  },
-  toJSON() {
-    return {
-      _id: "Tag",
-      key: this.key,
-      stack: this.stack
-    };
-  },
-  [NodeInspectSymbol]() {
-    return this.toJSON();
-  },
-  of(self) {
-    return self;
-  },
-  context(self) {
-    return make(this, self);
-  }
-};
-var ReferenceProto = {
-  ...TagProto,
-  [ReferenceTypeId]: ReferenceTypeId
-};
-var makeGenericTag = (key) => {
-  const limit = Error.stackTraceLimit;
-  Error.stackTraceLimit = 2;
-  const creationError = new Error;
-  Error.stackTraceLimit = limit;
-  const tag = Object.create(TagProto);
-  Object.defineProperty(tag, "stack", {
-    get() {
-      return creationError.stack;
-    }
-  });
-  tag.key = key;
-  return tag;
-};
-var Tag = (id) => () => {
-  const limit = Error.stackTraceLimit;
-  Error.stackTraceLimit = 2;
-  const creationError = new Error;
-  Error.stackTraceLimit = limit;
-  function TagClass() {}
-  Object.setPrototypeOf(TagClass, TagProto);
-  TagClass.key = id;
-  Object.defineProperty(TagClass, "stack", {
-    get() {
-      return creationError.stack;
-    }
-  });
-  return TagClass;
-};
-var Reference = () => (id, options) => {
-  const limit = Error.stackTraceLimit;
-  Error.stackTraceLimit = 2;
-  const creationError = new Error;
-  Error.stackTraceLimit = limit;
-  function ReferenceClass() {}
-  Object.setPrototypeOf(ReferenceClass, ReferenceProto);
-  ReferenceClass.key = id;
-  ReferenceClass.defaultValue = options.defaultValue;
-  Object.defineProperty(ReferenceClass, "stack", {
-    get() {
-      return creationError.stack;
-    }
-  });
-  return ReferenceClass;
-};
-var TypeId2 = /* @__PURE__ */ Symbol.for("effect/Context");
-var ContextProto = {
-  [TypeId2]: {
-    _Services: (_) => _
-  },
-  [symbol2](that) {
-    if (isContext(that)) {
-      if (this.unsafeMap.size === that.unsafeMap.size) {
-        for (const k of this.unsafeMap.keys()) {
-          if (!that.unsafeMap.has(k) || !equals(this.unsafeMap.get(k), that.unsafeMap.get(k))) {
-            return false;
-          }
-        }
-        return true;
-      }
-    }
-    return false;
-  },
-  [symbol]() {
-    return cached(this, number(this.unsafeMap.size));
-  },
-  pipe() {
-    return pipeArguments(this, arguments);
-  },
-  toString() {
-    return format(this.toJSON());
-  },
-  toJSON() {
-    return {
-      _id: "Context",
-      services: Array.from(this.unsafeMap).map(toJSON)
-    };
-  },
-  [NodeInspectSymbol]() {
-    return this.toJSON();
-  }
-};
-var makeContext = (unsafeMap) => {
-  const context = Object.create(ContextProto);
-  context.unsafeMap = unsafeMap;
-  return context;
-};
-var serviceNotFoundError = (tag) => {
-  const error = new Error(`Service not found${tag.key ? `: ${String(tag.key)}` : ""}`);
-  if (tag.stack) {
-    const lines = tag.stack.split(`
-`);
-    if (lines.length > 2) {
-      const afterAt = lines[2].match(/at (.*)/);
-      if (afterAt) {
-        error.message = error.message + ` (defined at ${afterAt[1]})`;
-      }
-    }
-  }
-  if (error.stack) {
-    const lines = error.stack.split(`
-`);
-    lines.splice(1, 3);
-    error.stack = lines.join(`
-`);
-  }
-  return error;
-};
-var isContext = (u) => hasProperty(u, TypeId2);
-var isTag = (u) => hasProperty(u, TagTypeId);
-var isReference = (u) => hasProperty(u, ReferenceTypeId);
-var _empty = /* @__PURE__ */ makeContext(/* @__PURE__ */ new Map);
-var empty = () => _empty;
-var make = (tag, service) => makeContext(new Map([[tag.key, service]]));
-var add = /* @__PURE__ */ dual(3, (self, tag, service) => {
-  const map = new Map(self.unsafeMap);
-  map.set(tag.key, service);
-  return makeContext(map);
-});
-var defaultValueCache = /* @__PURE__ */ globalValue("effect/Context/defaultValueCache", () => new Map);
-var getDefaultValue = (tag) => {
-  if (defaultValueCache.has(tag.key)) {
-    return defaultValueCache.get(tag.key);
-  }
-  const value = tag.defaultValue();
-  defaultValueCache.set(tag.key, value);
-  return value;
-};
-var unsafeGetReference = (self, tag) => {
-  return self.unsafeMap.has(tag.key) ? self.unsafeMap.get(tag.key) : getDefaultValue(tag);
-};
-var unsafeGet = /* @__PURE__ */ dual(2, (self, tag) => {
-  if (!self.unsafeMap.has(tag.key)) {
-    if (ReferenceTypeId in tag)
-      return getDefaultValue(tag);
-    throw serviceNotFoundError(tag);
-  }
-  return self.unsafeMap.get(tag.key);
-});
-var get = unsafeGet;
-var getOrElse = /* @__PURE__ */ dual(3, (self, tag, orElse) => {
-  if (!self.unsafeMap.has(tag.key)) {
-    return isReference(tag) ? getDefaultValue(tag) : orElse();
-  }
-  return self.unsafeMap.get(tag.key);
-});
-var getOption = /* @__PURE__ */ dual(2, (self, tag) => {
-  if (!self.unsafeMap.has(tag.key)) {
-    return isReference(tag) ? some(getDefaultValue(tag)) : none;
-  }
-  return some(self.unsafeMap.get(tag.key));
-});
-var merge = /* @__PURE__ */ dual(2, (self, that) => {
-  const map = new Map(self.unsafeMap);
-  for (const [tag, s] of that.unsafeMap) {
-    map.set(tag, s);
-  }
-  return makeContext(map);
-});
-var mergeAll = (...ctxs) => {
-  const map = new Map;
-  for (let i = 0;i < ctxs.length; i++) {
-    ctxs[i].unsafeMap.forEach((value, key) => {
-      map.set(key, value);
-    });
-  }
-  return makeContext(map);
-};
-var pick = (...tags) => (self) => {
-  const tagSet = new Set(tags.map((_) => _.key));
-  const newEnv = new Map;
-  for (const [tag, s] of self.unsafeMap.entries()) {
-    if (tagSet.has(tag)) {
-      newEnv.set(tag, s);
-    }
-  }
-  return makeContext(newEnv);
-};
-var omit = (...tags) => (self) => {
-  const newEnv = new Map(self.unsafeMap);
-  for (const tag of tags) {
-    newEnv.delete(tag.key);
-  }
-  return makeContext(newEnv);
-};
-
-// node_modules/effect/dist/esm/Context.js
-var TagTypeId2 = TagTypeId;
-var ReferenceTypeId2 = ReferenceTypeId;
-var GenericTag = makeGenericTag;
-var unsafeMake = makeContext;
-var isContext2 = isContext;
-var isTag2 = isTag;
-var isReference2 = isReference;
-var empty2 = empty;
-var make2 = make;
-var add2 = add;
-var get2 = get;
-var getOrElse2 = getOrElse;
-var unsafeGet2 = unsafeGet;
-var getOption2 = getOption;
-var merge2 = merge;
-var mergeAll2 = mergeAll;
-var pick2 = pick;
-var omit2 = omit;
-var Tag2 = Tag;
-var Reference2 = Reference;
-// node_modules/effect/dist/esm/Data.js
-var exports_Data = {};
-__export(exports_Data, {
-  unsafeStruct: () => unsafeStruct,
-  unsafeArray: () => unsafeArray,
-  tuple: () => tuple,
-  taggedEnum: () => taggedEnum,
-  tagged: () => tagged,
-  struct: () => struct2,
-  case: () => _case,
-  array: () => array3,
-  TaggedError: () => TaggedError,
-  TaggedClass: () => TaggedClass,
-  Structural: () => Structural2,
-  Error: () => Error2,
-  Class: () => Class
-});
-
-// node_modules/effect/dist/esm/Equivalence.js
-var make3 = (isEquivalent) => (self, that) => self === that || isEquivalent(self, that);
-var isStrictEquivalent = (x, y) => x === y;
-var strict = () => isStrictEquivalent;
-var number2 = /* @__PURE__ */ strict();
-var mapInput = /* @__PURE__ */ dual(2, (self, f) => make3((x, y) => self(f(x), f(y))));
-var Date2 = /* @__PURE__ */ mapInput(number2, (date) => date.getTime());
-var array2 = (item) => make3((self, that) => {
-  if (self.length !== that.length) {
-    return false;
-  }
-  for (let i = 0;i < self.length; i++) {
-    const isEq = item(self[i], that[i]);
-    if (!isEq) {
-      return false;
-    }
-  }
-  return true;
-});
-
-// node_modules/effect/dist/esm/internal/doNotation.js
-var let_ = (map) => dual(3, (self, name, f) => map(self, (a) => ({
-  ...a,
-  [name]: f(a)
-})));
-var bindTo = (map) => dual(2, (self, name) => map(self, (a) => ({
-  [name]: a
-})));
-var bind = (map, flatMap) => dual(3, (self, name, f) => flatMap(self, (a) => map(f(a), (b) => ({
-  ...a,
-  [name]: b
-}))));
-
 // node_modules/effect/dist/esm/internal/either.js
-var TypeId3 = /* @__PURE__ */ Symbol.for("effect/Either");
+var TypeId2 = /* @__PURE__ */ Symbol.for("effect/Either");
 var CommonProto2 = {
   ...EffectPrototype,
-  [TypeId3]: {
+  [TypeId2]: {
     _R: (_) => _
   },
   [NodeInspectSymbol]() {
@@ -1191,7 +1013,7 @@ var LeftProto = /* @__PURE__ */ Object.assign(/* @__PURE__ */ Object.create(Comm
     };
   }
 });
-var isEither = (input) => hasProperty(input, TypeId3);
+var isEither = (input) => hasProperty(input, TypeId2);
 var isLeft = (ma) => ma._tag === "Left";
 var isRight = (ma) => ma._tag === "Right";
 var left = (left2) => {
@@ -1204,6 +1026,7 @@ var right = (right2) => {
   a.right = right2;
   return a;
 };
+var getLeft = (self) => isRight(self) ? none : some(self.left);
 var getRight = (self) => isLeft(self) ? none : some(self.right);
 var fromOption = /* @__PURE__ */ dual(2, (self, onNone) => isNone(self) ? left(onNone()) : right(self.value));
 
@@ -1232,7 +1055,7 @@ var isRight2 = isRight;
 var getEquivalence = ({
   left: left3,
   right: right3
-}) => make3((x, y) => isLeft2(x) ? isLeft2(y) && left3(x.left, y.left) : isRight2(y) && right3(x.right, y.right));
+}) => make((x, y) => isLeft2(x) ? isLeft2(y) && left3(x.left, y.left) : isRight2(y) && right3(x.right, y.right));
 var mapBoth = /* @__PURE__ */ dual(2, (self, {
   onLeft,
   onRight
@@ -1243,7 +1066,7 @@ var match = /* @__PURE__ */ dual(2, (self, {
   onLeft,
   onRight
 }) => isLeft2(self) ? onLeft(self.left) : onRight(self.right));
-var merge3 = /* @__PURE__ */ match({
+var merge = /* @__PURE__ */ match({
   onLeft: identity,
   onRight: identity
 });
@@ -1258,11 +1081,74 @@ var getOrThrow = /* @__PURE__ */ getOrThrowWith(() => new Error("getOrThrow call
 // node_modules/effect/dist/esm/internal/array.js
 var isNonEmptyArray = (self) => self.length > 0;
 
+// node_modules/effect/dist/esm/Option.js
+var exports_Option = {};
+__export(exports_Option, {
+  zipWith: () => zipWith,
+  zipRight: () => zipRight,
+  zipLeft: () => zipLeft,
+  void: () => void_,
+  toRefinement: () => toRefinement,
+  toArray: () => toArray,
+  tap: () => tap,
+  some: () => some2,
+  reduceCompact: () => reduceCompact,
+  productMany: () => productMany,
+  product: () => product,
+  partitionMap: () => partitionMap,
+  orElseSome: () => orElseSome,
+  orElseEither: () => orElseEither,
+  orElse: () => orElse,
+  none: () => none2,
+  mergeWith: () => mergeWith,
+  match: () => match2,
+  map: () => map2,
+  liftThrowable: () => liftThrowable,
+  liftPredicate: () => liftPredicate,
+  liftNullable: () => liftNullable,
+  lift2: () => lift2,
+  let: () => let_2,
+  isSome: () => isSome2,
+  isOption: () => isOption2,
+  isNone: () => isNone2,
+  getRight: () => getRight2,
+  getOrder: () => getOrder,
+  getOrUndefined: () => getOrUndefined,
+  getOrThrowWith: () => getOrThrowWith2,
+  getOrThrow: () => getOrThrow2,
+  getOrNull: () => getOrNull,
+  getOrElse: () => getOrElse,
+  getLeft: () => getLeft2,
+  getEquivalence: () => getEquivalence2,
+  gen: () => gen,
+  fromNullable: () => fromNullable,
+  fromIterable: () => fromIterable,
+  flatten: () => flatten,
+  flatMapNullable: () => flatMapNullable,
+  flatMap: () => flatMap,
+  firstSomeOf: () => firstSomeOf,
+  filterMap: () => filterMap,
+  filter: () => filter,
+  exists: () => exists,
+  containsWith: () => containsWith,
+  contains: () => contains,
+  composeK: () => composeK,
+  bindTo: () => bindTo2,
+  bind: () => bind2,
+  asVoid: () => asVoid,
+  as: () => as,
+  ap: () => ap,
+  andThen: () => andThen,
+  all: () => all,
+  TypeId: () => TypeId3,
+  Do: () => Do
+});
+
 // node_modules/effect/dist/esm/Order.js
-var make4 = (compare) => (self, that) => self === that ? 0 : compare(self, that);
-var number3 = /* @__PURE__ */ make4((self, that) => self < that ? -1 : 1);
-var bigint = /* @__PURE__ */ make4((self, that) => self < that ? -1 : 1);
-var mapInput2 = /* @__PURE__ */ dual(2, (self, f) => make4((b1, b2) => self(f(b1), f(b2))));
+var make2 = (compare) => (self, that) => self === that ? 0 : compare(self, that);
+var number3 = /* @__PURE__ */ make2((self, that) => self < that ? -1 : 1);
+var bigint = /* @__PURE__ */ make2((self, that) => self < that ? -1 : 1);
+var mapInput2 = /* @__PURE__ */ dual(2, (self, f) => make2((b1, b2) => self(f(b1), f(b2))));
 var lessThan = (O) => dual(2, (self, that) => O(self, that) === -1);
 var greaterThan = (O) => dual(2, (self, that) => O(self, that) === 1);
 var lessThanOrEqualTo = (O) => dual(2, (self, that) => O(self, that) !== 1);
@@ -1273,6 +1159,7 @@ var clamp = (O) => dual(2, (self, options) => min(O)(options.maximum, max(O)(opt
 var between = (O) => dual(2, (self, options) => !lessThan(O)(self, options.minimum) && !greaterThan(O)(self, options.maximum));
 
 // node_modules/effect/dist/esm/Option.js
+var TypeId3 = /* @__PURE__ */ Symbol.for("effect/Option");
 var none2 = () => none;
 var some2 = some;
 var isOption2 = isOption;
@@ -1282,13 +1169,32 @@ var match2 = /* @__PURE__ */ dual(2, (self, {
   onNone,
   onSome
 }) => isNone2(self) ? onNone() : onSome(self.value));
+var toRefinement = (f) => (a) => isSome2(f(a));
+var fromIterable = (collection) => {
+  for (const a of collection) {
+    return some2(a);
+  }
+  return none2();
+};
 var getRight2 = getRight;
-var getOrElse3 = /* @__PURE__ */ dual(2, (self, onNone) => isNone2(self) ? onNone() : self.value);
+var getLeft2 = getLeft;
+var getOrElse = /* @__PURE__ */ dual(2, (self, onNone) => isNone2(self) ? onNone() : self.value);
 var orElse = /* @__PURE__ */ dual(2, (self, that) => isNone2(self) ? that() : self);
 var orElseSome = /* @__PURE__ */ dual(2, (self, onNone) => isNone2(self) ? some2(onNone()) : self);
+var orElseEither = /* @__PURE__ */ dual(2, (self, that) => isNone2(self) ? map2(that(), right) : map2(self, left));
+var firstSomeOf = (collection) => {
+  let out = none2();
+  for (out of collection) {
+    if (isSome2(out)) {
+      return out;
+    }
+  }
+  return out;
+};
 var fromNullable = (nullableValue) => nullableValue == null ? none2() : some2(nullableValue);
-var getOrNull = /* @__PURE__ */ getOrElse3(constNull);
-var getOrUndefined = /* @__PURE__ */ getOrElse3(constUndefined);
+var liftNullable = (f) => (...a) => fromNullable(f(...a));
+var getOrNull = /* @__PURE__ */ getOrElse(constNull);
+var getOrUndefined = /* @__PURE__ */ getOrElse(constUndefined);
 var liftThrowable = (f) => (...a) => {
   try {
     return some2(f(...a));
@@ -1304,15 +1210,102 @@ var getOrThrowWith2 = /* @__PURE__ */ dual(2, (self, onNone) => {
 });
 var getOrThrow2 = /* @__PURE__ */ getOrThrowWith2(() => new Error("getOrThrow called on a None"));
 var map2 = /* @__PURE__ */ dual(2, (self, f) => isNone2(self) ? none2() : some2(f(self.value)));
+var as = /* @__PURE__ */ dual(2, (self, b) => map2(self, () => b));
+var asVoid = /* @__PURE__ */ as(undefined);
+var void_ = /* @__PURE__ */ some2(undefined);
 var flatMap = /* @__PURE__ */ dual(2, (self, f) => isNone2(self) ? none2() : f(self.value));
+var andThen = /* @__PURE__ */ dual(2, (self, f) => flatMap(self, (a) => {
+  const b = isFunction(f) ? f(a) : f;
+  return isOption2(b) ? b : some2(b);
+}));
 var flatMapNullable = /* @__PURE__ */ dual(2, (self, f) => isNone2(self) ? none2() : fromNullable(f(self.value)));
+var flatten = /* @__PURE__ */ flatMap(identity);
+var zipRight = /* @__PURE__ */ dual(2, (self, that) => flatMap(self, () => that));
+var zipLeft = /* @__PURE__ */ dual(2, (self, that) => tap(self, () => that));
+var composeK = /* @__PURE__ */ dual(2, (afb, bfc) => (a) => flatMap(afb(a), bfc));
+var tap = /* @__PURE__ */ dual(2, (self, f) => flatMap(self, (a) => map2(f(a), () => a)));
+var product = (self, that) => isSome2(self) && isSome2(that) ? some2([self.value, that.value]) : none2();
+var productMany = (self, collection) => {
+  if (isNone2(self)) {
+    return none2();
+  }
+  const out = [self.value];
+  for (const o of collection) {
+    if (isNone2(o)) {
+      return none2();
+    }
+    out.push(o.value);
+  }
+  return some2(out);
+};
+var all = (input) => {
+  if (Symbol.iterator in input) {
+    const out2 = [];
+    for (const o of input) {
+      if (isNone2(o)) {
+        return none2();
+      }
+      out2.push(o.value);
+    }
+    return some2(out2);
+  }
+  const out = {};
+  for (const key of Object.keys(input)) {
+    const o = input[key];
+    if (isNone2(o)) {
+      return none2();
+    }
+    out[key] = o.value;
+  }
+  return some2(out);
+};
+var zipWith = /* @__PURE__ */ dual(3, (self, that, f) => map2(product(self, that), ([a, b]) => f(a, b)));
+var ap = /* @__PURE__ */ dual(2, (self, that) => zipWith(self, that, (f, a) => f(a)));
+var reduceCompact = /* @__PURE__ */ dual(3, (self, b, f) => {
+  let out = b;
+  for (const oa of self) {
+    if (isSome2(oa)) {
+      out = f(out, oa.value);
+    }
+  }
+  return out;
+});
+var toArray = (self) => isNone2(self) ? [] : [self.value];
+var partitionMap = /* @__PURE__ */ dual(2, (self, f) => {
+  if (isNone2(self)) {
+    return [none2(), none2()];
+  }
+  const e = f(self.value);
+  return isLeft(e) ? [some2(e.left), none2()] : [none2(), some2(e.right)];
+});
 var filterMap = flatMap;
 var filter = /* @__PURE__ */ dual(2, (self, predicate) => filterMap(self, (b) => predicate(b) ? some(b) : none));
-var getEquivalence2 = (isEquivalent) => make3((x, y) => isNone2(x) ? isNone2(y) : isNone2(y) ? false : isEquivalent(x.value, y.value));
+var getEquivalence2 = (isEquivalent) => make((x, y) => isNone2(x) ? isNone2(y) : isNone2(y) ? false : isEquivalent(x.value, y.value));
+var getOrder = (O) => make2((self, that) => isSome2(self) ? isSome2(that) ? O(self.value, that.value) : 1 : -1);
+var lift2 = (f) => dual(2, (self, that) => zipWith(self, that, f));
+var liftPredicate = /* @__PURE__ */ dual(2, (b, predicate) => predicate(b) ? some2(b) : none2());
 var containsWith = (isEquivalent) => dual(2, (self, a) => isNone2(self) ? false : isEquivalent(self.value, a));
 var _equivalence = /* @__PURE__ */ equivalence();
 var contains = /* @__PURE__ */ containsWith(_equivalence);
 var exists = /* @__PURE__ */ dual(2, (self, refinement) => isNone2(self) ? false : refinement(self.value));
+var bindTo2 = /* @__PURE__ */ bindTo(map2);
+var let_2 = /* @__PURE__ */ let_(map2);
+var bind2 = /* @__PURE__ */ bind(map2, flatMap);
+var Do = /* @__PURE__ */ some2({});
+var adapter2 = /* @__PURE__ */ adapter();
+var gen = (...args) => {
+  const f = args.length === 1 ? args[0] : args[1].bind(args[0]);
+  const iterator = f(adapter2);
+  let state = iterator.next();
+  while (!state.done) {
+    const current = isGenKind(state.value) ? state.value.value : yieldWrapGet(state.value);
+    if (isNone2(current)) {
+      return current;
+    }
+    state = iterator.next(current.value);
+  }
+  return some2(state.value);
+};
 var mergeWith = (f) => (o1, o2) => {
   if (isNone2(o1)) {
     return o2;
@@ -1323,7 +1316,7 @@ var mergeWith = (f) => (o1, o2) => {
 };
 
 // node_modules/effect/dist/esm/Tuple.js
-var make5 = (...elements) => elements;
+var make3 = (...elements) => elements;
 
 // node_modules/effect/dist/esm/Iterable.js
 var findFirst = /* @__PURE__ */ dual(2, (self, f) => {
@@ -1367,7 +1360,7 @@ var makeBy = /* @__PURE__ */ dual(2, (n, f) => {
   }
   return out;
 });
-var fromIterable = (collection) => Array.isArray(collection) ? collection : Array.from(collection);
+var fromIterable2 = (collection) => Array.isArray(collection) ? collection : Array.from(collection);
 var ensure = (self) => Array.isArray(self) ? self : [self];
 var match3 = /* @__PURE__ */ dual(2, (self, {
   onEmpty,
@@ -1379,27 +1372,27 @@ var matchLeft = /* @__PURE__ */ dual(2, (self, {
 }) => isNonEmptyReadonlyArray(self) ? onNonEmpty(headNonEmpty(self), tailNonEmpty(self)) : onEmpty());
 var prepend = /* @__PURE__ */ dual(2, (self, head) => [head, ...self]);
 var append = /* @__PURE__ */ dual(2, (self, last) => [...self, last]);
-var appendAll = /* @__PURE__ */ dual(2, (self, that) => fromIterable(self).concat(fromIterable(that)));
+var appendAll = /* @__PURE__ */ dual(2, (self, that) => fromIterable2(self).concat(fromIterable2(that)));
 var isArray = Array.isArray;
 var isEmptyArray = (self) => self.length === 0;
 var isEmptyReadonlyArray = isEmptyArray;
 var isNonEmptyArray2 = isNonEmptyArray;
 var isNonEmptyReadonlyArray = isNonEmptyArray;
-var isOutOfBounds = (i, as) => i < 0 || i >= as.length;
-var clamp2 = (i, as) => Math.floor(Math.min(Math.max(0, i), as.length));
-var get3 = /* @__PURE__ */ dual(2, (self, index) => {
+var isOutOfBounds = (i, as2) => i < 0 || i >= as2.length;
+var clamp2 = (i, as2) => Math.floor(Math.min(Math.max(0, i), as2.length));
+var get = /* @__PURE__ */ dual(2, (self, index) => {
   const i = Math.floor(index);
   return isOutOfBounds(i, self) ? none2() : some2(self[i]);
 });
-var unsafeGet3 = /* @__PURE__ */ dual(2, (self, index) => {
+var unsafeGet = /* @__PURE__ */ dual(2, (self, index) => {
   const i = Math.floor(index);
   if (isOutOfBounds(i, self)) {
     throw new Error(`Index ${i} out of bounds`);
   }
   return self[i];
 });
-var head = /* @__PURE__ */ get3(0);
-var headNonEmpty = /* @__PURE__ */ unsafeGet3(0);
+var head = /* @__PURE__ */ get(0);
+var headNonEmpty = /* @__PURE__ */ unsafeGet(0);
 var last = (self) => isNonEmptyReadonlyArray(self) ? some2(lastNonEmpty(self)) : none2();
 var lastNonEmpty = (self) => self[self.length - 1];
 var tailNonEmpty = (self) => self.slice(1);
@@ -1415,7 +1408,7 @@ var spanIndex = (self, predicate) => {
 };
 var span = /* @__PURE__ */ dual(2, (self, predicate) => splitAt(self, spanIndex(self, predicate)));
 var drop = /* @__PURE__ */ dual(2, (self, n) => {
-  const input = fromIterable(self);
+  const input = fromIterable2(self);
   return input.slice(clamp2(n, input), input.length);
 });
 var findFirst2 = findFirst;
@@ -1425,15 +1418,15 @@ var sort = /* @__PURE__ */ dual(2, (self, O) => {
   out.sort(O);
   return out;
 });
-var zip = /* @__PURE__ */ dual(2, (self, that) => zipWith(self, that, make5));
-var zipWith = /* @__PURE__ */ dual(3, (self, that, f) => {
-  const as = fromIterable(self);
-  const bs = fromIterable(that);
-  if (isNonEmptyReadonlyArray(as) && isNonEmptyReadonlyArray(bs)) {
-    const out = [f(headNonEmpty(as), headNonEmpty(bs))];
-    const len = Math.min(as.length, bs.length);
+var zip = /* @__PURE__ */ dual(2, (self, that) => zipWith2(self, that, make3));
+var zipWith2 = /* @__PURE__ */ dual(3, (self, that, f) => {
+  const as2 = fromIterable2(self);
+  const bs = fromIterable2(that);
+  if (isNonEmptyReadonlyArray(as2) && isNonEmptyReadonlyArray(bs)) {
+    const out = [f(headNonEmpty(as2), headNonEmpty(bs))];
+    const len = Math.min(as2.length, bs.length);
     for (let i = 1;i < len; i++) {
-      out[i] = f(as[i], bs[i]);
+      out[i] = f(as2[i], bs[i]);
     }
     return out;
   }
@@ -1465,8 +1458,8 @@ var splitNonEmptyAt = /* @__PURE__ */ dual(2, (self, n) => {
 });
 var copy = (self) => self.slice();
 var unionWith = /* @__PURE__ */ dual(3, (self, that, isEquivalent) => {
-  const a = fromIterable(self);
-  const b = fromIterable(that);
+  const a = fromIterable2(self);
+  const b = fromIterable2(that);
   if (isNonEmptyReadonlyArray(a)) {
     if (isNonEmptyReadonlyArray(b)) {
       const dedupe = dedupeWith(isEquivalent);
@@ -1480,12 +1473,12 @@ var union = /* @__PURE__ */ dual(2, (self, that) => unionWith(self, that, _equiv
 var intersectionWith = (isEquivalent) => {
   const has = containsWith2(isEquivalent);
   return dual(2, (self, that) => {
-    const bs = fromIterable(that);
-    return fromIterable(self).filter((a) => has(bs, a));
+    const bs = fromIterable2(that);
+    return fromIterable2(self).filter((a) => has(bs, a));
   });
 };
 var intersection = /* @__PURE__ */ intersectionWith(_equivalence2);
-var empty3 = () => [];
+var empty = () => [];
 var of = (a) => [a];
 var map3 = /* @__PURE__ */ dual(2, (self, f) => self.map(f));
 var flatMap2 = /* @__PURE__ */ dual(2, (self, f) => {
@@ -1501,24 +1494,24 @@ var flatMap2 = /* @__PURE__ */ dual(2, (self, f) => {
   }
   return out;
 });
-var flatten = /* @__PURE__ */ flatMap2(identity);
+var flatten2 = /* @__PURE__ */ flatMap2(identity);
 var filterMap2 = /* @__PURE__ */ dual(2, (self, f) => {
-  const as = fromIterable(self);
+  const as2 = fromIterable2(self);
   const out = [];
-  for (let i = 0;i < as.length; i++) {
-    const o = f(as[i], i);
+  for (let i = 0;i < as2.length; i++) {
+    const o = f(as2[i], i);
     if (isSome2(o)) {
       out.push(o.value);
     }
   }
   return out;
 });
-var partitionMap = /* @__PURE__ */ dual(2, (self, f) => {
+var partitionMap2 = /* @__PURE__ */ dual(2, (self, f) => {
   const left3 = [];
   const right3 = [];
-  const as = fromIterable(self);
-  for (let i = 0;i < as.length; i++) {
-    const e = f(as[i], i);
+  const as2 = fromIterable2(self);
+  for (let i = 0;i < as2.length; i++) {
+    const e = f(as2[i], i);
     if (isLeft2(e)) {
       left3.push(e.left);
     } else {
@@ -1528,8 +1521,8 @@ var partitionMap = /* @__PURE__ */ dual(2, (self, f) => {
   return [left3, right3];
 });
 var getSomes = /* @__PURE__ */ filterMap2(identity);
-var reduce = /* @__PURE__ */ dual(3, (self, b, f) => fromIterable(self).reduce((b2, a, i) => f(b2, a, i), b));
-var reduceRight = /* @__PURE__ */ dual(3, (self, b, f) => fromIterable(self).reduceRight((b2, a, i) => f(b2, a, i), b));
+var reduce = /* @__PURE__ */ dual(3, (self, b, f) => fromIterable2(self).reduce((b2, a, i) => f(b2, a, i), b));
+var reduceRight = /* @__PURE__ */ dual(3, (self, b, f) => fromIterable2(self).reduceRight((b2, a, i) => f(b2, a, i), b));
 var unfold = (b, f) => {
   const out = [];
   let next = b;
@@ -1541,9 +1534,9 @@ var unfold = (b, f) => {
   }
   return out;
 };
-var getEquivalence3 = array2;
+var getEquivalence3 = array;
 var dedupeWith = /* @__PURE__ */ dual(2, (self, isEquivalent) => {
-  const input = fromIterable(self);
+  const input = fromIterable2(self);
   if (isNonEmptyReadonlyArray(input)) {
     const out = [headNonEmpty(input)];
     const rest = tailNonEmpty(input);
@@ -1557,7 +1550,7 @@ var dedupeWith = /* @__PURE__ */ dual(2, (self, isEquivalent) => {
   return [];
 });
 var dedupe = (self) => dedupeWith(self, equivalence());
-var join = /* @__PURE__ */ dual(2, (self, sep) => fromIterable(self).join(sep));
+var join = /* @__PURE__ */ dual(2, (self, sep) => fromIterable2(self).join(sep));
 
 // node_modules/effect/dist/esm/Chunk.js
 var TypeId4 = /* @__PURE__ */ Symbol.for("effect/Chunk");
@@ -1568,7 +1561,7 @@ function copy2(src, srcPos, dest, destPos, len) {
   return dest;
 }
 var emptyArray = [];
-var getEquivalence4 = (isEquivalent) => make3((self, that) => self.length === that.length && toReadonlyArray(self).every((value, i) => isEquivalent(value, unsafeGet4(that, i))));
+var getEquivalence4 = (isEquivalent) => make((self, that) => self.length === that.length && toReadonlyArray(self).every((value, i) => isEquivalent(value, unsafeGet2(that, i))));
 var _equivalence3 = /* @__PURE__ */ getEquivalence4(equals);
 var ChunkProto = {
   [TypeId4]: {
@@ -1590,7 +1583,7 @@ var ChunkProto = {
     return isChunk(that) && _equivalence3(this, that);
   },
   [symbol]() {
-    return cached(this, array(toReadonlyArray(this)));
+    return cached(this, array2(toReadonlyArray(this)));
   },
   [Symbol.iterator]() {
     switch (this.backing._tag) {
@@ -1630,38 +1623,38 @@ var makeChunk = (backing) => {
     case "IArray": {
       chunk.length = backing.array.length;
       chunk.depth = 0;
-      chunk.left = _empty2;
-      chunk.right = _empty2;
+      chunk.left = _empty;
+      chunk.right = _empty;
       break;
     }
     case "ISingleton": {
       chunk.length = 1;
       chunk.depth = 0;
-      chunk.left = _empty2;
-      chunk.right = _empty2;
+      chunk.left = _empty;
+      chunk.right = _empty;
       break;
     }
     case "ISlice": {
       chunk.length = backing.length;
       chunk.depth = backing.chunk.depth + 1;
-      chunk.left = _empty2;
-      chunk.right = _empty2;
+      chunk.left = _empty;
+      chunk.right = _empty;
       break;
     }
   }
   return chunk;
 };
 var isChunk = (u) => hasProperty(u, TypeId4);
-var _empty2 = /* @__PURE__ */ makeChunk({
+var _empty = /* @__PURE__ */ makeChunk({
   _tag: "IEmpty"
 });
-var empty4 = () => _empty2;
-var make6 = (...as) => unsafeFromNonEmptyArray(as);
+var empty2 = () => _empty;
+var make4 = (...as2) => unsafeFromNonEmptyArray(as2);
 var of2 = (a) => makeChunk({
   _tag: "ISingleton",
   a
 });
-var fromIterable2 = (self) => isChunk(self) ? self : unsafeFromArray(fromIterable(self));
+var fromIterable3 = (self) => isChunk(self) ? self : unsafeFromArray(fromIterable2(self));
 var copyToArray = (self, array3, initial) => {
   switch (self.backing._tag) {
     case "IArray": {
@@ -1681,7 +1674,7 @@ var copyToArray = (self, array3, initial) => {
       let i = 0;
       let j = initial;
       while (i < self.length) {
-        array3[j] = unsafeGet4(self, i);
+        array3[j] = unsafeGet2(self, i);
         i += 1;
         j += 1;
       }
@@ -1704,8 +1697,8 @@ var toReadonlyArray_ = (self) => {
         _tag: "IArray",
         array: arr
       };
-      self.left = _empty2;
-      self.right = _empty2;
+      self.left = _empty;
+      self.right = _empty;
       self.depth = 0;
       return arr;
     }
@@ -1735,13 +1728,13 @@ var reverseChunk = (self) => {
   }
 };
 var reverse2 = reverseChunk;
-var get4 = /* @__PURE__ */ dual(2, (self, index) => index < 0 || index >= self.length ? none2() : some2(unsafeGet4(self, index)));
-var unsafeFromArray = (self) => self.length === 0 ? empty4() : self.length === 1 ? of2(self[0]) : makeChunk({
+var get2 = /* @__PURE__ */ dual(2, (self, index) => index < 0 || index >= self.length ? none2() : some2(unsafeGet2(self, index)));
+var unsafeFromArray = (self) => self.length === 0 ? empty2() : self.length === 1 ? of2(self[0]) : makeChunk({
   _tag: "IArray",
   array: self
 });
 var unsafeFromNonEmptyArray = (self) => unsafeFromArray(self);
-var unsafeGet4 = /* @__PURE__ */ dual(2, (self, index) => {
+var unsafeGet2 = /* @__PURE__ */ dual(2, (self, index) => {
   switch (self.backing._tag) {
     case "IEmpty": {
       throw new Error(`Index out of bounds`);
@@ -1759,10 +1752,10 @@ var unsafeGet4 = /* @__PURE__ */ dual(2, (self, index) => {
       return self.backing.array[index];
     }
     case "IConcat": {
-      return index < self.left.length ? unsafeGet4(self.left, index) : unsafeGet4(self.right, index - self.left.length);
+      return index < self.left.length ? unsafeGet2(self.left, index) : unsafeGet2(self.right, index - self.left.length);
     }
     case "ISlice": {
-      return unsafeGet4(self.backing.chunk, index + self.backing.offset);
+      return unsafeGet2(self.backing.chunk, index + self.backing.offset);
     }
   }
 });
@@ -1772,7 +1765,7 @@ var drop2 = /* @__PURE__ */ dual(2, (self, n) => {
   if (n <= 0) {
     return self;
   } else if (n >= self.length) {
-    return _empty2;
+    return _empty;
   } else {
     switch (self.backing._tag) {
       case "ISlice": {
@@ -1890,317 +1883,10 @@ var appendAll2 = /* @__PURE__ */ dual(2, (self, that) => {
 });
 var isEmpty = (self) => self.length === 0;
 var isNonEmpty = (self) => self.length > 0;
-var head2 = /* @__PURE__ */ get4(0);
-var unsafeHead = (self) => unsafeGet4(self, 0);
+var head2 = /* @__PURE__ */ get2(0);
+var unsafeHead = (self) => unsafeGet2(self, 0);
 var headNonEmpty2 = unsafeHead;
 var tailNonEmpty2 = (self) => drop2(self, 1);
-
-// node_modules/effect/dist/esm/Duration.js
-var TypeId5 = /* @__PURE__ */ Symbol.for("effect/Duration");
-var bigint0 = /* @__PURE__ */ BigInt(0);
-var bigint24 = /* @__PURE__ */ BigInt(24);
-var bigint60 = /* @__PURE__ */ BigInt(60);
-var bigint1e3 = /* @__PURE__ */ BigInt(1000);
-var bigint1e6 = /* @__PURE__ */ BigInt(1e6);
-var bigint1e9 = /* @__PURE__ */ BigInt(1e9);
-var DURATION_REGEX = /^(-?\d+(?:\.\d+)?)\s+(nanos?|micros?|millis?|seconds?|minutes?|hours?|days?|weeks?)$/;
-var decode = (input) => {
-  if (isDuration(input)) {
-    return input;
-  } else if (isNumber(input)) {
-    return millis(input);
-  } else if (isBigInt(input)) {
-    return nanos(input);
-  } else if (Array.isArray(input) && input.length === 2 && input.every(isNumber)) {
-    if (input[0] === -Infinity || input[1] === -Infinity || Number.isNaN(input[0]) || Number.isNaN(input[1])) {
-      return zero;
-    }
-    if (input[0] === Infinity || input[1] === Infinity) {
-      return infinity;
-    }
-    return nanos(BigInt(Math.round(input[0] * 1e9)) + BigInt(Math.round(input[1])));
-  } else if (isString(input)) {
-    const match4 = DURATION_REGEX.exec(input);
-    if (match4) {
-      const [_, valueStr, unit] = match4;
-      const value = Number(valueStr);
-      switch (unit) {
-        case "nano":
-        case "nanos":
-          return nanos(BigInt(valueStr));
-        case "micro":
-        case "micros":
-          return micros(BigInt(valueStr));
-        case "milli":
-        case "millis":
-          return millis(value);
-        case "second":
-        case "seconds":
-          return seconds(value);
-        case "minute":
-        case "minutes":
-          return minutes(value);
-        case "hour":
-        case "hours":
-          return hours(value);
-        case "day":
-        case "days":
-          return days(value);
-        case "week":
-        case "weeks":
-          return weeks(value);
-      }
-    }
-  }
-  throw new Error("Invalid DurationInput");
-};
-var zeroValue = {
-  _tag: "Millis",
-  millis: 0
-};
-var infinityValue = {
-  _tag: "Infinity"
-};
-var DurationProto = {
-  [TypeId5]: TypeId5,
-  [symbol]() {
-    return cached(this, structure(this.value));
-  },
-  [symbol2](that) {
-    return isDuration(that) && equals2(this, that);
-  },
-  toString() {
-    return `Duration(${format2(this)})`;
-  },
-  toJSON() {
-    switch (this.value._tag) {
-      case "Millis":
-        return {
-          _id: "Duration",
-          _tag: "Millis",
-          millis: this.value.millis
-        };
-      case "Nanos":
-        return {
-          _id: "Duration",
-          _tag: "Nanos",
-          hrtime: toHrTime(this)
-        };
-      case "Infinity":
-        return {
-          _id: "Duration",
-          _tag: "Infinity"
-        };
-    }
-  },
-  [NodeInspectSymbol]() {
-    return this.toJSON();
-  },
-  pipe() {
-    return pipeArguments(this, arguments);
-  }
-};
-var make7 = (input) => {
-  const duration = Object.create(DurationProto);
-  if (isNumber(input)) {
-    if (isNaN(input) || input <= 0) {
-      duration.value = zeroValue;
-    } else if (!Number.isFinite(input)) {
-      duration.value = infinityValue;
-    } else if (!Number.isInteger(input)) {
-      duration.value = {
-        _tag: "Nanos",
-        nanos: BigInt(Math.round(input * 1e6))
-      };
-    } else {
-      duration.value = {
-        _tag: "Millis",
-        millis: input
-      };
-    }
-  } else if (input <= bigint0) {
-    duration.value = zeroValue;
-  } else {
-    duration.value = {
-      _tag: "Nanos",
-      nanos: input
-    };
-  }
-  return duration;
-};
-var isDuration = (u) => hasProperty(u, TypeId5);
-var isFinite = (self) => self.value._tag !== "Infinity";
-var isZero = (self) => {
-  switch (self.value._tag) {
-    case "Millis": {
-      return self.value.millis === 0;
-    }
-    case "Nanos": {
-      return self.value.nanos === bigint0;
-    }
-    case "Infinity": {
-      return false;
-    }
-  }
-};
-var zero = /* @__PURE__ */ make7(0);
-var infinity = /* @__PURE__ */ make7(Infinity);
-var nanos = (nanos2) => make7(nanos2);
-var micros = (micros2) => make7(micros2 * bigint1e3);
-var millis = (millis2) => make7(millis2);
-var seconds = (seconds2) => make7(seconds2 * 1000);
-var minutes = (minutes2) => make7(minutes2 * 60000);
-var hours = (hours2) => make7(hours2 * 3600000);
-var days = (days2) => make7(days2 * 86400000);
-var weeks = (weeks2) => make7(weeks2 * 604800000);
-var toMillis = (self) => match4(self, {
-  onMillis: (millis2) => millis2,
-  onNanos: (nanos2) => Number(nanos2) / 1e6
-});
-var toNanos = (self) => {
-  const _self = decode(self);
-  switch (_self.value._tag) {
-    case "Infinity":
-      return none2();
-    case "Nanos":
-      return some2(_self.value.nanos);
-    case "Millis":
-      return some2(BigInt(Math.round(_self.value.millis * 1e6)));
-  }
-};
-var unsafeToNanos = (self) => {
-  const _self = decode(self);
-  switch (_self.value._tag) {
-    case "Infinity":
-      throw new Error("Cannot convert infinite duration to nanos");
-    case "Nanos":
-      return _self.value.nanos;
-    case "Millis":
-      return BigInt(Math.round(_self.value.millis * 1e6));
-  }
-};
-var toHrTime = (self) => {
-  const _self = decode(self);
-  switch (_self.value._tag) {
-    case "Infinity":
-      return [Infinity, 0];
-    case "Nanos":
-      return [Number(_self.value.nanos / bigint1e9), Number(_self.value.nanos % bigint1e9)];
-    case "Millis":
-      return [Math.floor(_self.value.millis / 1000), Math.round(_self.value.millis % 1000 * 1e6)];
-  }
-};
-var match4 = /* @__PURE__ */ dual(2, (self, options) => {
-  const _self = decode(self);
-  switch (_self.value._tag) {
-    case "Nanos":
-      return options.onNanos(_self.value.nanos);
-    case "Infinity":
-      return options.onMillis(Infinity);
-    case "Millis":
-      return options.onMillis(_self.value.millis);
-  }
-});
-var matchWith = /* @__PURE__ */ dual(3, (self, that, options) => {
-  const _self = decode(self);
-  const _that = decode(that);
-  if (_self.value._tag === "Infinity" || _that.value._tag === "Infinity") {
-    return options.onMillis(toMillis(_self), toMillis(_that));
-  } else if (_self.value._tag === "Nanos" || _that.value._tag === "Nanos") {
-    const selfNanos = _self.value._tag === "Nanos" ? _self.value.nanos : BigInt(Math.round(_self.value.millis * 1e6));
-    const thatNanos = _that.value._tag === "Nanos" ? _that.value.nanos : BigInt(Math.round(_that.value.millis * 1e6));
-    return options.onNanos(selfNanos, thatNanos);
-  }
-  return options.onMillis(_self.value.millis, _that.value.millis);
-});
-var Order = /* @__PURE__ */ make4((self, that) => matchWith(self, that, {
-  onMillis: (self2, that2) => self2 < that2 ? -1 : self2 > that2 ? 1 : 0,
-  onNanos: (self2, that2) => self2 < that2 ? -1 : self2 > that2 ? 1 : 0
-}));
-var between2 = /* @__PURE__ */ between(/* @__PURE__ */ mapInput2(Order, decode));
-var Equivalence = (self, that) => matchWith(self, that, {
-  onMillis: (self2, that2) => self2 === that2,
-  onNanos: (self2, that2) => self2 === that2
-});
-var _clamp = /* @__PURE__ */ clamp(Order);
-var clamp3 = /* @__PURE__ */ dual(2, (self, options) => _clamp(decode(self), {
-  minimum: decode(options.minimum),
-  maximum: decode(options.maximum)
-}));
-var lessThan2 = /* @__PURE__ */ dual(2, (self, that) => matchWith(self, that, {
-  onMillis: (self2, that2) => self2 < that2,
-  onNanos: (self2, that2) => self2 < that2
-}));
-var lessThanOrEqualTo2 = /* @__PURE__ */ dual(2, (self, that) => matchWith(self, that, {
-  onMillis: (self2, that2) => self2 <= that2,
-  onNanos: (self2, that2) => self2 <= that2
-}));
-var greaterThan2 = /* @__PURE__ */ dual(2, (self, that) => matchWith(self, that, {
-  onMillis: (self2, that2) => self2 > that2,
-  onNanos: (self2, that2) => self2 > that2
-}));
-var greaterThanOrEqualTo2 = /* @__PURE__ */ dual(2, (self, that) => matchWith(self, that, {
-  onMillis: (self2, that2) => self2 >= that2,
-  onNanos: (self2, that2) => self2 >= that2
-}));
-var equals2 = /* @__PURE__ */ dual(2, (self, that) => Equivalence(decode(self), decode(that)));
-var parts = (self) => {
-  const duration = decode(self);
-  if (duration.value._tag === "Infinity") {
-    return {
-      days: Infinity,
-      hours: Infinity,
-      minutes: Infinity,
-      seconds: Infinity,
-      millis: Infinity,
-      nanos: Infinity
-    };
-  }
-  const nanos2 = unsafeToNanos(duration);
-  const ms = nanos2 / bigint1e6;
-  const sec = ms / bigint1e3;
-  const min2 = sec / bigint60;
-  const hr = min2 / bigint60;
-  const days2 = hr / bigint24;
-  return {
-    days: Number(days2),
-    hours: Number(hr % bigint24),
-    minutes: Number(min2 % bigint60),
-    seconds: Number(sec % bigint60),
-    millis: Number(ms % bigint1e3),
-    nanos: Number(nanos2 % bigint1e6)
-  };
-};
-var format2 = (self) => {
-  const duration = decode(self);
-  if (duration.value._tag === "Infinity") {
-    return "Infinity";
-  }
-  if (isZero(duration)) {
-    return "0";
-  }
-  const fragments = parts(duration);
-  const pieces = [];
-  if (fragments.days !== 0) {
-    pieces.push(`${fragments.days}d`);
-  }
-  if (fragments.hours !== 0) {
-    pieces.push(`${fragments.hours}h`);
-  }
-  if (fragments.minutes !== 0) {
-    pieces.push(`${fragments.minutes}m`);
-  }
-  if (fragments.seconds !== 0) {
-    pieces.push(`${fragments.seconds}s`);
-  }
-  if (fragments.millis !== 0) {
-    pieces.push(`${fragments.millis}ms`);
-  }
-  if (fragments.nanos !== 0) {
-    pieces.push(`${fragments.nanos}ns`);
-  }
-  return pieces.join(" ");
-};
 
 // node_modules/effect/dist/esm/internal/hashMap/config.js
 var SIZE = 5;
@@ -2229,7 +1915,7 @@ function fromBitmap(bitmap, bit) {
 }
 
 // node_modules/effect/dist/esm/internal/stack.js
-var make8 = (value, previous) => ({
+var make5 = (value, previous) => ({
   value,
   previous
 });
@@ -2524,7 +2210,7 @@ function mergeLeaves(edit, shift, h1, n1, h2, n2) {
   while (true) {
     const res = mergeLeavesInner(edit, currentShift, h1, n1, h2, n2);
     if (typeof res === "function") {
-      stack = make8(res, stack);
+      stack = make5(res, stack);
       currentShift = currentShift + SIZE;
     } else {
       let final = res;
@@ -2655,10 +2341,10 @@ var visitLazyChildren = (len, children, i, f, cont) => {
   }
   return applyCont(cont);
 };
-var _empty3 = /* @__PURE__ */ makeImpl(false, 0, /* @__PURE__ */ new EmptyNode, 0);
-var empty5 = () => _empty3;
-var fromIterable3 = (entries) => {
-  const map4 = beginMutation(empty5());
+var _empty2 = /* @__PURE__ */ makeImpl(false, 0, /* @__PURE__ */ new EmptyNode, 0);
+var empty3 = () => _empty2;
+var fromIterable4 = (entries) => {
+  const map4 = beginMutation(empty3());
   for (const entry of entries) {
     set(map4, entry[0], entry[1]);
   }
@@ -2666,7 +2352,7 @@ var fromIterable3 = (entries) => {
 };
 var isHashMap = (u) => hasProperty(u, HashMapTypeId);
 var isEmpty2 = (self) => self && isEmptyNode(self._root);
-var get5 = /* @__PURE__ */ dual(2, (self, key) => getHash(self, key, hash(key)));
+var get3 = /* @__PURE__ */ dual(2, (self, key) => getHash(self, key, hash(key)));
 var getHash = /* @__PURE__ */ dual(3, (self, key, hash2) => {
   let node = self._root;
   let shift = 0;
@@ -2741,15 +2427,15 @@ var modifyHash = /* @__PURE__ */ dual(4, (self, key, hash2, f) => {
   return pipe(self, setTree(newRoot, size2.value));
 });
 var remove2 = /* @__PURE__ */ dual(2, (self, key) => modifyAt(self, key, none2));
-var map4 = /* @__PURE__ */ dual(2, (self, f) => reduce2(self, empty5(), (map5, value, key) => set(map5, key, f(value, key))));
+var map4 = /* @__PURE__ */ dual(2, (self, f) => reduce2(self, empty3(), (map5, value, key) => set(map5, key, f(value, key))));
 var forEach = /* @__PURE__ */ dual(2, (self, f) => reduce2(self, undefined, (_, value, key) => f(value, key)));
-var reduce2 = /* @__PURE__ */ dual(3, (self, zero2, f) => {
+var reduce2 = /* @__PURE__ */ dual(3, (self, zero, f) => {
   const root = self._root;
   if (root._tag === "LeafNode") {
-    return isSome2(root.value) ? f(zero2, root.value.value, root.key) : zero2;
+    return isSome2(root.value) ? f(zero, root.value.value, root.key) : zero;
   }
   if (root._tag === "EmptyNode") {
-    return zero2;
+    return zero;
   }
   const toVisit = [root.children];
   let children;
@@ -2759,7 +2445,7 @@ var reduce2 = /* @__PURE__ */ dual(3, (self, zero2, f) => {
       if (child && !isEmptyNode(child)) {
         if (child._tag === "LeafNode") {
           if (isSome2(child.value)) {
-            zero2 = f(zero2, child.value.value, child.key);
+            zero = f(zero, child.value.value, child.key);
           }
         } else {
           toVisit.push(child.children);
@@ -2767,7 +2453,7 @@ var reduce2 = /* @__PURE__ */ dual(3, (self, zero2, f) => {
       }
     }
   }
-  return zero2;
+  return zero;
 });
 
 // node_modules/effect/dist/esm/internal/hashSet.js
@@ -2809,19 +2495,19 @@ var makeImpl2 = (keyMap) => {
   return set2;
 };
 var isHashSet = (u) => hasProperty(u, HashSetTypeId);
-var _empty4 = /* @__PURE__ */ makeImpl2(/* @__PURE__ */ empty5());
-var empty6 = () => _empty4;
-var fromIterable4 = (elements) => {
-  const set2 = beginMutation2(empty6());
+var _empty3 = /* @__PURE__ */ makeImpl2(/* @__PURE__ */ empty3());
+var empty4 = () => _empty3;
+var fromIterable5 = (elements) => {
+  const set2 = beginMutation2(empty4());
   for (const value of elements) {
-    add3(set2, value);
+    add(set2, value);
   }
   return endMutation2(set2);
 };
-var make9 = (...elements) => {
-  const set2 = beginMutation2(empty6());
+var make6 = (...elements) => {
+  const set2 = beginMutation2(empty4());
   for (const value of elements) {
-    add3(set2, value);
+    add(set2, value);
   }
   return endMutation2(set2);
 };
@@ -2837,39 +2523,1300 @@ var mutate2 = /* @__PURE__ */ dual(2, (self, f) => {
   f(transient);
   return endMutation2(transient);
 });
-var add3 = /* @__PURE__ */ dual(2, (self, value) => self._keyMap._editable ? (set(value, true)(self._keyMap), self) : makeImpl2(set(value, true)(self._keyMap)));
+var add = /* @__PURE__ */ dual(2, (self, value) => self._keyMap._editable ? (set(value, true)(self._keyMap), self) : makeImpl2(set(value, true)(self._keyMap)));
 var remove3 = /* @__PURE__ */ dual(2, (self, value) => self._keyMap._editable ? (remove2(value)(self._keyMap), self) : makeImpl2(remove2(value)(self._keyMap)));
 var difference2 = /* @__PURE__ */ dual(2, (self, that) => mutate2(self, (set2) => {
   for (const value of that) {
     remove3(set2, value);
   }
 }));
-var union2 = /* @__PURE__ */ dual(2, (self, that) => mutate2(empty6(), (set2) => {
-  forEach2(self, (value) => add3(set2, value));
+var union2 = /* @__PURE__ */ dual(2, (self, that) => mutate2(empty4(), (set2) => {
+  forEach2(self, (value) => add(set2, value));
   for (const value of that) {
-    add3(set2, value);
+    add(set2, value);
   }
 }));
+var map5 = /* @__PURE__ */ dual(2, (self, f) => mutate2(empty4(), (set2) => {
+  forEach2(self, (a) => {
+    const b = f(a);
+    if (!has2(set2, b)) {
+      add(set2, b);
+    }
+  });
+}));
+var flatMap3 = /* @__PURE__ */ dual(2, (self, f) => mutate2(empty4(), (set2) => {
+  forEach2(self, (a) => {
+    for (const b of f(a)) {
+      if (!has2(set2, b)) {
+        add(set2, b);
+      }
+    }
+  });
+}));
 var forEach2 = /* @__PURE__ */ dual(2, (self, f) => forEach(self._keyMap, (_, k) => f(k)));
-var reduce3 = /* @__PURE__ */ dual(3, (self, zero2, f) => reduce2(self._keyMap, zero2, (z, _, a) => f(z, a)));
+var reduce3 = /* @__PURE__ */ dual(3, (self, zero, f) => reduce2(self._keyMap, zero, (z, _, a) => f(z, a)));
 
 // node_modules/effect/dist/esm/HashSet.js
 var isHashSet2 = isHashSet;
-var empty7 = empty6;
-var fromIterable5 = fromIterable4;
-var make10 = make9;
+var empty5 = empty4;
+var fromIterable6 = fromIterable5;
+var make7 = make6;
 var has3 = has2;
 var size3 = size2;
-var add4 = add3;
+var add2 = add;
 var remove4 = remove3;
 var difference3 = difference2;
 var union3 = union2;
+var map6 = map5;
+var flatMap4 = flatMap3;
 var reduce4 = reduce3;
 
-// node_modules/effect/dist/esm/MutableRef.js
-var TypeId6 = /* @__PURE__ */ Symbol.for("effect/MutableRef");
-var MutableRefProto = {
+// node_modules/effect/dist/esm/internal/opCodes/cause.js
+var OP_DIE = "Die";
+var OP_EMPTY = "Empty";
+var OP_FAIL = "Fail";
+var OP_INTERRUPT = "Interrupt";
+var OP_PARALLEL = "Parallel";
+var OP_SEQUENTIAL = "Sequential";
+
+// node_modules/effect/dist/esm/internal/cause.js
+var CauseSymbolKey = "effect/Cause";
+var CauseTypeId = /* @__PURE__ */ Symbol.for(CauseSymbolKey);
+var variance = {
+  _E: (_) => _
+};
+var proto = {
+  [CauseTypeId]: variance,
+  [symbol]() {
+    return pipe(hash(CauseSymbolKey), combine(hash(flattenCause(this))), cached(this));
+  },
+  [symbol2](that) {
+    return isCause(that) && causeEquals(this, that);
+  },
+  pipe() {
+    return pipeArguments(this, arguments);
+  },
+  toJSON() {
+    switch (this._tag) {
+      case "Empty":
+        return {
+          _id: "Cause",
+          _tag: this._tag
+        };
+      case "Die":
+        return {
+          _id: "Cause",
+          _tag: this._tag,
+          defect: toJSON(this.defect)
+        };
+      case "Interrupt":
+        return {
+          _id: "Cause",
+          _tag: this._tag,
+          fiberId: this.fiberId.toJSON()
+        };
+      case "Fail":
+        return {
+          _id: "Cause",
+          _tag: this._tag,
+          failure: toJSON(this.error)
+        };
+      case "Sequential":
+      case "Parallel":
+        return {
+          _id: "Cause",
+          _tag: this._tag,
+          left: toJSON(this.left),
+          right: toJSON(this.right)
+        };
+    }
+  },
+  toString() {
+    return pretty(this);
+  },
+  [NodeInspectSymbol]() {
+    return this.toJSON();
+  }
+};
+var empty6 = /* @__PURE__ */ (() => {
+  const o = /* @__PURE__ */ Object.create(proto);
+  o._tag = OP_EMPTY;
+  return o;
+})();
+var fail = (error) => {
+  const o = Object.create(proto);
+  o._tag = OP_FAIL;
+  o.error = error;
+  return o;
+};
+var die = (defect) => {
+  const o = Object.create(proto);
+  o._tag = OP_DIE;
+  o.defect = defect;
+  return o;
+};
+var interrupt = (fiberId) => {
+  const o = Object.create(proto);
+  o._tag = OP_INTERRUPT;
+  o.fiberId = fiberId;
+  return o;
+};
+var parallel = (left3, right3) => {
+  const o = Object.create(proto);
+  o._tag = OP_PARALLEL;
+  o.left = left3;
+  o.right = right3;
+  return o;
+};
+var sequential = (left3, right3) => {
+  const o = Object.create(proto);
+  o._tag = OP_SEQUENTIAL;
+  o.left = left3;
+  o.right = right3;
+  return o;
+};
+var isCause = (u) => hasProperty(u, CauseTypeId);
+var isEmptyType = (self) => self._tag === OP_EMPTY;
+var isFailType = (self) => self._tag === OP_FAIL;
+var isDieType = (self) => self._tag === OP_DIE;
+var isInterruptType = (self) => self._tag === OP_INTERRUPT;
+var isSequentialType = (self) => self._tag === OP_SEQUENTIAL;
+var isParallelType = (self) => self._tag === OP_PARALLEL;
+var size4 = (self) => reduceWithContext(self, undefined, SizeCauseReducer);
+var isEmpty3 = (self) => {
+  if (self._tag === OP_EMPTY) {
+    return true;
+  }
+  return reduce5(self, true, (acc, cause) => {
+    switch (cause._tag) {
+      case OP_EMPTY: {
+        return some2(acc);
+      }
+      case OP_DIE:
+      case OP_FAIL:
+      case OP_INTERRUPT: {
+        return some2(false);
+      }
+      default: {
+        return none2();
+      }
+    }
+  });
+};
+var isFailure = (self) => isSome2(failureOption(self));
+var isDie = (self) => isSome2(dieOption(self));
+var isInterrupted = (self) => isSome2(interruptOption(self));
+var isInterruptedOnly = (self) => reduceWithContext(undefined, IsInterruptedOnlyCauseReducer)(self);
+var failures = (self) => reverse2(reduce5(self, empty2(), (list, cause) => cause._tag === OP_FAIL ? some2(pipe(list, prepend2(cause.error))) : none2()));
+var defects = (self) => reverse2(reduce5(self, empty2(), (list, cause) => cause._tag === OP_DIE ? some2(pipe(list, prepend2(cause.defect))) : none2()));
+var interruptors = (self) => reduce5(self, empty5(), (set2, cause) => cause._tag === OP_INTERRUPT ? some2(pipe(set2, add2(cause.fiberId))) : none2());
+var failureOption = (self) => find(self, (cause) => cause._tag === OP_FAIL ? some2(cause.error) : none2());
+var failureOrCause = (self) => {
+  const option = failureOption(self);
+  switch (option._tag) {
+    case "None": {
+      return right2(self);
+    }
+    case "Some": {
+      return left2(option.value);
+    }
+  }
+};
+var dieOption = (self) => find(self, (cause) => cause._tag === OP_DIE ? some2(cause.defect) : none2());
+var flipCauseOption = (self) => match4(self, {
+  onEmpty: some2(empty6),
+  onFail: map2(fail),
+  onDie: (defect) => some2(die(defect)),
+  onInterrupt: (fiberId) => some2(interrupt(fiberId)),
+  onSequential: mergeWith(sequential),
+  onParallel: mergeWith(parallel)
+});
+var interruptOption = (self) => find(self, (cause) => cause._tag === OP_INTERRUPT ? some2(cause.fiberId) : none2());
+var keepDefects = (self) => match4(self, {
+  onEmpty: none2(),
+  onFail: () => none2(),
+  onDie: (defect) => some2(die(defect)),
+  onInterrupt: () => none2(),
+  onSequential: mergeWith(sequential),
+  onParallel: mergeWith(parallel)
+});
+var keepDefectsAndElectFailures = (self) => match4(self, {
+  onEmpty: none2(),
+  onFail: (failure) => some2(die(failure)),
+  onDie: (defect) => some2(die(defect)),
+  onInterrupt: () => none2(),
+  onSequential: mergeWith(sequential),
+  onParallel: mergeWith(parallel)
+});
+var linearize = (self) => match4(self, {
+  onEmpty: empty5(),
+  onFail: (error) => make7(fail(error)),
+  onDie: (defect) => make7(die(defect)),
+  onInterrupt: (fiberId) => make7(interrupt(fiberId)),
+  onSequential: (leftSet, rightSet) => flatMap4(leftSet, (leftCause) => map6(rightSet, (rightCause) => sequential(leftCause, rightCause))),
+  onParallel: (leftSet, rightSet) => flatMap4(leftSet, (leftCause) => map6(rightSet, (rightCause) => parallel(leftCause, rightCause)))
+});
+var stripFailures = (self) => match4(self, {
+  onEmpty: empty6,
+  onFail: () => empty6,
+  onDie: die,
+  onInterrupt: interrupt,
+  onSequential: sequential,
+  onParallel: parallel
+});
+var electFailures = (self) => match4(self, {
+  onEmpty: empty6,
+  onFail: die,
+  onDie: die,
+  onInterrupt: interrupt,
+  onSequential: sequential,
+  onParallel: parallel
+});
+var stripSomeDefects = /* @__PURE__ */ dual(2, (self, pf) => match4(self, {
+  onEmpty: some2(empty6),
+  onFail: (error) => some2(fail(error)),
+  onDie: (defect) => {
+    const option = pf(defect);
+    return isSome2(option) ? none2() : some2(die(defect));
+  },
+  onInterrupt: (fiberId) => some2(interrupt(fiberId)),
+  onSequential: mergeWith(sequential),
+  onParallel: mergeWith(parallel)
+}));
+var as2 = /* @__PURE__ */ dual(2, (self, error) => map7(self, () => error));
+var map7 = /* @__PURE__ */ dual(2, (self, f) => flatMap5(self, (e) => fail(f(e))));
+var flatMap5 = /* @__PURE__ */ dual(2, (self, f) => match4(self, {
+  onEmpty: empty6,
+  onFail: (error) => f(error),
+  onDie: (defect) => die(defect),
+  onInterrupt: (fiberId) => interrupt(fiberId),
+  onSequential: (left3, right3) => sequential(left3, right3),
+  onParallel: (left3, right3) => parallel(left3, right3)
+}));
+var flatten3 = (self) => flatMap5(self, identity);
+var andThen2 = /* @__PURE__ */ dual(2, (self, f) => isFunction2(f) ? flatMap5(self, f) : flatMap5(self, () => f));
+var contains3 = /* @__PURE__ */ dual(2, (self, that) => {
+  if (that._tag === OP_EMPTY || self === that) {
+    return true;
+  }
+  return reduce5(self, false, (accumulator, cause) => {
+    return some2(accumulator || causeEquals(cause, that));
+  });
+});
+var causeEquals = (left3, right3) => {
+  let leftStack = of2(left3);
+  let rightStack = of2(right3);
+  while (isNonEmpty(leftStack) && isNonEmpty(rightStack)) {
+    const [leftParallel, leftSequential] = pipe(headNonEmpty2(leftStack), reduce5([empty5(), empty2()], ([parallel2, sequential2], cause) => {
+      const [par, seq] = evaluateCause(cause);
+      return some2([pipe(parallel2, union3(par)), pipe(sequential2, appendAll2(seq))]);
+    }));
+    const [rightParallel, rightSequential] = pipe(headNonEmpty2(rightStack), reduce5([empty5(), empty2()], ([parallel2, sequential2], cause) => {
+      const [par, seq] = evaluateCause(cause);
+      return some2([pipe(parallel2, union3(par)), pipe(sequential2, appendAll2(seq))]);
+    }));
+    if (!equals(leftParallel, rightParallel)) {
+      return false;
+    }
+    leftStack = leftSequential;
+    rightStack = rightSequential;
+  }
+  return true;
+};
+var flattenCause = (cause) => {
+  return flattenCauseLoop(of2(cause), empty2());
+};
+var flattenCauseLoop = (causes, flattened) => {
+  while (true) {
+    const [parallel2, sequential2] = pipe(causes, reduce([empty5(), empty2()], ([parallel3, sequential3], cause) => {
+      const [par, seq] = evaluateCause(cause);
+      return [pipe(parallel3, union3(par)), pipe(sequential3, appendAll2(seq))];
+    }));
+    const updated = size3(parallel2) > 0 ? pipe(flattened, prepend2(parallel2)) : flattened;
+    if (isEmpty(sequential2)) {
+      return reverse2(updated);
+    }
+    causes = sequential2;
+    flattened = updated;
+  }
+  throw new Error(getBugErrorMessage("Cause.flattenCauseLoop"));
+};
+var find = /* @__PURE__ */ dual(2, (self, pf) => {
+  const stack = [self];
+  while (stack.length > 0) {
+    const item = stack.pop();
+    const option = pf(item);
+    switch (option._tag) {
+      case "None": {
+        switch (item._tag) {
+          case OP_SEQUENTIAL:
+          case OP_PARALLEL: {
+            stack.push(item.right);
+            stack.push(item.left);
+            break;
+          }
+        }
+        break;
+      }
+      case "Some": {
+        return option;
+      }
+    }
+  }
+  return none2();
+});
+var filter4 = /* @__PURE__ */ dual(2, (self, predicate) => reduceWithContext(self, undefined, FilterCauseReducer(predicate)));
+var evaluateCause = (self) => {
+  let cause = self;
+  const stack = [];
+  let _parallel = empty5();
+  let _sequential = empty2();
+  while (cause !== undefined) {
+    switch (cause._tag) {
+      case OP_EMPTY: {
+        if (stack.length === 0) {
+          return [_parallel, _sequential];
+        }
+        cause = stack.pop();
+        break;
+      }
+      case OP_FAIL: {
+        _parallel = add2(_parallel, make4(cause._tag, cause.error));
+        if (stack.length === 0) {
+          return [_parallel, _sequential];
+        }
+        cause = stack.pop();
+        break;
+      }
+      case OP_DIE: {
+        _parallel = add2(_parallel, make4(cause._tag, cause.defect));
+        if (stack.length === 0) {
+          return [_parallel, _sequential];
+        }
+        cause = stack.pop();
+        break;
+      }
+      case OP_INTERRUPT: {
+        _parallel = add2(_parallel, make4(cause._tag, cause.fiberId));
+        if (stack.length === 0) {
+          return [_parallel, _sequential];
+        }
+        cause = stack.pop();
+        break;
+      }
+      case OP_SEQUENTIAL: {
+        switch (cause.left._tag) {
+          case OP_EMPTY: {
+            cause = cause.right;
+            break;
+          }
+          case OP_SEQUENTIAL: {
+            cause = sequential(cause.left.left, sequential(cause.left.right, cause.right));
+            break;
+          }
+          case OP_PARALLEL: {
+            cause = parallel(sequential(cause.left.left, cause.right), sequential(cause.left.right, cause.right));
+            break;
+          }
+          default: {
+            _sequential = prepend2(_sequential, cause.right);
+            cause = cause.left;
+            break;
+          }
+        }
+        break;
+      }
+      case OP_PARALLEL: {
+        stack.push(cause.right);
+        cause = cause.left;
+        break;
+      }
+    }
+  }
+  throw new Error(getBugErrorMessage("Cause.evaluateCauseLoop"));
+};
+var SizeCauseReducer = {
+  emptyCase: () => 0,
+  failCase: () => 1,
+  dieCase: () => 1,
+  interruptCase: () => 1,
+  sequentialCase: (_, left3, right3) => left3 + right3,
+  parallelCase: (_, left3, right3) => left3 + right3
+};
+var IsInterruptedOnlyCauseReducer = {
+  emptyCase: constTrue,
+  failCase: constFalse,
+  dieCase: constFalse,
+  interruptCase: constTrue,
+  sequentialCase: (_, left3, right3) => left3 && right3,
+  parallelCase: (_, left3, right3) => left3 && right3
+};
+var FilterCauseReducer = (predicate) => ({
+  emptyCase: () => empty6,
+  failCase: (_, error) => fail(error),
+  dieCase: (_, defect) => die(defect),
+  interruptCase: (_, fiberId) => interrupt(fiberId),
+  sequentialCase: (_, left3, right3) => {
+    if (predicate(left3)) {
+      if (predicate(right3)) {
+        return sequential(left3, right3);
+      }
+      return left3;
+    }
+    if (predicate(right3)) {
+      return right3;
+    }
+    return empty6;
+  },
+  parallelCase: (_, left3, right3) => {
+    if (predicate(left3)) {
+      if (predicate(right3)) {
+        return parallel(left3, right3);
+      }
+      return left3;
+    }
+    if (predicate(right3)) {
+      return right3;
+    }
+    return empty6;
+  }
+});
+var OP_SEQUENTIAL_CASE = "SequentialCase";
+var OP_PARALLEL_CASE = "ParallelCase";
+var match4 = /* @__PURE__ */ dual(2, (self, {
+  onDie,
+  onEmpty,
+  onFail,
+  onInterrupt,
+  onParallel,
+  onSequential
+}) => {
+  return reduceWithContext(self, undefined, {
+    emptyCase: () => onEmpty,
+    failCase: (_, error) => onFail(error),
+    dieCase: (_, defect) => onDie(defect),
+    interruptCase: (_, fiberId) => onInterrupt(fiberId),
+    sequentialCase: (_, left3, right3) => onSequential(left3, right3),
+    parallelCase: (_, left3, right3) => onParallel(left3, right3)
+  });
+});
+var reduce5 = /* @__PURE__ */ dual(3, (self, zero, pf) => {
+  let accumulator = zero;
+  let cause = self;
+  const causes = [];
+  while (cause !== undefined) {
+    const option = pf(accumulator, cause);
+    accumulator = isSome2(option) ? option.value : accumulator;
+    switch (cause._tag) {
+      case OP_SEQUENTIAL: {
+        causes.push(cause.right);
+        cause = cause.left;
+        break;
+      }
+      case OP_PARALLEL: {
+        causes.push(cause.right);
+        cause = cause.left;
+        break;
+      }
+      default: {
+        cause = undefined;
+        break;
+      }
+    }
+    if (cause === undefined && causes.length > 0) {
+      cause = causes.pop();
+    }
+  }
+  return accumulator;
+});
+var reduceWithContext = /* @__PURE__ */ dual(3, (self, context, reducer) => {
+  const input = [self];
+  const output = [];
+  while (input.length > 0) {
+    const cause = input.pop();
+    switch (cause._tag) {
+      case OP_EMPTY: {
+        output.push(right2(reducer.emptyCase(context)));
+        break;
+      }
+      case OP_FAIL: {
+        output.push(right2(reducer.failCase(context, cause.error)));
+        break;
+      }
+      case OP_DIE: {
+        output.push(right2(reducer.dieCase(context, cause.defect)));
+        break;
+      }
+      case OP_INTERRUPT: {
+        output.push(right2(reducer.interruptCase(context, cause.fiberId)));
+        break;
+      }
+      case OP_SEQUENTIAL: {
+        input.push(cause.right);
+        input.push(cause.left);
+        output.push(left2({
+          _tag: OP_SEQUENTIAL_CASE
+        }));
+        break;
+      }
+      case OP_PARALLEL: {
+        input.push(cause.right);
+        input.push(cause.left);
+        output.push(left2({
+          _tag: OP_PARALLEL_CASE
+        }));
+        break;
+      }
+    }
+  }
+  const accumulator = [];
+  while (output.length > 0) {
+    const either = output.pop();
+    switch (either._tag) {
+      case "Left": {
+        switch (either.left._tag) {
+          case OP_SEQUENTIAL_CASE: {
+            const left3 = accumulator.pop();
+            const right3 = accumulator.pop();
+            const value = reducer.sequentialCase(context, left3, right3);
+            accumulator.push(value);
+            break;
+          }
+          case OP_PARALLEL_CASE: {
+            const left3 = accumulator.pop();
+            const right3 = accumulator.pop();
+            const value = reducer.parallelCase(context, left3, right3);
+            accumulator.push(value);
+            break;
+          }
+        }
+        break;
+      }
+      case "Right": {
+        accumulator.push(either.right);
+        break;
+      }
+    }
+  }
+  if (accumulator.length === 0) {
+    throw new Error("BUG: Cause.reduceWithContext - please report an issue at https://github.com/Effect-TS/effect/issues");
+  }
+  return accumulator.pop();
+});
+var pretty = (cause, options) => {
+  if (isInterruptedOnly(cause)) {
+    return "All fibers interrupted without errors.";
+  }
+  return prettyErrors(cause).map(function(e) {
+    if (options?.renderErrorCause !== true || e.cause === undefined) {
+      return e.stack;
+    }
+    return `${e.stack} {
+${renderErrorCause(e.cause, "  ")}
+}`;
+  }).join(`
+`);
+};
+var renderErrorCause = (cause, prefix) => {
+  const lines = cause.stack.split(`
+`);
+  let stack = `${prefix}[cause]: ${lines[0]}`;
+  for (let i = 1, len = lines.length;i < len; i++) {
+    stack += `
+${prefix}${lines[i]}`;
+  }
+  if (cause.cause) {
+    stack += ` {
+${renderErrorCause(cause.cause, `${prefix}  `)}
+${prefix}}`;
+  }
+  return stack;
+};
+var makePrettyError = (originalError) => {
+  const originalErrorIsObject = typeof originalError === "object" && originalError !== null;
+  const prevLimit = Error.stackTraceLimit;
+  Error.stackTraceLimit = 1;
+  const error = new Error(prettyErrorMessage(originalError), originalErrorIsObject && "cause" in originalError && typeof originalError.cause !== "undefined" ? {
+    cause: makePrettyError(originalError.cause)
+  } : undefined);
+  Error.stackTraceLimit = prevLimit;
+  if (error.message === "") {
+    error.message = "An error has occurred";
+  }
+  Error.stackTraceLimit = prevLimit;
+  error.name = originalError instanceof Error ? originalError.name : "Error";
+  if (originalErrorIsObject) {
+    if (spanSymbol in originalError) {
+      error.span = originalError[spanSymbol];
+    }
+    Object.keys(originalError).forEach((key) => {
+      if (!(key in error)) {
+        error[key] = originalError[key];
+      }
+    });
+  }
+  error.stack = prettyErrorStack(`${error.name}: ${error.message}`, originalError instanceof Error && originalError.stack ? originalError.stack : "", error.span);
+  return error;
+};
+var prettyErrorMessage = (u) => {
+  if (typeof u === "string") {
+    return u;
+  }
+  if (typeof u === "object" && u !== null && u instanceof Error) {
+    return u.message;
+  }
+  try {
+    if (hasProperty(u, "toString") && isFunction2(u["toString"]) && u["toString"] !== Object.prototype.toString && u["toString"] !== globalThis.Array.prototype.toString) {
+      return u["toString"]();
+    }
+  } catch {}
+  return stringifyCircular(u);
+};
+var locationRegex = /\((.*)\)/g;
+var spanToTrace = /* @__PURE__ */ globalValue("effect/Tracer/spanToTrace", () => new WeakMap);
+var prettyErrorStack = (message, stack, span2) => {
+  const out = [message];
+  const lines = stack.startsWith(message) ? stack.slice(message.length).split(`
+`) : stack.split(`
+`);
+  for (let i = 1;i < lines.length; i++) {
+    if (lines[i].includes(" at new BaseEffectError") || lines[i].includes(" at new YieldableError")) {
+      i++;
+      continue;
+    }
+    if (lines[i].includes("Generator.next")) {
+      break;
+    }
+    if (lines[i].includes("effect_internal_function")) {
+      break;
+    }
+    out.push(lines[i].replace(/at .*effect_instruction_i.*\((.*)\)/, "at $1").replace(/EffectPrimitive\.\w+/, "<anonymous>"));
+  }
+  if (span2) {
+    let current = span2;
+    let i = 0;
+    while (current && current._tag === "Span" && i < 10) {
+      const stackFn = spanToTrace.get(current);
+      if (typeof stackFn === "function") {
+        const stack2 = stackFn();
+        if (typeof stack2 === "string") {
+          const locationMatchAll = stack2.matchAll(locationRegex);
+          let match5 = false;
+          for (const [, location] of locationMatchAll) {
+            match5 = true;
+            out.push(`    at ${current.name} (${location})`);
+          }
+          if (!match5) {
+            out.push(`    at ${current.name} (${stack2.replace(/^at /, "")})`);
+          }
+        } else {
+          out.push(`    at ${current.name}`);
+        }
+      } else {
+        out.push(`    at ${current.name}`);
+      }
+      current = getOrUndefined(current.parent);
+      i++;
+    }
+  }
+  return out.join(`
+`);
+};
+var spanSymbol = /* @__PURE__ */ Symbol.for("effect/SpanAnnotation");
+var prettyErrors = (cause) => reduceWithContext(cause, undefined, {
+  emptyCase: () => [],
+  dieCase: (_, unknownError) => {
+    return [makePrettyError(unknownError)];
+  },
+  failCase: (_, error) => {
+    return [makePrettyError(error)];
+  },
+  interruptCase: () => [],
+  parallelCase: (_, l, r) => [...l, ...r],
+  sequentialCase: (_, l, r) => [...l, ...r]
+});
+
+// node_modules/effect/dist/esm/Context.js
+var exports_Context = {};
+__export(exports_Context, {
+  unsafeMake: () => unsafeMake,
+  unsafeGet: () => unsafeGet4,
+  pick: () => pick2,
+  omit: () => omit2,
+  mergeAll: () => mergeAll2,
+  merge: () => merge3,
+  make: () => make9,
+  isTag: () => isTag2,
+  isReference: () => isReference2,
+  isContext: () => isContext2,
+  getOrElse: () => getOrElse3,
+  getOption: () => getOption2,
+  get: () => get5,
+  empty: () => empty8,
+  add: () => add4,
+  TagTypeId: () => TagTypeId2,
+  Tag: () => Tag2,
+  ReferenceTypeId: () => ReferenceTypeId2,
+  Reference: () => Reference2,
+  GenericTag: () => GenericTag
+});
+
+// node_modules/effect/dist/esm/internal/context.js
+var TagTypeId = /* @__PURE__ */ Symbol.for("effect/Context/Tag");
+var ReferenceTypeId = /* @__PURE__ */ Symbol.for("effect/Context/Reference");
+var STMSymbolKey = "effect/STM";
+var STMTypeId = /* @__PURE__ */ Symbol.for(STMSymbolKey);
+var TagProto = {
+  ...EffectPrototype,
+  _op: "Tag",
+  [STMTypeId]: effectVariance,
+  [TagTypeId]: {
+    _Service: (_) => _,
+    _Identifier: (_) => _
+  },
+  toString() {
+    return format(this.toJSON());
+  },
+  toJSON() {
+    return {
+      _id: "Tag",
+      key: this.key,
+      stack: this.stack
+    };
+  },
+  [NodeInspectSymbol]() {
+    return this.toJSON();
+  },
+  of(self) {
+    return self;
+  },
+  context(self) {
+    return make8(this, self);
+  }
+};
+var ReferenceProto = {
+  ...TagProto,
+  [ReferenceTypeId]: ReferenceTypeId
+};
+var makeGenericTag = (key) => {
+  const limit = Error.stackTraceLimit;
+  Error.stackTraceLimit = 2;
+  const creationError = new Error;
+  Error.stackTraceLimit = limit;
+  const tag = Object.create(TagProto);
+  Object.defineProperty(tag, "stack", {
+    get() {
+      return creationError.stack;
+    }
+  });
+  tag.key = key;
+  return tag;
+};
+var Tag = (id) => () => {
+  const limit = Error.stackTraceLimit;
+  Error.stackTraceLimit = 2;
+  const creationError = new Error;
+  Error.stackTraceLimit = limit;
+  function TagClass() {}
+  Object.setPrototypeOf(TagClass, TagProto);
+  TagClass.key = id;
+  Object.defineProperty(TagClass, "stack", {
+    get() {
+      return creationError.stack;
+    }
+  });
+  return TagClass;
+};
+var Reference = () => (id, options) => {
+  const limit = Error.stackTraceLimit;
+  Error.stackTraceLimit = 2;
+  const creationError = new Error;
+  Error.stackTraceLimit = limit;
+  function ReferenceClass() {}
+  Object.setPrototypeOf(ReferenceClass, ReferenceProto);
+  ReferenceClass.key = id;
+  ReferenceClass.defaultValue = options.defaultValue;
+  Object.defineProperty(ReferenceClass, "stack", {
+    get() {
+      return creationError.stack;
+    }
+  });
+  return ReferenceClass;
+};
+var TypeId5 = /* @__PURE__ */ Symbol.for("effect/Context");
+var ContextProto = {
+  [TypeId5]: {
+    _Services: (_) => _
+  },
+  [symbol2](that) {
+    if (isContext(that)) {
+      if (this.unsafeMap.size === that.unsafeMap.size) {
+        for (const k of this.unsafeMap.keys()) {
+          if (!that.unsafeMap.has(k) || !equals(this.unsafeMap.get(k), that.unsafeMap.get(k))) {
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+    return false;
+  },
+  [symbol]() {
+    return cached(this, number2(this.unsafeMap.size));
+  },
+  pipe() {
+    return pipeArguments(this, arguments);
+  },
+  toString() {
+    return format(this.toJSON());
+  },
+  toJSON() {
+    return {
+      _id: "Context",
+      services: Array.from(this.unsafeMap).map(toJSON)
+    };
+  },
+  [NodeInspectSymbol]() {
+    return this.toJSON();
+  }
+};
+var makeContext = (unsafeMap) => {
+  const context = Object.create(ContextProto);
+  context.unsafeMap = unsafeMap;
+  return context;
+};
+var serviceNotFoundError = (tag) => {
+  const error = new Error(`Service not found${tag.key ? `: ${String(tag.key)}` : ""}`);
+  if (tag.stack) {
+    const lines = tag.stack.split(`
+`);
+    if (lines.length > 2) {
+      const afterAt = lines[2].match(/at (.*)/);
+      if (afterAt) {
+        error.message = error.message + ` (defined at ${afterAt[1]})`;
+      }
+    }
+  }
+  if (error.stack) {
+    const lines = error.stack.split(`
+`);
+    lines.splice(1, 3);
+    error.stack = lines.join(`
+`);
+  }
+  return error;
+};
+var isContext = (u) => hasProperty(u, TypeId5);
+var isTag = (u) => hasProperty(u, TagTypeId);
+var isReference = (u) => hasProperty(u, ReferenceTypeId);
+var _empty4 = /* @__PURE__ */ makeContext(/* @__PURE__ */ new Map);
+var empty7 = () => _empty4;
+var make8 = (tag, service) => makeContext(new Map([[tag.key, service]]));
+var add3 = /* @__PURE__ */ dual(3, (self, tag, service) => {
+  const map8 = new Map(self.unsafeMap);
+  map8.set(tag.key, service);
+  return makeContext(map8);
+});
+var defaultValueCache = /* @__PURE__ */ globalValue("effect/Context/defaultValueCache", () => new Map);
+var getDefaultValue = (tag) => {
+  if (defaultValueCache.has(tag.key)) {
+    return defaultValueCache.get(tag.key);
+  }
+  const value = tag.defaultValue();
+  defaultValueCache.set(tag.key, value);
+  return value;
+};
+var unsafeGetReference = (self, tag) => {
+  return self.unsafeMap.has(tag.key) ? self.unsafeMap.get(tag.key) : getDefaultValue(tag);
+};
+var unsafeGet3 = /* @__PURE__ */ dual(2, (self, tag) => {
+  if (!self.unsafeMap.has(tag.key)) {
+    if (ReferenceTypeId in tag)
+      return getDefaultValue(tag);
+    throw serviceNotFoundError(tag);
+  }
+  return self.unsafeMap.get(tag.key);
+});
+var get4 = unsafeGet3;
+var getOrElse2 = /* @__PURE__ */ dual(3, (self, tag, orElse2) => {
+  if (!self.unsafeMap.has(tag.key)) {
+    return isReference(tag) ? getDefaultValue(tag) : orElse2();
+  }
+  return self.unsafeMap.get(tag.key);
+});
+var getOption = /* @__PURE__ */ dual(2, (self, tag) => {
+  if (!self.unsafeMap.has(tag.key)) {
+    return isReference(tag) ? some(getDefaultValue(tag)) : none;
+  }
+  return some(self.unsafeMap.get(tag.key));
+});
+var merge2 = /* @__PURE__ */ dual(2, (self, that) => {
+  const map8 = new Map(self.unsafeMap);
+  for (const [tag, s] of that.unsafeMap) {
+    map8.set(tag, s);
+  }
+  return makeContext(map8);
+});
+var mergeAll = (...ctxs) => {
+  const map8 = new Map;
+  for (let i = 0;i < ctxs.length; i++) {
+    ctxs[i].unsafeMap.forEach((value, key) => {
+      map8.set(key, value);
+    });
+  }
+  return makeContext(map8);
+};
+var pick = (...tags) => (self) => {
+  const tagSet = new Set(tags.map((_) => _.key));
+  const newEnv = new Map;
+  for (const [tag, s] of self.unsafeMap.entries()) {
+    if (tagSet.has(tag)) {
+      newEnv.set(tag, s);
+    }
+  }
+  return makeContext(newEnv);
+};
+var omit = (...tags) => (self) => {
+  const newEnv = new Map(self.unsafeMap);
+  for (const tag of tags) {
+    newEnv.delete(tag.key);
+  }
+  return makeContext(newEnv);
+};
+
+// node_modules/effect/dist/esm/Context.js
+var TagTypeId2 = TagTypeId;
+var ReferenceTypeId2 = ReferenceTypeId;
+var GenericTag = makeGenericTag;
+var unsafeMake = makeContext;
+var isContext2 = isContext;
+var isTag2 = isTag;
+var isReference2 = isReference;
+var empty8 = empty7;
+var make9 = make8;
+var add4 = add3;
+var get5 = get4;
+var getOrElse3 = getOrElse2;
+var unsafeGet4 = unsafeGet3;
+var getOption2 = getOption;
+var merge3 = merge2;
+var mergeAll2 = mergeAll;
+var pick2 = pick;
+var omit2 = omit;
+var Tag2 = Tag;
+var Reference2 = Reference;
+
+// node_modules/effect/dist/esm/Duration.js
+var TypeId6 = /* @__PURE__ */ Symbol.for("effect/Duration");
+var bigint0 = /* @__PURE__ */ BigInt(0);
+var bigint24 = /* @__PURE__ */ BigInt(24);
+var bigint60 = /* @__PURE__ */ BigInt(60);
+var bigint1e3 = /* @__PURE__ */ BigInt(1000);
+var bigint1e6 = /* @__PURE__ */ BigInt(1e6);
+var bigint1e9 = /* @__PURE__ */ BigInt(1e9);
+var DURATION_REGEX = /^(-?\d+(?:\.\d+)?)\s+(nanos?|micros?|millis?|seconds?|minutes?|hours?|days?|weeks?)$/;
+var decode = (input) => {
+  if (isDuration(input)) {
+    return input;
+  } else if (isNumber(input)) {
+    return millis(input);
+  } else if (isBigInt(input)) {
+    return nanos(input);
+  } else if (Array.isArray(input) && input.length === 2 && input.every(isNumber)) {
+    if (input[0] === -Infinity || input[1] === -Infinity || Number.isNaN(input[0]) || Number.isNaN(input[1])) {
+      return zero;
+    }
+    if (input[0] === Infinity || input[1] === Infinity) {
+      return infinity;
+    }
+    return nanos(BigInt(Math.round(input[0] * 1e9)) + BigInt(Math.round(input[1])));
+  } else if (isString(input)) {
+    const match5 = DURATION_REGEX.exec(input);
+    if (match5) {
+      const [_, valueStr, unit] = match5;
+      const value = Number(valueStr);
+      switch (unit) {
+        case "nano":
+        case "nanos":
+          return nanos(BigInt(valueStr));
+        case "micro":
+        case "micros":
+          return micros(BigInt(valueStr));
+        case "milli":
+        case "millis":
+          return millis(value);
+        case "second":
+        case "seconds":
+          return seconds(value);
+        case "minute":
+        case "minutes":
+          return minutes(value);
+        case "hour":
+        case "hours":
+          return hours(value);
+        case "day":
+        case "days":
+          return days(value);
+        case "week":
+        case "weeks":
+          return weeks(value);
+      }
+    }
+  }
+  throw new Error("Invalid DurationInput");
+};
+var zeroValue = {
+  _tag: "Millis",
+  millis: 0
+};
+var infinityValue = {
+  _tag: "Infinity"
+};
+var DurationProto = {
   [TypeId6]: TypeId6,
+  [symbol]() {
+    return cached(this, structure(this.value));
+  },
+  [symbol2](that) {
+    return isDuration(that) && equals2(this, that);
+  },
+  toString() {
+    return `Duration(${format2(this)})`;
+  },
+  toJSON() {
+    switch (this.value._tag) {
+      case "Millis":
+        return {
+          _id: "Duration",
+          _tag: "Millis",
+          millis: this.value.millis
+        };
+      case "Nanos":
+        return {
+          _id: "Duration",
+          _tag: "Nanos",
+          hrtime: toHrTime(this)
+        };
+      case "Infinity":
+        return {
+          _id: "Duration",
+          _tag: "Infinity"
+        };
+    }
+  },
+  [NodeInspectSymbol]() {
+    return this.toJSON();
+  },
+  pipe() {
+    return pipeArguments(this, arguments);
+  }
+};
+var make10 = (input) => {
+  const duration = Object.create(DurationProto);
+  if (isNumber(input)) {
+    if (isNaN(input) || input <= 0) {
+      duration.value = zeroValue;
+    } else if (!Number.isFinite(input)) {
+      duration.value = infinityValue;
+    } else if (!Number.isInteger(input)) {
+      duration.value = {
+        _tag: "Nanos",
+        nanos: BigInt(Math.round(input * 1e6))
+      };
+    } else {
+      duration.value = {
+        _tag: "Millis",
+        millis: input
+      };
+    }
+  } else if (input <= bigint0) {
+    duration.value = zeroValue;
+  } else {
+    duration.value = {
+      _tag: "Nanos",
+      nanos: input
+    };
+  }
+  return duration;
+};
+var isDuration = (u) => hasProperty(u, TypeId6);
+var isFinite = (self) => self.value._tag !== "Infinity";
+var isZero = (self) => {
+  switch (self.value._tag) {
+    case "Millis": {
+      return self.value.millis === 0;
+    }
+    case "Nanos": {
+      return self.value.nanos === bigint0;
+    }
+    case "Infinity": {
+      return false;
+    }
+  }
+};
+var zero = /* @__PURE__ */ make10(0);
+var infinity = /* @__PURE__ */ make10(Infinity);
+var nanos = (nanos2) => make10(nanos2);
+var micros = (micros2) => make10(micros2 * bigint1e3);
+var millis = (millis2) => make10(millis2);
+var seconds = (seconds2) => make10(seconds2 * 1000);
+var minutes = (minutes2) => make10(minutes2 * 60000);
+var hours = (hours2) => make10(hours2 * 3600000);
+var days = (days2) => make10(days2 * 86400000);
+var weeks = (weeks2) => make10(weeks2 * 604800000);
+var toMillis = (self) => match5(self, {
+  onMillis: (millis2) => millis2,
+  onNanos: (nanos2) => Number(nanos2) / 1e6
+});
+var toNanos = (self) => {
+  const _self = decode(self);
+  switch (_self.value._tag) {
+    case "Infinity":
+      return none2();
+    case "Nanos":
+      return some2(_self.value.nanos);
+    case "Millis":
+      return some2(BigInt(Math.round(_self.value.millis * 1e6)));
+  }
+};
+var unsafeToNanos = (self) => {
+  const _self = decode(self);
+  switch (_self.value._tag) {
+    case "Infinity":
+      throw new Error("Cannot convert infinite duration to nanos");
+    case "Nanos":
+      return _self.value.nanos;
+    case "Millis":
+      return BigInt(Math.round(_self.value.millis * 1e6));
+  }
+};
+var toHrTime = (self) => {
+  const _self = decode(self);
+  switch (_self.value._tag) {
+    case "Infinity":
+      return [Infinity, 0];
+    case "Nanos":
+      return [Number(_self.value.nanos / bigint1e9), Number(_self.value.nanos % bigint1e9)];
+    case "Millis":
+      return [Math.floor(_self.value.millis / 1000), Math.round(_self.value.millis % 1000 * 1e6)];
+  }
+};
+var match5 = /* @__PURE__ */ dual(2, (self, options) => {
+  const _self = decode(self);
+  switch (_self.value._tag) {
+    case "Nanos":
+      return options.onNanos(_self.value.nanos);
+    case "Infinity":
+      return options.onMillis(Infinity);
+    case "Millis":
+      return options.onMillis(_self.value.millis);
+  }
+});
+var matchWith = /* @__PURE__ */ dual(3, (self, that, options) => {
+  const _self = decode(self);
+  const _that = decode(that);
+  if (_self.value._tag === "Infinity" || _that.value._tag === "Infinity") {
+    return options.onMillis(toMillis(_self), toMillis(_that));
+  } else if (_self.value._tag === "Nanos" || _that.value._tag === "Nanos") {
+    const selfNanos = _self.value._tag === "Nanos" ? _self.value.nanos : BigInt(Math.round(_self.value.millis * 1e6));
+    const thatNanos = _that.value._tag === "Nanos" ? _that.value.nanos : BigInt(Math.round(_that.value.millis * 1e6));
+    return options.onNanos(selfNanos, thatNanos);
+  }
+  return options.onMillis(_self.value.millis, _that.value.millis);
+});
+var Order = /* @__PURE__ */ make2((self, that) => matchWith(self, that, {
+  onMillis: (self2, that2) => self2 < that2 ? -1 : self2 > that2 ? 1 : 0,
+  onNanos: (self2, that2) => self2 < that2 ? -1 : self2 > that2 ? 1 : 0
+}));
+var between2 = /* @__PURE__ */ between(/* @__PURE__ */ mapInput2(Order, decode));
+var Equivalence = (self, that) => matchWith(self, that, {
+  onMillis: (self2, that2) => self2 === that2,
+  onNanos: (self2, that2) => self2 === that2
+});
+var _clamp = /* @__PURE__ */ clamp(Order);
+var clamp3 = /* @__PURE__ */ dual(2, (self, options) => _clamp(decode(self), {
+  minimum: decode(options.minimum),
+  maximum: decode(options.maximum)
+}));
+var lessThan2 = /* @__PURE__ */ dual(2, (self, that) => matchWith(self, that, {
+  onMillis: (self2, that2) => self2 < that2,
+  onNanos: (self2, that2) => self2 < that2
+}));
+var lessThanOrEqualTo2 = /* @__PURE__ */ dual(2, (self, that) => matchWith(self, that, {
+  onMillis: (self2, that2) => self2 <= that2,
+  onNanos: (self2, that2) => self2 <= that2
+}));
+var greaterThan2 = /* @__PURE__ */ dual(2, (self, that) => matchWith(self, that, {
+  onMillis: (self2, that2) => self2 > that2,
+  onNanos: (self2, that2) => self2 > that2
+}));
+var greaterThanOrEqualTo2 = /* @__PURE__ */ dual(2, (self, that) => matchWith(self, that, {
+  onMillis: (self2, that2) => self2 >= that2,
+  onNanos: (self2, that2) => self2 >= that2
+}));
+var equals2 = /* @__PURE__ */ dual(2, (self, that) => Equivalence(decode(self), decode(that)));
+var parts = (self) => {
+  const duration = decode(self);
+  if (duration.value._tag === "Infinity") {
+    return {
+      days: Infinity,
+      hours: Infinity,
+      minutes: Infinity,
+      seconds: Infinity,
+      millis: Infinity,
+      nanos: Infinity
+    };
+  }
+  const nanos2 = unsafeToNanos(duration);
+  const ms = nanos2 / bigint1e6;
+  const sec = ms / bigint1e3;
+  const min2 = sec / bigint60;
+  const hr = min2 / bigint60;
+  const days2 = hr / bigint24;
+  return {
+    days: Number(days2),
+    hours: Number(hr % bigint24),
+    minutes: Number(min2 % bigint60),
+    seconds: Number(sec % bigint60),
+    millis: Number(ms % bigint1e3),
+    nanos: Number(nanos2 % bigint1e6)
+  };
+};
+var format2 = (self) => {
+  const duration = decode(self);
+  if (duration.value._tag === "Infinity") {
+    return "Infinity";
+  }
+  if (isZero(duration)) {
+    return "0";
+  }
+  const fragments = parts(duration);
+  const pieces = [];
+  if (fragments.days !== 0) {
+    pieces.push(`${fragments.days}d`);
+  }
+  if (fragments.hours !== 0) {
+    pieces.push(`${fragments.hours}h`);
+  }
+  if (fragments.minutes !== 0) {
+    pieces.push(`${fragments.minutes}m`);
+  }
+  if (fragments.seconds !== 0) {
+    pieces.push(`${fragments.seconds}s`);
+  }
+  if (fragments.millis !== 0) {
+    pieces.push(`${fragments.millis}ms`);
+  }
+  if (fragments.nanos !== 0) {
+    pieces.push(`${fragments.nanos}ns`);
+  }
+  return pieces.join(" ");
+};
+
+// node_modules/effect/dist/esm/MutableRef.js
+var TypeId7 = /* @__PURE__ */ Symbol.for("effect/MutableRef");
+var MutableRefProto = {
+  [TypeId7]: TypeId7,
   toString() {
     return format(this.toJSON());
   },
@@ -3019,10 +3966,10 @@ var combine2 = /* @__PURE__ */ dual(2, (self, that) => {
 var ids = (self) => {
   switch (self._tag) {
     case OP_NONE: {
-      return empty7();
+      return empty5();
     }
     case OP_RUNTIME: {
-      return make10(self.id);
+      return make7(self.id);
     }
     case OP_COMPOSITE: {
       return pipe(ids(self.left), union3(ids(self.right)));
@@ -3046,30 +3993,31 @@ var runtime2 = runtime;
 var composite2 = composite;
 var isFiberId2 = isFiberId;
 var combine3 = combine2;
+var ids2 = ids;
 var threadName2 = threadName;
 var unsafeMake3 = unsafeMake2;
 
 // node_modules/effect/dist/esm/HashMap.js
 var isHashMap2 = isHashMap;
-var empty8 = empty5;
-var fromIterable6 = fromIterable3;
-var isEmpty3 = isEmpty2;
-var get7 = get5;
+var empty9 = empty3;
+var fromIterable7 = fromIterable4;
+var isEmpty4 = isEmpty2;
+var get7 = get3;
 var set3 = set;
 var keys2 = keys;
 var mutate3 = mutate;
 var modifyAt2 = modifyAt;
-var map6 = map4;
+var map8 = map4;
 var forEach3 = forEach;
-var reduce5 = reduce2;
+var reduce6 = reduce2;
 
 // node_modules/effect/dist/esm/List.js
-var TypeId7 = /* @__PURE__ */ Symbol.for("effect/List");
-var toArray2 = (self) => fromIterable(self);
+var TypeId8 = /* @__PURE__ */ Symbol.for("effect/List");
+var toArray2 = (self) => fromIterable2(self);
 var getEquivalence5 = (isEquivalent) => mapInput(getEquivalence3(isEquivalent), toArray2);
 var _equivalence4 = /* @__PURE__ */ getEquivalence5(equals);
 var ConsProto = {
-  [TypeId7]: TypeId7,
+  [TypeId8]: TypeId8,
   _tag: "Cons",
   toString() {
     return format(this.toJSON());
@@ -3088,7 +4036,7 @@ var ConsProto = {
     return isList(that) && this._tag === that._tag && _equivalence4(this, that);
   },
   [symbol]() {
-    return cached(this, array(toArray2(this)));
+    return cached(this, array2(toArray2(this)));
   },
   [Symbol.iterator]() {
     let done = false;
@@ -3132,7 +4080,7 @@ var makeCons = (head3, tail) => {
 };
 var NilHash = /* @__PURE__ */ string("Nil");
 var NilProto = {
-  [TypeId7]: TypeId7,
+  [TypeId8]: TypeId8,
   _tag: "Nil",
   toString() {
     return format(this.toJSON());
@@ -3167,14 +4115,14 @@ var NilProto = {
   }
 };
 var _Nil = /* @__PURE__ */ Object.create(NilProto);
-var isList = (u) => hasProperty(u, TypeId7);
+var isList = (u) => hasProperty(u, TypeId8);
 var isNil = (self) => self._tag === "Nil";
 var isCons = (self) => self._tag === "Cons";
 var nil = () => _Nil;
 var cons = (head3, tail) => makeCons(head3, tail);
-var empty9 = nil;
+var empty10 = nil;
 var of3 = (value) => makeCons(value, _Nil);
-var fromIterable7 = (prefix) => {
+var fromIterable8 = (prefix) => {
   const iterator = prefix[Symbol.iterator]();
   let next;
   if ((next = iterator.next()) && !next.done) {
@@ -3210,7 +4158,7 @@ var prependAll = /* @__PURE__ */ dual(2, (self, prefix) => {
     return result;
   }
 });
-var reduce6 = /* @__PURE__ */ dual(3, (self, zero2, f) => {
+var reduce7 = /* @__PURE__ */ dual(3, (self, zero2, f) => {
   let acc = zero2;
   let these = self;
   while (!isNil(these)) {
@@ -3220,7 +4168,7 @@ var reduce6 = /* @__PURE__ */ dual(3, (self, zero2, f) => {
   return acc;
 });
 var reverse3 = (self) => {
-  let result = empty9();
+  let result = empty10();
   let these = self;
   while (!isNil(these)) {
     result = prepend3(result, these.head);
@@ -3232,7 +4180,7 @@ var reverse3 = (self) => {
 // node_modules/effect/dist/esm/internal/data.js
 var ArrayProto = /* @__PURE__ */ Object.assign(/* @__PURE__ */ Object.create(Array.prototype), {
   [symbol]() {
-    return cached(this, array(this));
+    return cached(this, array2(this));
   },
   [symbol2](that) {
     if (Array.isArray(that) && this.length === that.length) {
@@ -3251,25 +4199,25 @@ var Structural = /* @__PURE__ */ function() {
   Structural2.prototype = StructuralPrototype;
   return Structural2;
 }();
-var struct = (as) => Object.assign(Object.create(StructuralPrototype), as);
+var struct = (as3) => Object.assign(Object.create(StructuralPrototype), as3);
 
 // node_modules/effect/dist/esm/internal/differ/contextPatch.js
 var ContextPatchTypeId = /* @__PURE__ */ Symbol.for("effect/DifferContextPatch");
-function variance(a) {
+function variance2(a) {
   return a;
 }
 var PatchProto = {
   ...Structural.prototype,
   [ContextPatchTypeId]: {
-    _Value: variance,
-    _Patch: variance
+    _Value: variance2,
+    _Patch: variance2
   }
 };
 var EmptyProto = /* @__PURE__ */ Object.assign(/* @__PURE__ */ Object.create(PatchProto), {
   _tag: "Empty"
 });
 var _empty5 = /* @__PURE__ */ Object.create(EmptyProto);
-var empty10 = () => _empty5;
+var empty11 = () => _empty5;
 var AndThenProto = /* @__PURE__ */ Object.assign(/* @__PURE__ */ Object.create(PatchProto), {
   _tag: "AndThen"
 });
@@ -3307,7 +4255,7 @@ var makeUpdateService = (key, update) => {
 };
 var diff = (oldValue, newValue) => {
   const missingServices = new Map(oldValue.unsafeMap);
-  let patch = empty10();
+  let patch = empty11();
   for (const [tag, newService] of newValue.unsafeMap.entries()) {
     if (missingServices.has(tag)) {
       const old = missingServices.get(tag);
@@ -3366,37 +4314,37 @@ var patch = /* @__PURE__ */ dual(2, (self, context) => {
   if (!wasServiceUpdated) {
     return makeContext(updatedContext);
   }
-  const map7 = new Map;
+  const map9 = new Map;
   for (const [tag] of context.unsafeMap) {
     if (updatedContext.has(tag)) {
-      map7.set(tag, updatedContext.get(tag));
+      map9.set(tag, updatedContext.get(tag));
       updatedContext.delete(tag);
     }
   }
   for (const [tag, s] of updatedContext) {
-    map7.set(tag, s);
+    map9.set(tag, s);
   }
-  return makeContext(map7);
+  return makeContext(map9);
 });
 
 // node_modules/effect/dist/esm/internal/differ/hashSetPatch.js
 var HashSetPatchTypeId = /* @__PURE__ */ Symbol.for("effect/DifferHashSetPatch");
-function variance2(a) {
+function variance3(a) {
   return a;
 }
 var PatchProto2 = {
   ...Structural.prototype,
   [HashSetPatchTypeId]: {
-    _Value: variance2,
-    _Key: variance2,
-    _Patch: variance2
+    _Value: variance3,
+    _Key: variance3,
+    _Patch: variance3
   }
 };
 var EmptyProto2 = /* @__PURE__ */ Object.assign(/* @__PURE__ */ Object.create(PatchProto2), {
   _tag: "Empty"
 });
 var _empty6 = /* @__PURE__ */ Object.create(EmptyProto2);
-var empty11 = () => _empty6;
+var empty12 = () => _empty6;
 var AndThenProto2 = /* @__PURE__ */ Object.assign(/* @__PURE__ */ Object.create(PatchProto2), {
   _tag: "AndThen"
 });
@@ -3423,7 +4371,7 @@ var makeRemove = (value) => {
   return o;
 };
 var diff2 = (oldValue, newValue) => {
-  const [removed, patch2] = reduce4([oldValue, empty11()], ([set4, patch3], value) => {
+  const [removed, patch2] = reduce4([oldValue, empty12()], ([set4, patch3], value) => {
     if (has3(value)(set4)) {
       return [remove4(value)(set4), patch3];
     }
@@ -3451,7 +4399,7 @@ var patch2 = /* @__PURE__ */ dual(2, (self, oldValue) => {
         break;
       }
       case "Add": {
-        set4 = add4(head3.value)(set4);
+        set4 = add2(head3.value)(set4);
         patches = tail;
         break;
       }
@@ -3466,21 +4414,21 @@ var patch2 = /* @__PURE__ */ dual(2, (self, oldValue) => {
 
 // node_modules/effect/dist/esm/internal/differ/readonlyArrayPatch.js
 var ReadonlyArrayPatchTypeId = /* @__PURE__ */ Symbol.for("effect/DifferReadonlyArrayPatch");
-function variance3(a) {
+function variance4(a) {
   return a;
 }
 var PatchProto3 = {
   ...Structural.prototype,
   [ReadonlyArrayPatchTypeId]: {
-    _Value: variance3,
-    _Patch: variance3
+    _Value: variance4,
+    _Patch: variance4
   }
 };
 var EmptyProto3 = /* @__PURE__ */ Object.assign(/* @__PURE__ */ Object.create(PatchProto3), {
   _tag: "Empty"
 });
 var _empty7 = /* @__PURE__ */ Object.create(EmptyProto3);
-var empty12 = () => _empty7;
+var empty13 = () => _empty7;
 var AndThenProto3 = /* @__PURE__ */ Object.assign(/* @__PURE__ */ Object.create(PatchProto3), {
   _tag: "AndThen"
 });
@@ -3518,7 +4466,7 @@ var makeUpdate = (index, patch3) => {
 };
 var diff3 = (options) => {
   let i = 0;
-  let patch3 = empty12();
+  let patch3 = empty13();
   while (i < options.oldValue.length && i < options.newValue.length) {
     const oldElement = options.oldValue[i];
     const newElement = options.newValue[i];
@@ -3598,19 +4546,19 @@ var make14 = (params) => {
   return differ;
 };
 var environment = () => make14({
-  empty: empty10(),
+  empty: empty11(),
   combine: (first, second) => combine4(second)(first),
   diff: (oldValue, newValue) => diff(oldValue, newValue),
   patch: (patch4, oldValue) => patch(oldValue)(patch4)
 });
 var hashSet = () => make14({
-  empty: empty11(),
+  empty: empty12(),
   combine: (first, second) => combine5(second)(first),
   diff: (oldValue, newValue) => diff2(oldValue, newValue),
   patch: (patch4, oldValue) => patch2(oldValue)(patch4)
 });
 var readonlyArray = (differ) => make14({
-  empty: empty12(),
+  empty: empty13(),
   combine: (first, second) => combine6(first, second),
   diff: (oldValue, newValue) => diff3({
     oldValue,
@@ -3646,11 +4594,11 @@ var BIT_SHIFT = 8;
 var active = (patch4) => patch4 & BIT_MASK;
 var enabled = (patch4) => patch4 >> BIT_SHIFT & BIT_MASK;
 var make15 = (active2, enabled2) => (active2 & BIT_MASK) + ((enabled2 & active2 & BIT_MASK) << BIT_SHIFT);
-var empty13 = /* @__PURE__ */ make15(0, 0);
+var empty14 = /* @__PURE__ */ make15(0, 0);
 var enable = (flag) => make15(flag, flag);
 var disable = (flag) => make15(flag, 0);
 var exclude = /* @__PURE__ */ dual(2, (self, flag) => make15(active(self) & ~flag, enabled(self)));
-var andThen = /* @__PURE__ */ dual(2, (self, that) => self | that);
+var andThen3 = /* @__PURE__ */ dual(2, (self, that) => self | that);
 var invert = (n) => ~n >>> 0 & BIT_MASK;
 
 // node_modules/effect/dist/esm/internal/runtimeFlags.js
@@ -3673,20 +4621,20 @@ var windDown = (self) => isEnabled(self, WindDown);
 var diff4 = /* @__PURE__ */ dual(2, (self, that) => make15(self ^ that, that));
 var patch4 = /* @__PURE__ */ dual(2, (self, patch5) => self & (invert(active(patch5)) | enabled(patch5)) | active(patch5) & enabled(patch5));
 var differ = /* @__PURE__ */ make14({
-  empty: empty13,
+  empty: empty14,
   diff: (oldValue, newValue) => diff4(oldValue, newValue),
-  combine: (first, second) => andThen(second)(first),
+  combine: (first, second) => andThen3(second)(first),
   patch: (_patch, oldValue) => patch4(oldValue, _patch)
 });
 
 // node_modules/effect/dist/esm/RuntimeFlagsPatch.js
-var empty14 = empty13;
+var empty15 = empty14;
 var enable3 = enable;
 var disable3 = disable;
 var exclude2 = exclude;
 
 // node_modules/effect/dist/esm/internal/blockedRequests.js
-var empty15 = {
+var empty16 = {
   _tag: "Empty"
 };
 var par = (self, that) => ({
@@ -3704,32 +4652,32 @@ var single = (dataSource, blockedRequest) => ({
   dataSource,
   blockedRequest
 });
-var flatten2 = (self) => {
+var flatten4 = (self) => {
   let current = of3(self);
-  let updated = empty9();
+  let updated = empty10();
   while (true) {
-    const [parallel, sequential] = reduce6(current, [parallelCollectionEmpty(), empty9()], ([parallel2, sequential2], blockedRequest) => {
+    const [parallel2, sequential2] = reduce7(current, [parallelCollectionEmpty(), empty10()], ([parallel3, sequential3], blockedRequest) => {
       const [par2, seq2] = step(blockedRequest);
-      return [parallelCollectionCombine(parallel2, par2), appendAll3(sequential2, seq2)];
+      return [parallelCollectionCombine(parallel3, par2), appendAll3(sequential3, seq2)];
     });
-    updated = merge4(updated, parallel);
-    if (isNil(sequential)) {
+    updated = merge4(updated, parallel2);
+    if (isNil(sequential2)) {
       return reverse3(updated);
     }
-    current = sequential;
+    current = sequential2;
   }
   throw new Error("BUG: BlockedRequests.flatten - please report an issue at https://github.com/Effect-TS/effect/issues");
 };
 var step = (requests) => {
   let current = requests;
-  let parallel = parallelCollectionEmpty();
-  let stack = empty9();
-  let sequential = empty9();
+  let parallel2 = parallelCollectionEmpty();
+  let stack = empty10();
+  let sequential2 = empty10();
   while (true) {
     switch (current._tag) {
       case "Empty": {
         if (isNil(stack)) {
-          return [parallel, sequential];
+          return [parallel2, sequential2];
         }
         current = stack.head;
         stack = stack.tail;
@@ -3762,16 +4710,16 @@ var step = (requests) => {
           }
           case "Single": {
             current = left3;
-            sequential = cons(right3, sequential);
+            sequential2 = cons(right3, sequential2);
             break;
           }
         }
         break;
       }
       case "Single": {
-        parallel = parallelCollectionAdd(parallel, current);
+        parallel2 = parallelCollectionAdd(parallel2, current);
         if (isNil(stack)) {
-          return [parallel, sequential];
+          return [parallel2, sequential2];
         }
         current = stack.head;
         stack = stack.tail;
@@ -3781,19 +4729,19 @@ var step = (requests) => {
   }
   throw new Error("BUG: BlockedRequests.step - please report an issue at https://github.com/Effect-TS/effect/issues");
 };
-var merge4 = (sequential, parallel) => {
-  if (isNil(sequential)) {
-    return of3(parallelCollectionToSequentialCollection(parallel));
+var merge4 = (sequential2, parallel2) => {
+  if (isNil(sequential2)) {
+    return of3(parallelCollectionToSequentialCollection(parallel2));
   }
-  if (parallelCollectionIsEmpty(parallel)) {
-    return sequential;
+  if (parallelCollectionIsEmpty(parallel2)) {
+    return sequential2;
   }
-  const seqHeadKeys = sequentialCollectionKeys(sequential.head);
-  const parKeys = parallelCollectionKeys(parallel);
+  const seqHeadKeys = sequentialCollectionKeys(sequential2.head);
+  const parKeys = parallelCollectionKeys(parallel2);
   if (seqHeadKeys.length === 1 && parKeys.length === 1 && equals(seqHeadKeys[0], parKeys[0])) {
-    return cons(sequentialCollectionCombine(sequential.head, parallelCollectionToSequentialCollection(parallel)), sequential.tail);
+    return cons(sequentialCollectionCombine(sequential2.head, parallelCollectionToSequentialCollection(parallel2)), sequential2.tail);
   }
-  return cons(parallelCollectionToSequentialCollection(parallel), sequential);
+  return cons(parallelCollectionToSequentialCollection(parallel2), sequential2);
 };
 var EntryTypeId = /* @__PURE__ */ Symbol.for("effect/RequestBlock/Entry");
 
@@ -3824,19 +4772,19 @@ var parallelVariance = {
 class ParallelImpl {
   map;
   [RequestBlockParallelTypeId] = parallelVariance;
-  constructor(map7) {
-    this.map = map7;
+  constructor(map9) {
+    this.map = map9;
   }
 }
-var parallelCollectionEmpty = () => new ParallelImpl(empty8());
+var parallelCollectionEmpty = () => new ParallelImpl(empty9());
 var parallelCollectionAdd = (self, blockedRequest) => new ParallelImpl(modifyAt2(self.map, blockedRequest.dataSource, (_) => orElseSome(map2(_, append2(blockedRequest.blockedRequest)), () => of2(blockedRequest.blockedRequest))));
-var parallelCollectionCombine = (self, that) => new ParallelImpl(reduce5(self.map, that.map, (map7, value, key) => set3(map7, key, match2(get7(map7, key), {
+var parallelCollectionCombine = (self, that) => new ParallelImpl(reduce6(self.map, that.map, (map9, value, key) => set3(map9, key, match2(get7(map9, key), {
   onNone: () => value,
   onSome: (other) => appendAll2(value, other)
 }))));
-var parallelCollectionIsEmpty = (self) => isEmpty3(self.map);
+var parallelCollectionIsEmpty = (self) => isEmpty4(self.map);
 var parallelCollectionKeys = (self) => Array.from(keys2(self.map));
-var parallelCollectionToSequentialCollection = (self) => sequentialCollectionMake(map6(self.map, (x) => of2(x)));
+var parallelCollectionToSequentialCollection = (self) => sequentialCollectionMake(map8(self.map, (x) => of2(x)));
 var SequentialCollectionTypeId = /* @__PURE__ */ Symbol.for("effect/RequestBlock/RequestBlockSequential");
 var sequentialVariance = {
   _R: (_) => _
@@ -3845,598 +4793,17 @@ var sequentialVariance = {
 class SequentialImpl {
   map;
   [SequentialCollectionTypeId] = sequentialVariance;
-  constructor(map7) {
-    this.map = map7;
+  constructor(map9) {
+    this.map = map9;
   }
 }
-var sequentialCollectionMake = (map7) => new SequentialImpl(map7);
-var sequentialCollectionCombine = (self, that) => new SequentialImpl(reduce5(that.map, self.map, (map7, value, key) => set3(map7, key, match2(get7(map7, key), {
-  onNone: () => empty4(),
+var sequentialCollectionMake = (map9) => new SequentialImpl(map9);
+var sequentialCollectionCombine = (self, that) => new SequentialImpl(reduce6(that.map, self.map, (map9, value, key) => set3(map9, key, match2(get7(map9, key), {
+  onNone: () => empty2(),
   onSome: (a) => appendAll2(a, value)
 }))));
 var sequentialCollectionKeys = (self) => Array.from(keys2(self.map));
 var sequentialCollectionToChunk = (self) => Array.from(self.map);
-
-// node_modules/effect/dist/esm/internal/opCodes/cause.js
-var OP_DIE = "Die";
-var OP_EMPTY = "Empty";
-var OP_FAIL = "Fail";
-var OP_INTERRUPT = "Interrupt";
-var OP_PARALLEL = "Parallel";
-var OP_SEQUENTIAL = "Sequential";
-
-// node_modules/effect/dist/esm/internal/cause.js
-var CauseSymbolKey = "effect/Cause";
-var CauseTypeId = /* @__PURE__ */ Symbol.for(CauseSymbolKey);
-var variance4 = {
-  _E: (_) => _
-};
-var proto = {
-  [CauseTypeId]: variance4,
-  [symbol]() {
-    return pipe(hash(CauseSymbolKey), combine(hash(flattenCause(this))), cached(this));
-  },
-  [symbol2](that) {
-    return isCause(that) && causeEquals(this, that);
-  },
-  pipe() {
-    return pipeArguments(this, arguments);
-  },
-  toJSON() {
-    switch (this._tag) {
-      case "Empty":
-        return {
-          _id: "Cause",
-          _tag: this._tag
-        };
-      case "Die":
-        return {
-          _id: "Cause",
-          _tag: this._tag,
-          defect: toJSON(this.defect)
-        };
-      case "Interrupt":
-        return {
-          _id: "Cause",
-          _tag: this._tag,
-          fiberId: this.fiberId.toJSON()
-        };
-      case "Fail":
-        return {
-          _id: "Cause",
-          _tag: this._tag,
-          failure: toJSON(this.error)
-        };
-      case "Sequential":
-      case "Parallel":
-        return {
-          _id: "Cause",
-          _tag: this._tag,
-          left: toJSON(this.left),
-          right: toJSON(this.right)
-        };
-    }
-  },
-  toString() {
-    return pretty(this);
-  },
-  [NodeInspectSymbol]() {
-    return this.toJSON();
-  }
-};
-var empty16 = /* @__PURE__ */ (() => {
-  const o = /* @__PURE__ */ Object.create(proto);
-  o._tag = OP_EMPTY;
-  return o;
-})();
-var fail = (error) => {
-  const o = Object.create(proto);
-  o._tag = OP_FAIL;
-  o.error = error;
-  return o;
-};
-var die = (defect) => {
-  const o = Object.create(proto);
-  o._tag = OP_DIE;
-  o.defect = defect;
-  return o;
-};
-var interrupt = (fiberId) => {
-  const o = Object.create(proto);
-  o._tag = OP_INTERRUPT;
-  o.fiberId = fiberId;
-  return o;
-};
-var parallel = (left3, right3) => {
-  const o = Object.create(proto);
-  o._tag = OP_PARALLEL;
-  o.left = left3;
-  o.right = right3;
-  return o;
-};
-var sequential = (left3, right3) => {
-  const o = Object.create(proto);
-  o._tag = OP_SEQUENTIAL;
-  o.left = left3;
-  o.right = right3;
-  return o;
-};
-var isCause = (u) => hasProperty(u, CauseTypeId);
-var isEmptyType = (self) => self._tag === OP_EMPTY;
-var isFailType = (self) => self._tag === OP_FAIL;
-var isDieType = (self) => self._tag === OP_DIE;
-var isEmpty5 = (self) => {
-  if (self._tag === OP_EMPTY) {
-    return true;
-  }
-  return reduce7(self, true, (acc, cause) => {
-    switch (cause._tag) {
-      case OP_EMPTY: {
-        return some2(acc);
-      }
-      case OP_DIE:
-      case OP_FAIL:
-      case OP_INTERRUPT: {
-        return some2(false);
-      }
-      default: {
-        return none2();
-      }
-    }
-  });
-};
-var isInterrupted = (self) => isSome2(interruptOption(self));
-var isInterruptedOnly = (self) => reduceWithContext(undefined, IsInterruptedOnlyCauseReducer)(self);
-var failures = (self) => reverse2(reduce7(self, empty4(), (list, cause) => cause._tag === OP_FAIL ? some2(pipe(list, prepend2(cause.error))) : none2()));
-var defects = (self) => reverse2(reduce7(self, empty4(), (list, cause) => cause._tag === OP_DIE ? some2(pipe(list, prepend2(cause.defect))) : none2()));
-var interruptors = (self) => reduce7(self, empty7(), (set4, cause) => cause._tag === OP_INTERRUPT ? some2(pipe(set4, add4(cause.fiberId))) : none2());
-var failureOption = (self) => find(self, (cause) => cause._tag === OP_FAIL ? some2(cause.error) : none2());
-var failureOrCause = (self) => {
-  const option = failureOption(self);
-  switch (option._tag) {
-    case "None": {
-      return right2(self);
-    }
-    case "Some": {
-      return left2(option.value);
-    }
-  }
-};
-var interruptOption = (self) => find(self, (cause) => cause._tag === OP_INTERRUPT ? some2(cause.fiberId) : none2());
-var keepDefects = (self) => match5(self, {
-  onEmpty: none2(),
-  onFail: () => none2(),
-  onDie: (defect) => some2(die(defect)),
-  onInterrupt: () => none2(),
-  onSequential: mergeWith(sequential),
-  onParallel: mergeWith(parallel)
-});
-var keepDefectsAndElectFailures = (self) => match5(self, {
-  onEmpty: none2(),
-  onFail: (failure) => some2(die(failure)),
-  onDie: (defect) => some2(die(defect)),
-  onInterrupt: () => none2(),
-  onSequential: mergeWith(sequential),
-  onParallel: mergeWith(parallel)
-});
-var stripFailures = (self) => match5(self, {
-  onEmpty: empty16,
-  onFail: () => empty16,
-  onDie: die,
-  onInterrupt: interrupt,
-  onSequential: sequential,
-  onParallel: parallel
-});
-var electFailures = (self) => match5(self, {
-  onEmpty: empty16,
-  onFail: die,
-  onDie: die,
-  onInterrupt: interrupt,
-  onSequential: sequential,
-  onParallel: parallel
-});
-var flatMap6 = /* @__PURE__ */ dual(2, (self, f) => match5(self, {
-  onEmpty: empty16,
-  onFail: (error) => f(error),
-  onDie: (defect) => die(defect),
-  onInterrupt: (fiberId) => interrupt(fiberId),
-  onSequential: (left3, right3) => sequential(left3, right3),
-  onParallel: (left3, right3) => parallel(left3, right3)
-}));
-var flatten3 = (self) => flatMap6(self, identity);
-var causeEquals = (left3, right3) => {
-  let leftStack = of2(left3);
-  let rightStack = of2(right3);
-  while (isNonEmpty(leftStack) && isNonEmpty(rightStack)) {
-    const [leftParallel, leftSequential] = pipe(headNonEmpty2(leftStack), reduce7([empty7(), empty4()], ([parallel2, sequential2], cause) => {
-      const [par2, seq2] = evaluateCause(cause);
-      return some2([pipe(parallel2, union3(par2)), pipe(sequential2, appendAll2(seq2))]);
-    }));
-    const [rightParallel, rightSequential] = pipe(headNonEmpty2(rightStack), reduce7([empty7(), empty4()], ([parallel2, sequential2], cause) => {
-      const [par2, seq2] = evaluateCause(cause);
-      return some2([pipe(parallel2, union3(par2)), pipe(sequential2, appendAll2(seq2))]);
-    }));
-    if (!equals(leftParallel, rightParallel)) {
-      return false;
-    }
-    leftStack = leftSequential;
-    rightStack = rightSequential;
-  }
-  return true;
-};
-var flattenCause = (cause) => {
-  return flattenCauseLoop(of2(cause), empty4());
-};
-var flattenCauseLoop = (causes, flattened) => {
-  while (true) {
-    const [parallel2, sequential2] = pipe(causes, reduce([empty7(), empty4()], ([parallel3, sequential3], cause) => {
-      const [par2, seq2] = evaluateCause(cause);
-      return [pipe(parallel3, union3(par2)), pipe(sequential3, appendAll2(seq2))];
-    }));
-    const updated = size3(parallel2) > 0 ? pipe(flattened, prepend2(parallel2)) : flattened;
-    if (isEmpty(sequential2)) {
-      return reverse2(updated);
-    }
-    causes = sequential2;
-    flattened = updated;
-  }
-  throw new Error(getBugErrorMessage("Cause.flattenCauseLoop"));
-};
-var find = /* @__PURE__ */ dual(2, (self, pf) => {
-  const stack = [self];
-  while (stack.length > 0) {
-    const item = stack.pop();
-    const option = pf(item);
-    switch (option._tag) {
-      case "None": {
-        switch (item._tag) {
-          case OP_SEQUENTIAL:
-          case OP_PARALLEL: {
-            stack.push(item.right);
-            stack.push(item.left);
-            break;
-          }
-        }
-        break;
-      }
-      case "Some": {
-        return option;
-      }
-    }
-  }
-  return none2();
-});
-var evaluateCause = (self) => {
-  let cause = self;
-  const stack = [];
-  let _parallel = empty7();
-  let _sequential = empty4();
-  while (cause !== undefined) {
-    switch (cause._tag) {
-      case OP_EMPTY: {
-        if (stack.length === 0) {
-          return [_parallel, _sequential];
-        }
-        cause = stack.pop();
-        break;
-      }
-      case OP_FAIL: {
-        _parallel = add4(_parallel, make6(cause._tag, cause.error));
-        if (stack.length === 0) {
-          return [_parallel, _sequential];
-        }
-        cause = stack.pop();
-        break;
-      }
-      case OP_DIE: {
-        _parallel = add4(_parallel, make6(cause._tag, cause.defect));
-        if (stack.length === 0) {
-          return [_parallel, _sequential];
-        }
-        cause = stack.pop();
-        break;
-      }
-      case OP_INTERRUPT: {
-        _parallel = add4(_parallel, make6(cause._tag, cause.fiberId));
-        if (stack.length === 0) {
-          return [_parallel, _sequential];
-        }
-        cause = stack.pop();
-        break;
-      }
-      case OP_SEQUENTIAL: {
-        switch (cause.left._tag) {
-          case OP_EMPTY: {
-            cause = cause.right;
-            break;
-          }
-          case OP_SEQUENTIAL: {
-            cause = sequential(cause.left.left, sequential(cause.left.right, cause.right));
-            break;
-          }
-          case OP_PARALLEL: {
-            cause = parallel(sequential(cause.left.left, cause.right), sequential(cause.left.right, cause.right));
-            break;
-          }
-          default: {
-            _sequential = prepend2(_sequential, cause.right);
-            cause = cause.left;
-            break;
-          }
-        }
-        break;
-      }
-      case OP_PARALLEL: {
-        stack.push(cause.right);
-        cause = cause.left;
-        break;
-      }
-    }
-  }
-  throw new Error(getBugErrorMessage("Cause.evaluateCauseLoop"));
-};
-var IsInterruptedOnlyCauseReducer = {
-  emptyCase: constTrue,
-  failCase: constFalse,
-  dieCase: constFalse,
-  interruptCase: constTrue,
-  sequentialCase: (_, left3, right3) => left3 && right3,
-  parallelCase: (_, left3, right3) => left3 && right3
-};
-var OP_SEQUENTIAL_CASE = "SequentialCase";
-var OP_PARALLEL_CASE = "ParallelCase";
-var match5 = /* @__PURE__ */ dual(2, (self, {
-  onDie,
-  onEmpty,
-  onFail,
-  onInterrupt,
-  onParallel,
-  onSequential
-}) => {
-  return reduceWithContext(self, undefined, {
-    emptyCase: () => onEmpty,
-    failCase: (_, error) => onFail(error),
-    dieCase: (_, defect) => onDie(defect),
-    interruptCase: (_, fiberId) => onInterrupt(fiberId),
-    sequentialCase: (_, left3, right3) => onSequential(left3, right3),
-    parallelCase: (_, left3, right3) => onParallel(left3, right3)
-  });
-});
-var reduce7 = /* @__PURE__ */ dual(3, (self, zero2, pf) => {
-  let accumulator = zero2;
-  let cause = self;
-  const causes = [];
-  while (cause !== undefined) {
-    const option = pf(accumulator, cause);
-    accumulator = isSome2(option) ? option.value : accumulator;
-    switch (cause._tag) {
-      case OP_SEQUENTIAL: {
-        causes.push(cause.right);
-        cause = cause.left;
-        break;
-      }
-      case OP_PARALLEL: {
-        causes.push(cause.right);
-        cause = cause.left;
-        break;
-      }
-      default: {
-        cause = undefined;
-        break;
-      }
-    }
-    if (cause === undefined && causes.length > 0) {
-      cause = causes.pop();
-    }
-  }
-  return accumulator;
-});
-var reduceWithContext = /* @__PURE__ */ dual(3, (self, context, reducer) => {
-  const input = [self];
-  const output = [];
-  while (input.length > 0) {
-    const cause = input.pop();
-    switch (cause._tag) {
-      case OP_EMPTY: {
-        output.push(right2(reducer.emptyCase(context)));
-        break;
-      }
-      case OP_FAIL: {
-        output.push(right2(reducer.failCase(context, cause.error)));
-        break;
-      }
-      case OP_DIE: {
-        output.push(right2(reducer.dieCase(context, cause.defect)));
-        break;
-      }
-      case OP_INTERRUPT: {
-        output.push(right2(reducer.interruptCase(context, cause.fiberId)));
-        break;
-      }
-      case OP_SEQUENTIAL: {
-        input.push(cause.right);
-        input.push(cause.left);
-        output.push(left2({
-          _tag: OP_SEQUENTIAL_CASE
-        }));
-        break;
-      }
-      case OP_PARALLEL: {
-        input.push(cause.right);
-        input.push(cause.left);
-        output.push(left2({
-          _tag: OP_PARALLEL_CASE
-        }));
-        break;
-      }
-    }
-  }
-  const accumulator = [];
-  while (output.length > 0) {
-    const either2 = output.pop();
-    switch (either2._tag) {
-      case "Left": {
-        switch (either2.left._tag) {
-          case OP_SEQUENTIAL_CASE: {
-            const left3 = accumulator.pop();
-            const right3 = accumulator.pop();
-            const value = reducer.sequentialCase(context, left3, right3);
-            accumulator.push(value);
-            break;
-          }
-          case OP_PARALLEL_CASE: {
-            const left3 = accumulator.pop();
-            const right3 = accumulator.pop();
-            const value = reducer.parallelCase(context, left3, right3);
-            accumulator.push(value);
-            break;
-          }
-        }
-        break;
-      }
-      case "Right": {
-        accumulator.push(either2.right);
-        break;
-      }
-    }
-  }
-  if (accumulator.length === 0) {
-    throw new Error("BUG: Cause.reduceWithContext - please report an issue at https://github.com/Effect-TS/effect/issues");
-  }
-  return accumulator.pop();
-});
-var pretty = (cause, options) => {
-  if (isInterruptedOnly(cause)) {
-    return "All fibers interrupted without errors.";
-  }
-  return prettyErrors(cause).map(function(e) {
-    if (options?.renderErrorCause !== true || e.cause === undefined) {
-      return e.stack;
-    }
-    return `${e.stack} {
-${renderErrorCause(e.cause, "  ")}
-}`;
-  }).join(`
-`);
-};
-var renderErrorCause = (cause, prefix) => {
-  const lines = cause.stack.split(`
-`);
-  let stack = `${prefix}[cause]: ${lines[0]}`;
-  for (let i = 1, len = lines.length;i < len; i++) {
-    stack += `
-${prefix}${lines[i]}`;
-  }
-  if (cause.cause) {
-    stack += ` {
-${renderErrorCause(cause.cause, `${prefix}  `)}
-${prefix}}`;
-  }
-  return stack;
-};
-var makePrettyError = (originalError) => {
-  const originalErrorIsObject = typeof originalError === "object" && originalError !== null;
-  const prevLimit = Error.stackTraceLimit;
-  Error.stackTraceLimit = 1;
-  const error = new Error(prettyErrorMessage(originalError), originalErrorIsObject && "cause" in originalError && typeof originalError.cause !== "undefined" ? {
-    cause: makePrettyError(originalError.cause)
-  } : undefined);
-  Error.stackTraceLimit = prevLimit;
-  if (error.message === "") {
-    error.message = "An error has occurred";
-  }
-  Error.stackTraceLimit = prevLimit;
-  error.name = originalError instanceof Error ? originalError.name : "Error";
-  if (originalErrorIsObject) {
-    if (spanSymbol in originalError) {
-      error.span = originalError[spanSymbol];
-    }
-    Object.keys(originalError).forEach((key) => {
-      if (!(key in error)) {
-        error[key] = originalError[key];
-      }
-    });
-  }
-  error.stack = prettyErrorStack(`${error.name}: ${error.message}`, originalError instanceof Error && originalError.stack ? originalError.stack : "", error.span);
-  return error;
-};
-var prettyErrorMessage = (u) => {
-  if (typeof u === "string") {
-    return u;
-  }
-  if (typeof u === "object" && u !== null && u instanceof Error) {
-    return u.message;
-  }
-  try {
-    if (hasProperty(u, "toString") && isFunction2(u["toString"]) && u["toString"] !== Object.prototype.toString && u["toString"] !== globalThis.Array.prototype.toString) {
-      return u["toString"]();
-    }
-  } catch {}
-  return stringifyCircular(u);
-};
-var locationRegex = /\((.*)\)/g;
-var spanToTrace = /* @__PURE__ */ globalValue("effect/Tracer/spanToTrace", () => new WeakMap);
-var prettyErrorStack = (message, stack, span2) => {
-  const out = [message];
-  const lines = stack.startsWith(message) ? stack.slice(message.length).split(`
-`) : stack.split(`
-`);
-  for (let i = 1;i < lines.length; i++) {
-    if (lines[i].includes(" at new BaseEffectError") || lines[i].includes(" at new YieldableError")) {
-      i++;
-      continue;
-    }
-    if (lines[i].includes("Generator.next")) {
-      break;
-    }
-    if (lines[i].includes("effect_internal_function")) {
-      break;
-    }
-    out.push(lines[i].replace(/at .*effect_instruction_i.*\((.*)\)/, "at $1").replace(/EffectPrimitive\.\w+/, "<anonymous>"));
-  }
-  if (span2) {
-    let current = span2;
-    let i = 0;
-    while (current && current._tag === "Span" && i < 10) {
-      const stackFn = spanToTrace.get(current);
-      if (typeof stackFn === "function") {
-        const stack2 = stackFn();
-        if (typeof stack2 === "string") {
-          const locationMatchAll = stack2.matchAll(locationRegex);
-          let match6 = false;
-          for (const [, location] of locationMatchAll) {
-            match6 = true;
-            out.push(`    at ${current.name} (${location})`);
-          }
-          if (!match6) {
-            out.push(`    at ${current.name} (${stack2.replace(/^at /, "")})`);
-          }
-        } else {
-          out.push(`    at ${current.name}`);
-        }
-      } else {
-        out.push(`    at ${current.name}`);
-      }
-      current = getOrUndefined(current.parent);
-      i++;
-    }
-  }
-  return out.join(`
-`);
-};
-var spanSymbol = /* @__PURE__ */ Symbol.for("effect/SpanAnnotation");
-var prettyErrors = (cause) => reduceWithContext(cause, undefined, {
-  emptyCase: () => [],
-  dieCase: (_, unknownError) => {
-    return [makePrettyError(unknownError)];
-  },
-  failCase: (_, error) => {
-    return [makePrettyError(error)];
-  },
-  interruptCase: () => [],
-  parallelCase: (_, l, r) => [...l, ...r],
-  sequentialCase: (_, l, r) => [...l, ...r]
-});
 
 // node_modules/effect/dist/esm/internal/opCodes/deferred.js
 var OP_STATE_PENDING = "Pending";
@@ -4655,8 +5022,8 @@ var acquireUseRelease = /* @__PURE__ */ dual(3, (acquire, use, release) => unint
     onSuccess: () => exit
   }));
 }))));
-var as = /* @__PURE__ */ dual(2, (self, value) => flatMap7(self, () => succeed(value)));
-var asVoid = (self) => as(self, undefined);
+var as3 = /* @__PURE__ */ dual(2, (self, value) => flatMap7(self, () => succeed(value)));
+var asVoid2 = (self) => as3(self, undefined);
 var custom = function() {
   const wrapper = new EffectPrimitive(OP_COMMIT);
   switch (arguments.length) {
@@ -4691,7 +5058,7 @@ var unsafeAsync = (register, blockingOn = none4) => {
     cancelerRef = register(resume);
   };
   effect.effect_instruction_i1 = blockingOn;
-  return onInterrupt(effect, (_) => isEffect(cancelerRef) ? cancelerRef : void_);
+  return onInterrupt(effect, (_) => isEffect(cancelerRef) ? cancelerRef : void_2);
 };
 var asyncInterrupt = (register, blockingOn = none4) => suspend(() => unsafeAsync(register, blockingOn));
 var async_ = (resume, blockingOn = none4) => {
@@ -4725,7 +5092,7 @@ var async_ = (resume, blockingOn = none4) => {
       if (controllerRef) {
         controllerRef.abort();
       }
-      return cancelerRef ?? void_;
+      return cancelerRef ?? void_2;
     }) : effect;
   });
 };
@@ -4752,13 +5119,19 @@ var catchSome = /* @__PURE__ */ dual(2, (self, pf) => catchAllCause(self, (cause
   const either2 = failureOrCause(cause);
   switch (either2._tag) {
     case "Left":
-      return pipe(pf(either2.left), getOrElse3(() => failCause(cause)));
+      return pipe(pf(either2.left), getOrElse(() => failCause(cause)));
     case "Right":
       return failCause(either2.right);
   }
 }));
 var checkInterruptible = (f) => withFiberRuntime((_, status) => f(interruption(status.runtimeFlags)));
 var originalSymbol = /* @__PURE__ */ Symbol.for("effect/OriginalAnnotation");
+var originalInstance = (obj) => {
+  if (hasProperty(obj, originalSymbol)) {
+    return obj[originalSymbol];
+  }
+  return obj;
+};
 var capture = (obj, span2) => {
   if (isSome2(span2)) {
     return new Proxy(obj, {
@@ -4805,7 +5178,7 @@ var flatMap7 = /* @__PURE__ */ dual(2, (self, f) => {
   effect.effect_instruction_i1 = f;
   return effect;
 });
-var andThen2 = /* @__PURE__ */ dual(2, (self, f) => flatMap7(self, (a) => {
+var andThen4 = /* @__PURE__ */ dual(2, (self, f) => flatMap7(self, (a) => {
   const b = typeof f === "function" ? f(a) : f;
   if (isEffect(b)) {
     return b;
@@ -4821,7 +5194,7 @@ var step2 = (self) => {
   effect.effect_instruction_i0 = self;
   return effect;
 };
-var flatten4 = (self) => flatMap7(self, identity);
+var flatten5 = (self) => flatMap7(self, identity);
 var flip = (self) => matchEffect(self, {
   onFailure: succeed,
   onSuccess: fail2
@@ -4852,10 +5225,10 @@ var matchEffect = /* @__PURE__ */ dual(2, (self, options) => matchCauseEffect(se
   onSuccess: options.onSuccess
 }));
 var forEachSequential = /* @__PURE__ */ dual(2, (self, f) => suspend(() => {
-  const arr = fromIterable(self);
+  const arr = fromIterable2(self);
   const ret = allocate(arr.length);
   let i = 0;
-  return as(whileLoop({
+  return as3(whileLoop({
     while: () => i < arr.length,
     body: () => f(arr[i], i),
     step: (b) => {
@@ -4864,7 +5237,7 @@ var forEachSequential = /* @__PURE__ */ dual(2, (self, f) => suspend(() => {
   }), ret);
 }));
 var forEachSequentialDiscard = /* @__PURE__ */ dual(2, (self, f) => suspend(() => {
-  const arr = fromIterable(self);
+  const arr = fromIterable2(self);
   let i = 0;
   return whileLoop({
     while: () => i < arr.length,
@@ -4909,7 +5282,7 @@ var mapError = /* @__PURE__ */ dual(2, (self, f) => matchCauseEffect(self, {
   },
   onSuccess: succeed
 }));
-var onError = /* @__PURE__ */ dual(2, (self, cleanup) => onExit(self, (exit2) => exitIsSuccess(exit2) ? void_ : cleanup(exit2.effect_instruction_i0)));
+var onError = /* @__PURE__ */ dual(2, (self, cleanup) => onExit(self, (exit2) => exitIsSuccess(exit2) ? void_2 : cleanup(exit2.effect_instruction_i0)));
 var onExit = /* @__PURE__ */ dual(2, (self, cleanup) => uninterruptibleMask((restore) => matchCauseEffect(restore(self), {
   onFailure: (cause1) => {
     const result = exitFailCause(cause1);
@@ -4920,12 +5293,12 @@ var onExit = /* @__PURE__ */ dual(2, (self, cleanup) => uninterruptibleMask((res
   },
   onSuccess: (success) => {
     const result = exitSucceed(success);
-    return zipRight(cleanup(result), result);
+    return zipRight2(cleanup(result), result);
   }
 })));
 var onInterrupt = /* @__PURE__ */ dual(2, (self, cleanup) => onExit(self, exitMatch({
-  onFailure: (cause) => isInterruptedOnly(cause) ? asVoid(cleanup(interruptors(cause))) : void_,
-  onSuccess: () => void_
+  onFailure: (cause) => isInterruptedOnly(cause) ? asVoid2(cleanup(interruptors(cause))) : void_2,
+  onSuccess: () => void_2
 })));
 var orElse2 = /* @__PURE__ */ dual(2, (self, that) => attemptOrElse(self, that, succeed));
 var orDie = (self) => orDieWith(self, identity);
@@ -4933,7 +5306,7 @@ var orDieWith = /* @__PURE__ */ dual(2, (self, f) => matchEffect(self, {
   onFailure: (e) => die2(f(e)),
   onSuccess: succeed
 }));
-var partitionMap2 = partitionMap;
+var partitionMap3 = partitionMap2;
 var runtimeFlags = /* @__PURE__ */ withFiberRuntime((_, status) => succeed(status.runtimeFlags));
 var succeed = (value) => {
   const effect = new EffectPrimitiveSuccess(OP_SUCCESS);
@@ -4950,10 +5323,10 @@ var sync = (thunk) => {
   effect.effect_instruction_i0 = thunk;
   return effect;
 };
-var tap = /* @__PURE__ */ dual((args) => args.length === 3 || args.length === 2 && !(isObject(args[1]) && ("onlyEffect" in args[1])), (self, f) => flatMap7(self, (a) => {
+var tap2 = /* @__PURE__ */ dual((args) => args.length === 3 || args.length === 2 && !(isObject(args[1]) && ("onlyEffect" in args[1])), (self, f) => flatMap7(self, (a) => {
   const b = typeof f === "function" ? f(a) : f;
   if (isEffect(b)) {
-    return as(b, a);
+    return as3(b, a);
   } else if (isPromiseLike(b)) {
     return unsafeAsync((resume) => {
       b.then((_) => resume(succeed(a)), (e) => resume(fail2(new UnknownException(e, "An unknown error occurred in Effect.tap"))));
@@ -4963,7 +5336,7 @@ var tap = /* @__PURE__ */ dual((args) => args.length === 3 || args.length === 2 
 }));
 var transplant = (f) => withFiberRuntime((state) => {
   const scopeOverride = state.getFiberRef(currentForkScopeOverride);
-  const scope = pipe(scopeOverride, getOrElse3(() => state.scope()));
+  const scope = pipe(scopeOverride, getOrElse(() => state.scope()));
   return f(fiberRefLocally(currentForkScopeOverride, some2(scope)));
 });
 var attemptOrElse = /* @__PURE__ */ dual(3, (self, that, onSuccess) => matchCauseEffect(self, {
@@ -4988,7 +5361,7 @@ var uninterruptibleMask = (f) => custom(f, function() {
   effect.effect_instruction_i1 = (oldFlags) => interruption(oldFlags) ? internalCall(() => this.effect_instruction_i0(interruptible2)) : internalCall(() => this.effect_instruction_i0(uninterruptible));
   return effect;
 });
-var void_ = /* @__PURE__ */ succeed(undefined);
+var void_2 = /* @__PURE__ */ succeed(undefined);
 var updateRuntimeFlags = (patch5) => {
   const effect = new EffectPrimitive(OP_UPDATE_RUNTIME_FLAGS);
   effect.effect_instruction_i0 = patch5;
@@ -5013,7 +5386,7 @@ var fromIterator = (iterator) => suspend(() => {
   effect.effect_instruction_i0 = iterator();
   return effect;
 });
-var gen = function() {
+var gen2 = function() {
   const f = arguments.length === 1 ? arguments[0] : arguments[1].bind(arguments[0]);
   return fromIterator(() => f(pipe));
 };
@@ -5044,9 +5417,9 @@ var yieldNow = (options) => {
   return typeof options?.priority !== "undefined" ? withSchedulingPriority(effect, options.priority) : effect;
 };
 var zip2 = /* @__PURE__ */ dual(2, (self, that) => flatMap7(self, (a) => map9(that, (b) => [a, b])));
-var zipLeft = /* @__PURE__ */ dual(2, (self, that) => flatMap7(self, (a) => as(that, a)));
-var zipRight = /* @__PURE__ */ dual(2, (self, that) => flatMap7(self, () => that));
-var zipWith2 = /* @__PURE__ */ dual(3, (self, that, f) => flatMap7(self, (a) => map9(that, (b) => f(a, b))));
+var zipLeft2 = /* @__PURE__ */ dual(2, (self, that) => flatMap7(self, (a) => as3(that, a)));
+var zipRight2 = /* @__PURE__ */ dual(2, (self, that) => flatMap7(self, () => that));
+var zipWith3 = /* @__PURE__ */ dual(3, (self, that, f) => flatMap7(self, (a) => map9(that, (b) => f(a, b))));
 var never = /* @__PURE__ */ asyncInterrupt(() => {
   const interval = setInterval(() => {}, 2 ** 31 - 1);
   return sync(() => clearInterval(interval));
@@ -5138,7 +5511,7 @@ var fiberRefModify = /* @__PURE__ */ dual(2, (self, f) => withFiberRuntime((stat
   state.setFiberRef(self, a);
   return succeed(b);
 }));
-var fiberRefLocally = /* @__PURE__ */ dual(3, (use, self, value) => acquireUseRelease(zipLeft(fiberRefGet(self), fiberRefSet(self, value)), () => use, (oldValue) => fiberRefSet(self, oldValue)));
+var fiberRefLocally = /* @__PURE__ */ dual(3, (use, self, value) => acquireUseRelease(zipLeft2(fiberRefGet(self), fiberRefSet(self, value)), () => use, (oldValue) => fiberRefSet(self, oldValue)));
 var fiberRefLocallyWith = /* @__PURE__ */ dual(3, (use, self, f) => fiberRefGetWith(self, (a) => fiberRefLocally(use, self, f(a))));
 var fiberRefUnsafeMake = (initial, options) => fiberRefUnsafeMakePatch(initial, {
   differ: update(),
@@ -5186,12 +5559,12 @@ var fiberRefUnsafeMakeRuntimeFlags = (initial) => fiberRefUnsafeMakePatch(initia
   differ,
   fork: differ.empty
 });
-var currentContext = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentContext"), () => fiberRefUnsafeMakeContext(empty2()));
+var currentContext = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentContext"), () => fiberRefUnsafeMakeContext(empty8()));
 var currentSchedulingPriority = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentSchedulingPriority"), () => fiberRefUnsafeMake(0));
 var currentMaxOpsBeforeYield = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentMaxOpsBeforeYield"), () => fiberRefUnsafeMake(2048));
-var currentLogAnnotations = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentLogAnnotation"), () => fiberRefUnsafeMake(empty8()));
+var currentLogAnnotations = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentLogAnnotation"), () => fiberRefUnsafeMake(empty9()));
 var currentLogLevel = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentLogLevel"), () => fiberRefUnsafeMake(logLevelInfo));
-var currentLogSpan = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentLogSpan"), () => fiberRefUnsafeMake(empty9()));
+var currentLogSpan = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentLogSpan"), () => fiberRefUnsafeMake(empty10()));
 var withSchedulingPriority = /* @__PURE__ */ dual(2, (self, scheduler) => fiberRefLocally(self, currentSchedulingPriority, scheduler));
 var withMaxOpsBeforeYield = /* @__PURE__ */ dual(2, (self, scheduler) => fiberRefLocally(self, currentMaxOpsBeforeYield, scheduler));
 var currentConcurrency = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentConcurrency"), () => fiberRefUnsafeMake("unbounded"));
@@ -5199,27 +5572,48 @@ var currentRequestBatching = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.
 var currentUnhandledErrorLogLevel = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentUnhandledErrorLogLevel"), () => fiberRefUnsafeMake(some2(logLevelDebug)));
 var currentVersionMismatchErrorLogLevel = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/versionMismatchErrorLogLevel"), () => fiberRefUnsafeMake(some2(logLevelWarning)));
 var withUnhandledErrorLogLevel = /* @__PURE__ */ dual(2, (self, level) => fiberRefLocally(self, currentUnhandledErrorLogLevel, level));
-var currentMetricLabels = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentMetricLabels"), () => fiberRefUnsafeMakeReadonlyArray(empty3()));
+var currentMetricLabels = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentMetricLabels"), () => fiberRefUnsafeMakeReadonlyArray(empty()));
 var metricLabels = /* @__PURE__ */ fiberRefGet(currentMetricLabels);
 var currentForkScopeOverride = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentForkScopeOverride"), () => fiberRefUnsafeMake(none2(), {
   fork: () => none2(),
   join: (parent, _) => parent
 }));
-var currentInterruptedCause = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentInterruptedCause"), () => fiberRefUnsafeMake(empty16, {
-  fork: () => empty16,
+var currentInterruptedCause = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentInterruptedCause"), () => fiberRefUnsafeMake(empty6, {
+  fork: () => empty6,
   join: (parent, _) => parent
 }));
 var currentTracerEnabled = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentTracerEnabled"), () => fiberRefUnsafeMake(true));
 var currentTracerTimingEnabled = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentTracerTiming"), () => fiberRefUnsafeMake(true));
-var currentTracerSpanAnnotations = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentTracerSpanAnnotations"), () => fiberRefUnsafeMake(empty8()));
-var currentTracerSpanLinks = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentTracerSpanLinks"), () => fiberRefUnsafeMake(empty4()));
+var currentTracerSpanAnnotations = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentTracerSpanAnnotations"), () => fiberRefUnsafeMake(empty9()));
+var currentTracerSpanLinks = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentTracerSpanLinks"), () => fiberRefUnsafeMake(empty2()));
 var ScopeTypeId = /* @__PURE__ */ Symbol.for("effect/Scope");
 var CloseableScopeTypeId = /* @__PURE__ */ Symbol.for("effect/CloseableScope");
-var scopeAddFinalizer = (self, finalizer) => self.addFinalizer(() => asVoid(finalizer));
+var scopeAddFinalizer = (self, finalizer) => self.addFinalizer(() => asVoid2(finalizer));
 var scopeAddFinalizerExit = (self, finalizer) => self.addFinalizer(finalizer);
 var scopeClose = (self, exit2) => self.close(exit2);
 var scopeFork = (self, strategy) => self.fork(strategy);
+var causeSquash = (self) => {
+  return causeSquashWith(identity)(self);
+};
+var causeSquashWith = /* @__PURE__ */ dual(2, (self, f) => {
+  const option = pipe(self, failureOption, map2(f));
+  switch (option._tag) {
+    case "None": {
+      return pipe(defects(self), head2, match2({
+        onNone: () => {
+          const interrupts = fromIterable2(interruptors(self)).flatMap((fiberId2) => fromIterable2(ids2(fiberId2)).map((id) => `#${id}`));
+          return new InterruptedException(interrupts ? `Interrupted by fibers: ${interrupts.join(", ")}` : undefined);
+        },
+        onSome: identity
+      }));
+    }
+    case "Some": {
+      return option.value;
+    }
+  }
+});
 var YieldableError = /* @__PURE__ */ function() {
+
   class YieldableError2 extends globalThis.Error {
     commit() {
       return fail2(this);
@@ -5264,6 +5658,7 @@ var RuntimeExceptionTypeId = /* @__PURE__ */ Symbol.for("effect/Cause/errors/Run
 var RuntimeException = /* @__PURE__ */ makeException({
   [RuntimeExceptionTypeId]: RuntimeExceptionTypeId
 }, "RuntimeException");
+var isRuntimeException = (u) => hasProperty(u, RuntimeExceptionTypeId);
 var InterruptedExceptionTypeId = /* @__PURE__ */ Symbol.for("effect/Cause/errors/InterruptedException");
 var InterruptedException = /* @__PURE__ */ makeException({
   [InterruptedExceptionTypeId]: InterruptedExceptionTypeId
@@ -5273,6 +5668,7 @@ var IllegalArgumentExceptionTypeId = /* @__PURE__ */ Symbol.for("effect/Cause/er
 var IllegalArgumentException = /* @__PURE__ */ makeException({
   [IllegalArgumentExceptionTypeId]: IllegalArgumentExceptionTypeId
 }, "IllegalArgumentException");
+var isIllegalArgumentException = (u) => hasProperty(u, IllegalArgumentExceptionTypeId);
 var NoSuchElementExceptionTypeId = /* @__PURE__ */ Symbol.for("effect/Cause/errors/NoSuchElement");
 var NoSuchElementException = /* @__PURE__ */ makeException({
   [NoSuchElementExceptionTypeId]: NoSuchElementExceptionTypeId
@@ -5286,11 +5682,13 @@ var ExceededCapacityExceptionTypeId = /* @__PURE__ */ Symbol.for("effect/Cause/e
 var ExceededCapacityException = /* @__PURE__ */ makeException({
   [ExceededCapacityExceptionTypeId]: ExceededCapacityExceptionTypeId
 }, "ExceededCapacityException");
+var isExceededCapacityException = (u) => hasProperty(u, ExceededCapacityExceptionTypeId);
 var TimeoutExceptionTypeId = /* @__PURE__ */ Symbol.for("effect/Cause/errors/Timeout");
 var TimeoutException = /* @__PURE__ */ makeException({
   [TimeoutExceptionTypeId]: TimeoutExceptionTypeId
 }, "TimeoutException");
 var timeoutExceptionFromDuration = (duration) => new TimeoutException(`Operation timed out after '${format2(duration)}'`);
+var isTimeoutException = (u) => hasProperty(u, TimeoutExceptionTypeId);
 var UnknownExceptionTypeId = /* @__PURE__ */ Symbol.for("effect/Cause/errors/UnknownException");
 var UnknownException = /* @__PURE__ */ function() {
 
@@ -5310,6 +5708,7 @@ var UnknownException = /* @__PURE__ */ function() {
   });
   return UnknownException2;
 }();
+var isUnknownException = (u) => hasProperty(u, UnknownExceptionTypeId);
 var exitIsExit = (u) => isEffect(u) && ("_tag" in u) && (u._tag === "Success" || u._tag === "Failure");
 var exitIsFailure = (self) => self._tag === "Failure";
 var exitIsSuccess = (self) => self._tag === "Success";
@@ -5405,7 +5804,7 @@ var exitZipWith = /* @__PURE__ */ dual(3, (self, that, {
   }
 });
 var exitCollectAllInternal = (exits, combineCauses) => {
-  const list = fromIterable2(exits);
+  const list = fromIterable3(exits);
   if (!isNonEmpty(list)) {
     return none2();
   }
@@ -5482,7 +5881,7 @@ var constContext = /* @__PURE__ */ withFiberRuntime((fiber) => exitSucceed(fiber
 var context = () => constContext;
 var contextWithEffect = (f) => flatMap7(context(), f);
 var provideContext = /* @__PURE__ */ dual(2, (self, context2) => fiberRefLocally(currentContext, context2)(self));
-var provideSomeContext = /* @__PURE__ */ dual(2, (self, context2) => fiberRefLocallyWith(currentContext, (parent) => merge2(parent, context2))(self));
+var provideSomeContext = /* @__PURE__ */ dual(2, (self, context2) => fiberRefLocallyWith(currentContext, (parent) => merge3(parent, context2))(self));
 var mapInputContext = /* @__PURE__ */ dual(2, (self, f) => contextWithEffect((context2) => provideContext(self, f(context2))));
 var filterEffectOrElse = /* @__PURE__ */ dual(2, (self, options) => flatMap7(self, (a) => flatMap7(options.predicate(a), (pass) => pass ? succeed(a) : options.orElse(a))));
 var filterEffectOrFail = /* @__PURE__ */ dual(2, (self, options) => filterEffectOrElse(self, {
@@ -5514,12 +5913,100 @@ var NoopSpanProto = {
 };
 var noopSpan = (options) => Object.assign(Object.create(NoopSpanProto), options);
 
+// node_modules/effect/dist/esm/Cause.js
+var CauseTypeId2 = CauseTypeId;
+var RuntimeExceptionTypeId2 = RuntimeExceptionTypeId;
+var InterruptedExceptionTypeId2 = InterruptedExceptionTypeId;
+var IllegalArgumentExceptionTypeId2 = IllegalArgumentExceptionTypeId;
+var NoSuchElementExceptionTypeId2 = NoSuchElementExceptionTypeId;
+var InvalidPubSubCapacityExceptionTypeId2 = InvalidPubSubCapacityExceptionTypeId;
+var ExceededCapacityExceptionTypeId2 = ExceededCapacityExceptionTypeId;
+var TimeoutExceptionTypeId2 = TimeoutExceptionTypeId;
+var UnknownExceptionTypeId2 = UnknownExceptionTypeId;
+var YieldableError2 = YieldableError;
+var empty17 = empty6;
+var fail3 = fail;
+var die3 = die;
+var interrupt3 = interrupt;
+var parallel2 = parallel;
+var sequential2 = sequential;
+var isCause2 = isCause;
+var isEmptyType2 = isEmptyType;
+var isFailType2 = isFailType;
+var isDieType2 = isDieType;
+var isInterruptType2 = isInterruptType;
+var isSequentialType2 = isSequentialType;
+var isParallelType2 = isParallelType;
+var size5 = size4;
+var isEmpty6 = isEmpty3;
+var isFailure2 = isFailure;
+var isDie2 = isDie;
+var isInterrupted2 = isInterrupted;
+var isInterruptedOnly2 = isInterruptedOnly;
+var failures2 = failures;
+var defects2 = defects;
+var interruptors2 = interruptors;
+var failureOption2 = failureOption;
+var failureOrCause2 = failureOrCause;
+var flipCauseOption2 = flipCauseOption;
+var dieOption2 = dieOption;
+var interruptOption2 = interruptOption;
+var keepDefects2 = keepDefects;
+var linearize2 = linearize;
+var stripFailures2 = stripFailures;
+var stripSomeDefects2 = stripSomeDefects;
+var as4 = as2;
+var map10 = map7;
+var flatMap8 = flatMap5;
+var andThen5 = andThen2;
+var flatten6 = flatten3;
+var contains4 = contains3;
+var squash = causeSquash;
+var squashWith = causeSquashWith;
+var find2 = find;
+var filter6 = filter4;
+var match6 = match4;
+var reduce8 = reduce5;
+var reduceWithContext2 = reduceWithContext;
+var InterruptedException2 = InterruptedException;
+var isInterruptedException2 = isInterruptedException;
+var IllegalArgumentException2 = IllegalArgumentException;
+var isIllegalArgumentException2 = isIllegalArgumentException;
+var NoSuchElementException2 = NoSuchElementException;
+var isNoSuchElementException2 = isNoSuchElementException;
+var RuntimeException2 = RuntimeException;
+var isRuntimeException2 = isRuntimeException;
+var TimeoutException2 = TimeoutException;
+var isTimeoutException2 = isTimeoutException;
+var UnknownException2 = UnknownException;
+var isUnknownException2 = isUnknownException;
+var ExceededCapacityException2 = ExceededCapacityException;
+var isExceededCapacityException2 = isExceededCapacityException;
+var pretty2 = pretty;
+var prettyErrors2 = prettyErrors;
+var originalError = originalInstance;
 // node_modules/effect/dist/esm/Data.js
+var exports_Data = {};
+__export(exports_Data, {
+  unsafeStruct: () => unsafeStruct,
+  unsafeArray: () => unsafeArray,
+  tuple: () => tuple,
+  taggedEnum: () => taggedEnum,
+  tagged: () => tagged,
+  struct: () => struct2,
+  case: () => _case,
+  array: () => array3,
+  TaggedError: () => TaggedError,
+  TaggedClass: () => TaggedClass,
+  Structural: () => Structural2,
+  Error: () => Error2,
+  Class: () => Class
+});
 var struct2 = struct;
-var unsafeStruct = (as2) => Object.setPrototypeOf(as2, StructuralPrototype);
-var tuple = (...as2) => unsafeArray(as2);
-var array3 = (as2) => unsafeArray(as2.slice(0));
-var unsafeArray = (as2) => Object.setPrototypeOf(as2, ArrayProto);
+var unsafeStruct = (as5) => Object.setPrototypeOf(as5, StructuralPrototype);
+var tuple = (...as5) => unsafeArray(as5);
+var array3 = (as5) => unsafeArray(as5.slice(0));
+var unsafeArray = (as5) => Object.setPrototypeOf(as5, ArrayProto);
 var _case = () => (args) => args === undefined ? Object.create(StructuralPrototype) : struct2(args);
 var tagged = (tag) => (args) => {
   const value = args === undefined ? Object.create(StructuralPrototype) : struct2(args);
@@ -5594,9 +6081,9 @@ var TaggedError = (tag) => {
 // node_modules/effect/dist/esm/Effect.js
 var exports_Effect = {};
 __export(exports_Effect, {
-  zipWith: () => zipWith4,
-  zipRight: () => zipRight2,
-  zipLeft: () => zipLeft2,
+  zipWith: () => zipWith5,
+  zipRight: () => zipRight3,
+  zipLeft: () => zipLeft3,
   zip: () => zip4,
   yieldNow: () => yieldNow4,
   withUnhandledErrorLogLevel: () => withUnhandledErrorLogLevel2,
@@ -5673,7 +6160,7 @@ __export(exports_Effect, {
   tapError: () => tapError3,
   tapDefect: () => tapDefect2,
   tapBoth: () => tapBoth2,
-  tap: () => tap3,
+  tap: () => tap4,
   takeWhile: () => takeWhile2,
   takeUntil: () => takeUntil2,
   tagMetricsScoped: () => tagMetricsScoped2,
@@ -5725,7 +6212,7 @@ __export(exports_Effect, {
   reduceWhile: () => reduceWhile2,
   reduceRight: () => reduceRight3,
   reduceEffect: () => reduceEffect2,
-  reduce: () => reduce10,
+  reduce: () => reduce11,
   randomWith: () => randomWith2,
   random: () => random3,
   raceWith: () => raceWith2,
@@ -5761,13 +6248,13 @@ __export(exports_Effect, {
   matchEffect: () => matchEffect2,
   matchCauseEffect: () => matchCauseEffect3,
   matchCause: () => matchCause3,
-  match: () => match11,
+  match: () => match12,
   mapInputContext: () => mapInputContext2,
   mapErrorCause: () => mapErrorCause2,
   mapError: () => mapError3,
   mapBoth: () => mapBoth3,
   mapAccum: () => mapAccum3,
-  map: () => map12,
+  map: () => map13,
   makeSpanScoped: () => makeSpanScoped2,
   makeSpan: () => makeSpan2,
   makeSemaphore: () => makeSemaphore2,
@@ -5788,13 +6275,13 @@ __export(exports_Effect, {
   locally: () => locally,
   linkSpans: () => linkSpans2,
   linkSpanCurrent: () => linkSpanCurrent2,
-  liftPredicate: () => liftPredicate2,
-  let: () => let_3,
+  liftPredicate: () => liftPredicate3,
+  let: () => let_4,
   labelMetricsScoped: () => labelMetricsScoped2,
   labelMetrics: () => labelMetrics2,
   iterate: () => iterate2,
   isSuccess: () => isSuccess3,
-  isFailure: () => isFailure3,
+  isFailure: () => isFailure4,
   isEffect: () => isEffect2,
   intoDeferred: () => intoDeferred2,
   interruptibleMask: () => interruptibleMask2,
@@ -5808,7 +6295,7 @@ __export(exports_Effect, {
   head: () => head4,
   getRuntimeFlags: () => getRuntimeFlags,
   getFiberRefs: () => getFiberRefs,
-  gen: () => gen2,
+  gen: () => gen3,
   functionWithSpan: () => functionWithSpan2,
   fromNullable: () => fromNullable3,
   fromFiberEffect: () => fromFiberEffect2,
@@ -5825,8 +6312,8 @@ __export(exports_Effect, {
   fn: () => fn,
   flipWith: () => flipWith2,
   flip: () => flip2,
-  flatten: () => flatten7,
-  flatMap: () => flatMap10,
+  flatten: () => flatten9,
+  flatMap: () => flatMap11,
   firstSuccessOf: () => firstSuccessOf2,
   findFirst: () => findFirst6,
   finalizersMask: () => finalizersMask2,
@@ -5837,7 +6324,7 @@ __export(exports_Effect, {
   filterMap: () => filterMap5,
   filterEffectOrFail: () => filterEffectOrFail2,
   filterEffectOrElse: () => filterEffectOrElse2,
-  filter: () => filter7,
+  filter: () => filter8,
   fiberIdWith: () => fiberIdWith2,
   fiberId: () => fiberId2,
   failSync: () => failSync3,
@@ -5896,22 +6383,22 @@ __export(exports_Effect, {
   cached: () => cached3,
   cacheRequestResult: () => cacheRequestResult,
   blocked: () => blocked2,
-  bindTo: () => bindTo3,
+  bindTo: () => bindTo4,
   bindAll: () => bindAll2,
-  bind: () => bind3,
+  bind: () => bind4,
   awaitAllChildren: () => awaitAllChildren2,
   asyncEffect: () => asyncEffect2,
   async: () => async,
-  asVoid: () => asVoid3,
+  asVoid: () => asVoid4,
   asSomeError: () => asSomeError2,
   asSome: () => asSome2,
-  as: () => as3,
-  ap: () => ap,
+  as: () => as5,
+  ap: () => ap2,
   annotateSpans: () => annotateSpans3,
   annotateLogsScoped: () => annotateLogsScoped2,
   annotateLogs: () => annotateLogs3,
   annotateCurrentSpan: () => annotateCurrentSpan2,
-  andThen: () => andThen4,
+  andThen: () => andThen6,
   allowInterrupt: () => allowInterrupt2,
   allWith: () => allWith2,
   allSuccesses: () => allSuccesses2,
@@ -5923,7 +6410,7 @@ __export(exports_Effect, {
   Tag: () => Tag3,
   Service: () => Service,
   EffectTypeId: () => EffectTypeId3,
-  Do: () => Do2
+  Do: () => Do3
 });
 
 // node_modules/effect/dist/esm/internal/clock.js
@@ -5985,8 +6472,8 @@ class ClockImpl {
   }
   sleep(duration) {
     return async_((resume) => {
-      const canceler = globalClockScheduler.unsafeSchedule(() => resume(void_), duration);
-      return asVoid(sync(canceler));
+      const canceler = globalClockScheduler.unsafeSchedule(() => resume(void_2), duration);
+      return asVoid2(sync(canceler));
     });
   }
 }
@@ -6165,7 +6652,7 @@ var prefixed = /* @__PURE__ */ dual(2, (self, prefix) => {
 });
 
 // node_modules/effect/dist/esm/internal/configProvider/pathPatch.js
-var empty17 = {
+var empty18 = {
   _tag: "Empty"
 };
 var patch5 = /* @__PURE__ */ dual(2, (path, patch6) => {
@@ -6241,8 +6728,8 @@ var makeFlat = (options) => ({
   enumerateChildren: options.enumerateChildren
 });
 var fromFlat = (flat) => make20({
-  load: (config) => flatMap7(fromFlatLoop(flat, empty3(), config, false), (chunk) => match2(head(chunk), {
-    onNone: () => fail2(MissingData(empty3(), `Expected a single value having structure: ${config}`)),
+  load: (config) => flatMap7(fromFlatLoop(flat, empty(), config, false), (chunk) => match2(head(chunk), {
+    onNone: () => fail2(MissingData(empty(), `Expected a single value having structure: ${config}`)),
     onSome: succeed
   })),
   flattened: flat
@@ -6270,7 +6757,7 @@ var fromEnv = (options) => {
     const keyPaths = keys3.map((value) => unmakePathString(value.toUpperCase()));
     const filteredKeyPaths = keyPaths.filter((keyPath) => {
       for (let i = 0;i < path.length; i++) {
-        const pathComponent = pipe(path, unsafeGet3(i));
+        const pathComponent = pipe(path, unsafeGet(i));
         const currentElement = keyPath[i];
         if (currentElement === undefined || pathComponent !== currentElement) {
           return false;
@@ -6278,12 +6765,12 @@ var fromEnv = (options) => {
       }
       return true;
     }).flatMap((keyPath) => keyPath.slice(path.length, path.length + 1));
-    return fromIterable5(filteredKeyPaths);
+    return fromIterable6(filteredKeyPaths);
   });
   return fromFlat(makeFlat({
     load,
     enumerateChildren,
-    patch: empty17
+    patch: empty18
   }));
 };
 var extend = (leftDef, rightDef, left3, right3) => {
@@ -6337,7 +6824,7 @@ var fromFlatLoop = (flat, prefix, config, split) => {
     case OP_PRIMITIVE: {
       return pipe(patch5(prefix, flat.patch), flatMap7((prefix2) => pipe(flat.load(prefix2, op, split), flatMap7((values3) => {
         if (values3.length === 0) {
-          const name = pipe(last(prefix2), getOrElse3(() => "<n/a>"));
+          const name = pipe(last(prefix2), getOrElse(() => "<n/a>"));
           return fail2(MissingData([], `Expected ${op.description} with name ${name}`));
         }
         return succeed(values3);
@@ -6349,9 +6836,9 @@ var fromFlatLoop = (flat, prefix, config, split) => {
           return suspend(() => map9(fromFlatLoop(flat, prefix, op.config, true), of));
         }
         return pipe(forEachSequential(indices, (index) => fromFlatLoop(flat, append(prefix, `[${index}]`), op.config, true)), map9((chunkChunk) => {
-          const flattened = flatten(chunkChunk);
+          const flattened = flatten2(chunkChunk);
           if (flattened.length === 0) {
-            return of(empty3());
+            return of(empty());
           }
           return of(flattened);
         }));
@@ -6361,9 +6848,9 @@ var fromFlatLoop = (flat, prefix, config, split) => {
       return suspend(() => pipe(patch5(prefix, flat.patch), flatMap7((prefix2) => pipe(flat.enumerateChildren(prefix2), flatMap7((keys3) => {
         return pipe(keys3, forEachSequential((key) => fromFlatLoop(flat, concat(prefix2, of(key)), op.valueConfig, split)), map9((matrix) => {
           if (matrix.length === 0) {
-            return of(empty8());
+            return of(empty9());
           }
-          return pipe(transpose(matrix), map3((values3) => fromIterable6(zip(fromIterable(keys3), values3))));
+          return pipe(transpose(matrix), map3((values3) => fromIterable7(zip(fromIterable2(keys3), values3))));
         }));
       })))));
     }
@@ -6380,8 +6867,8 @@ var fromFlatLoop = (flat, prefix, config, split) => {
         }
         if (isRight2(left3) && isRight2(right3)) {
           const path = pipe(prefix, join("."));
-          const fail3 = fromFlatLoopFail(prefix, path);
-          const [lefts, rights] = extend(fail3, fail3, pipe(left3.right, map3(right2)), pipe(right3.right, map3(right2)));
+          const fail4 = fromFlatLoopFail(prefix, path);
+          const [lefts, rights] = extend(fail4, fail4, pipe(left3.right, map3(right2)), pipe(right3.right, map3(right2)));
           return pipe(lefts, zip(rights), forEachSequential(([left4, right4]) => pipe(zip2(left4, right4), map9(([left5, right5]) => op.zip(left5, right5)))));
         }
         throw new Error("BUG: ConfigProvider.fromFlatLoop - please report an issue at https://github.com/Effect-TS/effect/issues");
@@ -6407,14 +6894,14 @@ var transpose = (array4) => {
   return Object.keys(array4[0]).map((column) => array4.map((row) => row[column]));
 };
 var indicesFrom = (quotedIndices) => pipe(forEachSequential(quotedIndices, parseQuotedIndex), mapBoth2({
-  onFailure: () => empty3(),
+  onFailure: () => empty(),
   onSuccess: sort(Order2)
-}), either2, map9(merge3));
+}), either2, map9(merge));
 var QUOTED_INDEX_REGEX = /^(\[(\d+)\])$/;
 var parseQuotedIndex = (str) => {
-  const match6 = str.match(QUOTED_INDEX_REGEX);
-  if (match6 !== null) {
-    const matchedIndex = match6[2];
+  const match7 = str.match(QUOTED_INDEX_REGEX);
+  if (match7 !== null) {
+    const matchedIndex = match7[2];
     return pipe(matchedIndex !== undefined && matchedIndex.length > 0 ? some2(matchedIndex) : none2(), flatMap(parseInteger));
   }
   return none2();
@@ -6425,10 +6912,10 @@ var parseInteger = (str) => {
 };
 
 // node_modules/effect/dist/esm/internal/defaultServices/console.js
-var TypeId8 = /* @__PURE__ */ Symbol.for("effect/Console");
+var TypeId9 = /* @__PURE__ */ Symbol.for("effect/Console");
 var consoleTag = /* @__PURE__ */ GenericTag("effect/Console");
 var defaultConsole = {
-  [TypeId8]: TypeId8,
+  [TypeId9]: TypeId9,
   assert(condition, ...args) {
     return sync(() => {
       console.assert(condition, ...args);
@@ -6550,7 +7037,7 @@ var shuffleWith = (elements, nextIntBounded) => {
     for (let i = buffer.length;i >= 2; i = i - 1) {
       numbers.push(i);
     }
-    return pipe(numbers, forEachSequentialDiscard((n) => pipe(nextIntBounded(n), map9((k) => swap(buffer, n - 1, k)))), as(fromIterable2(buffer)));
+    return pipe(numbers, forEachSequentialDiscard((n) => pipe(nextIntBounded(n), map9((k) => swap(buffer, n - 1, k)))), as3(fromIterable3(buffer)));
   })));
 };
 var swap = (buffer, index1, index2) => {
@@ -6726,7 +7213,7 @@ var DisablePropagation = /* @__PURE__ */ Reference2()("effect/Tracer/DisableProp
 });
 
 // node_modules/effect/dist/esm/internal/defaultServices.js
-var liveServices = /* @__PURE__ */ pipe(/* @__PURE__ */ empty2(), /* @__PURE__ */ add2(clockTag, /* @__PURE__ */ make18()), /* @__PURE__ */ add2(consoleTag, defaultConsole), /* @__PURE__ */ add2(randomTag, /* @__PURE__ */ make21(/* @__PURE__ */ Math.random())), /* @__PURE__ */ add2(configProviderTag, /* @__PURE__ */ fromEnv()), /* @__PURE__ */ add2(tracerTag, nativeTracer));
+var liveServices = /* @__PURE__ */ pipe(/* @__PURE__ */ empty8(), /* @__PURE__ */ add4(clockTag, /* @__PURE__ */ make18()), /* @__PURE__ */ add4(consoleTag, defaultConsole), /* @__PURE__ */ add4(randomTag, /* @__PURE__ */ make21(/* @__PURE__ */ Math.random())), /* @__PURE__ */ add4(configProviderTag, /* @__PURE__ */ fromEnv()), /* @__PURE__ */ add4(tracerTag, nativeTracer));
 var currentServices = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/DefaultServices/currentServices"), () => fiberRefUnsafeMakeContext(liveServices));
 var sleep = (duration) => {
   const decodedDuration = decode(duration);
@@ -6736,14 +7223,14 @@ var defaultServicesWith = (f) => withFiberRuntime((fiber) => f(fiber.currentDefa
 var clockWith = (f) => defaultServicesWith((services) => f(services.unsafeMap.get(clockTag.key)));
 var currentTimeMillis = /* @__PURE__ */ clockWith((clock) => clock.currentTimeMillis);
 var currentTimeNanos = /* @__PURE__ */ clockWith((clock) => clock.currentTimeNanos);
-var withClock = /* @__PURE__ */ dual(2, (effect, c) => fiberRefLocallyWith(currentServices, add2(clockTag, c))(effect));
-var withConfigProvider = /* @__PURE__ */ dual(2, (self, provider) => fiberRefLocallyWith(currentServices, add2(configProviderTag, provider))(self));
+var withClock = /* @__PURE__ */ dual(2, (effect, c) => fiberRefLocallyWith(currentServices, add4(clockTag, c))(effect));
+var withConfigProvider = /* @__PURE__ */ dual(2, (self, provider) => fiberRefLocallyWith(currentServices, add4(configProviderTag, provider))(self));
 var configProviderWith = (f) => defaultServicesWith((services) => f(services.unsafeMap.get(configProviderTag.key)));
 var config = (config2) => configProviderWith((_) => _.load(config2));
 var randomWith = (f) => defaultServicesWith((services) => f(services.unsafeMap.get(randomTag.key)));
-var withRandom = /* @__PURE__ */ dual(2, (effect, value) => fiberRefLocallyWith(currentServices, add2(randomTag, value))(effect));
+var withRandom = /* @__PURE__ */ dual(2, (effect, value) => fiberRefLocallyWith(currentServices, add4(randomTag, value))(effect));
 var tracerWith = (f) => defaultServicesWith((services) => f(services.unsafeMap.get(tracerTag.key)));
-var withTracer = /* @__PURE__ */ dual(2, (effect, value) => fiberRefLocallyWith(currentServices, add2(tracerTag, value))(effect));
+var withTracer = /* @__PURE__ */ dual(2, (effect, value) => fiberRefLocallyWith(currentServices, add4(tracerTag, value))(effect));
 
 // node_modules/effect/dist/esm/Boolean.js
 var not = (self) => !self;
@@ -6759,10 +7246,10 @@ class Class2 extends Base2 {
 var OP_SEQUENTIAL2 = "Sequential";
 var OP_PARALLEL2 = "Parallel";
 var OP_PARALLEL_N = "ParallelN";
-var sequential2 = {
+var sequential3 = {
   _tag: OP_SEQUENTIAL2
 };
-var parallel2 = {
+var parallel3 = {
   _tag: OP_PARALLEL2
 };
 var parallelN = (parallelism) => ({
@@ -6773,15 +7260,15 @@ var isSequential = (self) => self._tag === OP_SEQUENTIAL2;
 var isParallel = (self) => self._tag === OP_PARALLEL2;
 
 // node_modules/effect/dist/esm/ExecutionStrategy.js
-var sequential3 = sequential2;
-var parallel3 = parallel2;
+var sequential4 = sequential3;
+var parallel4 = parallel3;
 var parallelN2 = parallelN;
 
 // node_modules/effect/dist/esm/internal/fiberRefs.js
 function unsafeMake4(fiberRefLocals) {
   return new FiberRefsImpl(fiberRefLocals);
 }
-function empty18() {
+function empty19() {
   return unsafeMake4(new Map);
 }
 var FiberRefsSym = /* @__PURE__ */ Symbol.for("effect/FiberRefs");
@@ -6864,22 +7351,22 @@ var joinAs = /* @__PURE__ */ dual(3, (self, fiberId2, that) => {
   return new FiberRefsImpl(parentFiberRefs);
 });
 var forkAs = /* @__PURE__ */ dual(2, (self, childId) => {
-  const map10 = new Map;
-  unsafeForkAs(self, map10, childId);
-  return new FiberRefsImpl(map10);
+  const map11 = new Map;
+  unsafeForkAs(self, map11, childId);
+  return new FiberRefsImpl(map11);
 });
-var unsafeForkAs = (self, map10, fiberId2) => {
+var unsafeForkAs = (self, map11, fiberId2) => {
   self.locals.forEach((stack, fiberRef) => {
     const oldValue = stack[0][1];
     const newValue = fiberRef.patch(fiberRef.fork)(oldValue);
     if (equals(oldValue, newValue)) {
-      map10.set(fiberRef, stack);
+      map11.set(fiberRef, stack);
     } else {
-      map10.set(fiberRef, [[fiberId2, newValue], ...stack]);
+      map11.set(fiberRef, [[fiberId2, newValue], ...stack]);
     }
   });
 };
-var fiberRefs = (self) => fromIterable5(self.locals.keys());
+var fiberRefs = (self) => fromIterable6(self.locals.keys());
 var setAll = (self) => forEachSequentialDiscard(fiberRefs(self), (fiberRef) => fiberRefSet(fiberRef, getOrDefault(self, fiberRef)));
 var delete_ = /* @__PURE__ */ dual(2, (self, fiberRef) => {
   const locals = new Map(self.locals);
@@ -6892,7 +7379,7 @@ var get8 = /* @__PURE__ */ dual(2, (self, fiberRef) => {
   }
   return some2(headNonEmpty(self.locals.get(fiberRef))[1]);
 });
-var getOrDefault = /* @__PURE__ */ dual(2, (self, fiberRef) => pipe(get8(self, fiberRef), getOrElse3(() => fiberRef.initial)));
+var getOrDefault = /* @__PURE__ */ dual(2, (self, fiberRef) => pipe(get8(self, fiberRef), getOrElse(() => fiberRef.initial)));
 var updateAs = /* @__PURE__ */ dual(2, (self, {
   fiberId: fiberId2,
   fiberRef,
@@ -6953,7 +7440,7 @@ var getOrDefault2 = getOrDefault;
 var joinAs2 = joinAs;
 var setAll2 = setAll;
 var updateManyAs2 = updateManyAs;
-var empty19 = empty18;
+var empty20 = empty19;
 
 // node_modules/effect/dist/esm/internal/fiberRefs/patch.js
 var OP_EMPTY2 = "Empty";
@@ -6961,12 +7448,12 @@ var OP_ADD = "Add";
 var OP_REMOVE = "Remove";
 var OP_UPDATE = "Update";
 var OP_AND_THEN = "AndThen";
-var empty20 = {
+var empty21 = {
   _tag: OP_EMPTY2
 };
 var diff5 = (oldValue, newValue) => {
   const missingLocals = new Map(oldValue.locals);
-  let patch6 = empty20;
+  let patch6 = empty21;
   for (const [fiberRef, pairs] of newValue.locals.entries()) {
     const newValue2 = headNonEmpty(pairs)[1];
     const old = missingLocals.get(fiberRef);
@@ -7144,7 +7631,7 @@ var fromLiteral = (literal) => {
 };
 
 // node_modules/effect/dist/esm/Micro.js
-var TypeId9 = /* @__PURE__ */ Symbol.for("effect/Micro");
+var TypeId10 = /* @__PURE__ */ Symbol.for("effect/Micro");
 var MicroExitTypeId = /* @__PURE__ */ Symbol.for("effect/Micro/MicroExit");
 var MicroCauseTypeId = /* @__PURE__ */ Symbol.for("effect/Micro/MicroCause");
 var microCauseVariance = {
@@ -7155,22 +7642,22 @@ class MicroCauseImpl extends globalThis.Error {
   _tag;
   traces;
   [MicroCauseTypeId];
-  constructor(_tag, originalError, traces) {
+  constructor(_tag, originalError2, traces) {
     const causeName = `MicroCause.${_tag}`;
     let name;
     let message;
     let stack;
-    if (originalError instanceof globalThis.Error) {
-      name = `(${causeName}) ${originalError.name}`;
-      message = originalError.message;
+    if (originalError2 instanceof globalThis.Error) {
+      name = `(${causeName}) ${originalError2.name}`;
+      message = originalError2.message;
       const messageLines = message.split(`
 `).length;
-      stack = originalError.stack ? `(${causeName}) ${originalError.stack.split(`
+      stack = originalError2.stack ? `(${causeName}) ${originalError2.stack.split(`
 `).slice(0, messageLines + 3).join(`
 `)}` : `${name}: ${message}`;
     } else {
       name = causeName;
-      message = toStringUnknown(originalError, 0);
+      message = toStringUnknown(originalError2, 0);
       stack = `${name}: ${message}`;
     }
     if (traces.length > 0) {
@@ -7274,7 +7761,7 @@ class MicroFiberImpl {
     }
     const interruptChildren = fiberMiddleware.interruptChildren && fiberMiddleware.interruptChildren(this);
     if (interruptChildren !== undefined) {
-      return this.evaluate(flatMap8(interruptChildren, () => exit2));
+      return this.evaluate(flatMap9(interruptChildren, () => exit2));
     }
     this._exit = exit2;
     for (let i = 0;i < this._observers.length; i++) {
@@ -7292,7 +7779,7 @@ class MicroFiberImpl {
         if (!yielding && this.getRef(CurrentScheduler).shouldYield(this)) {
           yielding = true;
           const prev = current;
-          current = flatMap8(yieldNow2, () => prev);
+          current = flatMap9(yieldNow2, () => prev);
         }
         current = current[evaluate](this);
         if (current === Yield) {
@@ -7352,7 +7839,7 @@ var microVariance = {
 var MicroProto = {
   ...EffectPrototype2,
   _op: "Micro",
-  [TypeId9]: microVariance,
+  [TypeId10]: microVariance,
   pipe() {
     return pipeArguments(this, arguments);
   },
@@ -7459,14 +7946,14 @@ var yieldNowWith = /* @__PURE__ */ makePrimitive({
   }
 });
 var yieldNow2 = /* @__PURE__ */ yieldNowWith(0);
-var void_2 = /* @__PURE__ */ succeed2(undefined);
+var void_3 = /* @__PURE__ */ succeed2(undefined);
 var withMicroFiber = /* @__PURE__ */ makePrimitive({
   op: "WithMicroFiber",
   eval(fiber) {
     return this[args](fiber);
   }
 });
-var flatMap8 = /* @__PURE__ */ dual(2, (self, f) => {
+var flatMap9 = /* @__PURE__ */ dual(2, (self, f) => {
   const onSuccess = Object.create(OnSuccessProto);
   onSuccess[args] = self;
   onSuccess[successCont] = f;
@@ -7522,10 +8009,10 @@ var updateContext = /* @__PURE__ */ dual(2, (self, f) => withMicroFiber((fiber) 
   fiber.context = f(prev);
   return onExit2(self, () => {
     fiber.context = prev;
-    return void_2;
+    return void_3;
   });
 }));
-var provideContext2 = /* @__PURE__ */ dual(2, (self, provided) => updateContext(self, merge2(provided)));
+var provideContext2 = /* @__PURE__ */ dual(2, (self, provided) => updateContext(self, merge3(provided)));
 class MaxOpsBeforeYield extends (/* @__PURE__ */ Reference2()("effect/Micro/currentMaxOpsBeforeYield", {
   defaultValue: () => 2048
 })) {
@@ -7549,8 +8036,8 @@ var OnSuccessAndFailureProto = /* @__PURE__ */ makePrimitiveProto({
   }
 });
 var onExit2 = /* @__PURE__ */ dual(2, (self, f) => uninterruptibleMask2((restore) => matchCauseEffect2(restore(self), {
-  onFailure: (cause) => flatMap8(f(exitFailCause2(cause)), () => failCause2(cause)),
-  onSuccess: (a) => flatMap8(f(exitSucceed2(a)), () => succeed2(a))
+  onFailure: (cause) => flatMap9(f(exitFailCause2(cause)), () => failCause2(cause)),
+  onSuccess: (a) => flatMap9(f(exitSucceed2(a)), () => succeed2(a))
 })));
 var setInterruptible = /* @__PURE__ */ makePrimitive({
   op: "SetInterruptible",
@@ -7615,9 +8102,9 @@ __export(exports_Ref, {
 });
 
 // node_modules/effect/dist/esm/Readable.js
-var TypeId10 = /* @__PURE__ */ Symbol.for("effect/Readable");
+var TypeId11 = /* @__PURE__ */ Symbol.for("effect/Readable");
 var Proto = {
-  [TypeId10]: TypeId10,
+  [TypeId11]: TypeId11,
   pipe() {
     return pipeArguments(this, arguments);
   }
@@ -7635,7 +8122,7 @@ class RefImpl extends Class2 {
     return this.get;
   }
   [RefTypeId] = refVariance;
-  [TypeId10] = TypeId10;
+  [TypeId11] = TypeId11;
   constructor(ref) {
     super();
     this.ref = ref;
@@ -7847,28 +8334,28 @@ var withScheduler = /* @__PURE__ */ dual(2, (self, scheduler) => fiberRefLocally
 var currentRequestMap = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentRequestMap"), () => fiberRefUnsafeMake(new Map));
 
 // node_modules/effect/dist/esm/internal/concurrency.js
-var match7 = (concurrency, sequential4, unbounded, bounded) => {
+var match8 = (concurrency, sequential5, unbounded, bounded) => {
   switch (concurrency) {
     case undefined:
-      return sequential4();
+      return sequential5();
     case "unbounded":
       return unbounded();
     case "inherit":
-      return fiberRefGetWith(currentConcurrency, (concurrency2) => concurrency2 === "unbounded" ? unbounded() : concurrency2 > 1 ? bounded(concurrency2) : sequential4());
+      return fiberRefGetWith(currentConcurrency, (concurrency2) => concurrency2 === "unbounded" ? unbounded() : concurrency2 > 1 ? bounded(concurrency2) : sequential5());
     default:
-      return concurrency > 1 ? bounded(concurrency) : sequential4();
+      return concurrency > 1 ? bounded(concurrency) : sequential5();
   }
 };
-var matchSimple = (concurrency, sequential4, concurrent) => {
+var matchSimple = (concurrency, sequential5, concurrent) => {
   switch (concurrency) {
     case undefined:
-      return sequential4();
+      return sequential5();
     case "unbounded":
       return concurrent();
     case "inherit":
-      return fiberRefGetWith(currentConcurrency, (concurrency2) => concurrency2 === "unbounded" || concurrency2 > 1 ? concurrent() : sequential4());
+      return fiberRefGetWith(currentConcurrency, (concurrency2) => concurrency2 === "unbounded" || concurrency2 > 1 ? concurrent() : sequential5());
     default:
-      return concurrency > 1 ? concurrent() : sequential4();
+      return concurrency > 1 ? concurrent() : sequential5();
   }
 };
 
@@ -8020,24 +8507,24 @@ var catchTags = /* @__PURE__ */ dual(2, (self, cases) => {
 });
 var cause = (self) => matchCause(self, {
   onFailure: identity,
-  onSuccess: () => empty16
+  onSuccess: () => empty6
 });
 var clockWith3 = clockWith2;
 var clock = /* @__PURE__ */ clockWith3(succeed);
-var delay = /* @__PURE__ */ dual(2, (self, duration) => zipRight(sleep2(duration), self));
+var delay = /* @__PURE__ */ dual(2, (self, duration) => zipRight2(sleep2(duration), self));
 var descriptorWith = (f) => withFiberRuntime((state, status) => f({
   id: state.id(),
   status,
   interruptors: interruptors(state.getFiberRef(currentInterruptedCause))
 }));
-var allowInterrupt = /* @__PURE__ */ descriptorWith((descriptor) => size3(descriptor.interruptors) > 0 ? interrupt2 : void_);
+var allowInterrupt = /* @__PURE__ */ descriptorWith((descriptor) => size3(descriptor.interruptors) > 0 ? interrupt2 : void_2);
 var descriptor = /* @__PURE__ */ descriptorWith(succeed);
 var diffFiberRefs = (self) => summarized(self, fiberRefs2, diff5);
 var diffFiberRefsAndRuntimeFlags = (self) => summarized(self, zip2(fiberRefs2, runtimeFlags), ([refs, flags], [refsNew, flagsNew]) => [diff5(refs, refsNew), diff4(flags, flagsNew)]);
-var Do = /* @__PURE__ */ succeed({});
-var bind2 = /* @__PURE__ */ bind(map9, flatMap7);
-var bindTo2 = /* @__PURE__ */ bindTo(map9);
-var let_2 = /* @__PURE__ */ let_(map9);
+var Do2 = /* @__PURE__ */ succeed({});
+var bind3 = /* @__PURE__ */ bind(map9, flatMap7);
+var bindTo3 = /* @__PURE__ */ bindTo(map9);
+var let_3 = /* @__PURE__ */ let_(map9);
 var dropUntil = /* @__PURE__ */ dual(2, (elements, predicate) => suspend(() => {
   const iterator = elements[Symbol.iterator]();
   const builder = [];
@@ -8081,7 +8568,7 @@ var filterMap4 = /* @__PURE__ */ dual(2, (elements, pf) => map9(forEachSequentia
 var filterOrDie = /* @__PURE__ */ dual(3, (self, predicate, orDieWith2) => filterOrElse(self, predicate, (a) => dieSync(() => orDieWith2(a))));
 var filterOrDieMessage = /* @__PURE__ */ dual(3, (self, predicate, message) => filterOrElse(self, predicate, () => dieMessage(message)));
 var filterOrElse = /* @__PURE__ */ dual(3, (self, predicate, orElse3) => flatMap7(self, (a) => predicate(a) ? succeed(a) : orElse3(a)));
-var liftPredicate = /* @__PURE__ */ dual(3, (self, predicate, orFailWith) => suspend(() => predicate(self) ? succeed(self) : fail2(orFailWith(self))));
+var liftPredicate2 = /* @__PURE__ */ dual(3, (self, predicate, orFailWith) => suspend(() => predicate(self) ? succeed(self) : fail2(orFailWith(self))));
 var filterOrFail = /* @__PURE__ */ dual((args2) => isEffect(args2[0]), (self, predicate, orFailWith) => filterOrElse(self, predicate, (a) => orFailWith === undefined ? fail2(new NoSuchElementException) : failSync(() => orFailWith(a))));
 var findFirst4 = /* @__PURE__ */ dual(2, (elements, predicate) => suspend(() => {
   const iterator = elements[Symbol.iterator]();
@@ -8102,14 +8589,14 @@ var findLoop = (iterator, index, f, value) => flatMap7(f(value, index), (result)
   return succeed(none2());
 });
 var firstSuccessOf = (effects) => suspend(() => {
-  const list = fromIterable2(effects);
+  const list = fromIterable3(effects);
   if (!isNonEmpty(list)) {
     return dieSync(() => new IllegalArgumentException(`Received an empty collection of effects`));
   }
   return pipe(tailNonEmpty2(list), reduce(headNonEmpty2(list), (left3, right3) => orElse2(left3, () => right3)));
 });
 var flipWith = /* @__PURE__ */ dual(2, (self, f) => flip(f(flip(self))));
-var match8 = /* @__PURE__ */ dual(2, (self, options) => matchEffect(self, {
+var match9 = /* @__PURE__ */ dual(2, (self, options) => matchEffect(self, {
   onFailure: (e) => succeed(options.onFailure(e)),
   onSuccess: (a) => succeed(options.onSuccess(a))
 }));
@@ -8123,28 +8610,28 @@ var forever = (self) => {
   return loop;
 };
 var fiberRefs2 = /* @__PURE__ */ withFiberRuntime((state) => succeed(state.getFiberRefs()));
-var head3 = (self) => flatMap7(self, (as2) => {
-  const iterator = as2[Symbol.iterator]();
+var head3 = (self) => flatMap7(self, (as5) => {
+  const iterator = as5[Symbol.iterator]();
   const next = iterator.next();
   if (next.done) {
     return fail2(new NoSuchElementException);
   }
   return succeed(next.value);
 });
-var ignore = (self) => match8(self, {
+var ignore = (self) => match9(self, {
   onFailure: constVoid,
   onSuccess: constVoid
 });
 var ignoreLogged = (self) => matchCauseEffect(self, {
   onFailure: (cause2) => logDebug(cause2, "An error was silently ignored because it is not anticipated to be useful"),
-  onSuccess: () => void_
+  onSuccess: () => void_2
 });
 var inheritFiberRefs = (childFiberRefs) => updateFiberRefs((parentFiberId, parentFiberRefs) => joinAs2(parentFiberRefs, parentFiberId, childFiberRefs));
-var isFailure = (self) => match8(self, {
+var isFailure3 = (self) => match9(self, {
   onFailure: constTrue,
   onSuccess: constFalse
 });
-var isSuccess = (self) => match8(self, {
+var isSuccess = (self) => match9(self, {
   onFailure: constFalse,
   onSuccess: constTrue
 });
@@ -8170,11 +8657,11 @@ var logWithLevel = (level) => (...message) => {
     }
   }
   if (cause2 === undefined) {
-    cause2 = empty16;
+    cause2 = empty6;
   }
   return withFiberRuntime((fiberState) => {
     fiberState.log(message, cause2, levelOption);
-    return void_;
+    return void_2;
   });
 };
 var log = /* @__PURE__ */ logWithLevel();
@@ -8186,9 +8673,9 @@ var logError = /* @__PURE__ */ logWithLevel(Error3);
 var logFatal = /* @__PURE__ */ logWithLevel(Fatal);
 var withLogSpan = /* @__PURE__ */ dual(2, (effect, label) => flatMap7(currentTimeMillis2, (now) => fiberRefLocallyWith(effect, currentLogSpan, prepend3(make26(label, now)))));
 var logAnnotations = /* @__PURE__ */ fiberRefGet(currentLogAnnotations);
-var loop = (initial, options) => options.discard ? loopDiscard(initial, options.while, options.step, options.body) : map9(loopInternal(initial, options.while, options.step, options.body), fromIterable);
-var loopInternal = (initial, cont, inc, body) => suspend(() => cont(initial) ? flatMap7(body(initial), (a) => map9(loopInternal(inc(initial), cont, inc, body), prepend3(a))) : sync(() => empty9()));
-var loopDiscard = (initial, cont, inc, body) => suspend(() => cont(initial) ? flatMap7(body(initial), () => loopDiscard(inc(initial), cont, inc, body)) : void_);
+var loop = (initial, options) => options.discard ? loopDiscard(initial, options.while, options.step, options.body) : map9(loopInternal(initial, options.while, options.step, options.body), fromIterable2);
+var loopInternal = (initial, cont, inc, body) => suspend(() => cont(initial) ? flatMap7(body(initial), (a) => map9(loopInternal(inc(initial), cont, inc, body), prepend3(a))) : sync(() => empty10()));
+var loopDiscard = (initial, cont, inc, body) => suspend(() => cont(initial) ? flatMap7(body(initial), () => loopDiscard(inc(initial), cont, inc, body)) : void_2);
 var mapAccum2 = /* @__PURE__ */ dual(3, (elements, initial, f) => suspend(() => {
   const iterator = elements[Symbol.iterator]();
   const builder = [];
@@ -8209,7 +8696,7 @@ var mapErrorCause = /* @__PURE__ */ dual(2, (self, f) => matchCauseEffect(self, 
   onFailure: (c) => failCauseSync(() => f(c)),
   onSuccess: succeed
 }));
-var memoize = (self) => pipe(deferredMake(), flatMap7((deferred) => pipe(diffFiberRefsAndRuntimeFlags(self), intoDeferred(deferred), once, map9((complete) => zipRight(complete, pipe(deferredAwait(deferred), flatMap7(([patch8, a]) => as(zip2(patchFiberRefs(patch8[0]), updateRuntimeFlags(patch8[1])), a))))))));
+var memoize = (self) => pipe(deferredMake(), flatMap7((deferred) => pipe(diffFiberRefsAndRuntimeFlags(self), intoDeferred(deferred), once, map9((complete) => zipRight2(complete, pipe(deferredAwait(deferred), flatMap7(([patch8, a]) => as3(zip2(patchFiberRefs(patch8[0]), updateRuntimeFlags(patch8[1])), a))))))));
 var merge5 = (self) => matchEffect(self, {
   onFailure: (e) => succeed(e),
   onSuccess: succeed
@@ -8218,12 +8705,12 @@ var negate = (self) => map9(self, (b) => !b);
 var none6 = (self) => flatMap7(self, (option) => {
   switch (option._tag) {
     case "None":
-      return void_;
+      return void_2;
     case "Some":
       return fail2(new NoSuchElementException);
   }
 });
-var once = (self) => map9(make24(true), (ref) => asVoid(whenEffect(self, getAndSet2(ref, false))));
+var once = (self) => map9(make24(true), (ref) => asVoid2(whenEffect(self, getAndSet2(ref, false))));
 var option = (self) => matchEffect(self, {
   onFailure: () => succeed(none2()),
   onSuccess: (a) => succeed(some2(a))
@@ -8232,7 +8719,7 @@ var orElseFail = /* @__PURE__ */ dual(2, (self, evaluate2) => orElse2(self, () =
 var orElseSucceed = /* @__PURE__ */ dual(2, (self, evaluate2) => orElse2(self, () => sync(evaluate2)));
 var parallelErrors = (self) => matchCauseEffect(self, {
   onFailure: (cause2) => {
-    const errors = fromIterable(failures(cause2));
+    const errors = fromIterable2(failures(cause2));
     return errors.length === 0 ? failCause(cause2) : fail2(errors);
   },
   onSuccess: succeed
@@ -8251,11 +8738,11 @@ var promise = (evaluate2) => evaluate2.length >= 1 ? async_((resolve, signal) =>
     resolve(die2(e));
   }
 });
-var provideService = /* @__PURE__ */ dual(3, (self, tag, service) => contextWithEffect((env) => provideContext(self, add2(env, tag, service))));
-var provideServiceEffect = /* @__PURE__ */ dual(3, (self, tag, effect) => contextWithEffect((env) => flatMap7(effect, (service) => provideContext(self, pipe(env, add2(tag, service))))));
+var provideService = /* @__PURE__ */ dual(3, (self, tag, service) => contextWithEffect((env) => provideContext(self, add4(env, tag, service))));
+var provideServiceEffect = /* @__PURE__ */ dual(3, (self, tag, effect) => contextWithEffect((env) => flatMap7(effect, (service) => provideContext(self, pipe(env, add4(tag, service))))));
 var random2 = /* @__PURE__ */ randomWith(succeed);
-var reduce8 = /* @__PURE__ */ dual(3, (elements, zero2, f) => fromIterable(elements).reduce((acc, el, i) => flatMap7(acc, (a) => f(a, el, i)), succeed(zero2)));
-var reduceRight2 = /* @__PURE__ */ dual(3, (elements, zero2, f) => fromIterable(elements).reduceRight((acc, el, i) => flatMap7(acc, (a) => f(el, a, i)), succeed(zero2)));
+var reduce9 = /* @__PURE__ */ dual(3, (elements, zero2, f) => fromIterable2(elements).reduce((acc, el, i) => flatMap7(acc, (a) => f(a, el, i)), succeed(zero2)));
+var reduceRight2 = /* @__PURE__ */ dual(3, (elements, zero2, f) => fromIterable2(elements).reduceRight((acc, el, i) => flatMap7(acc, (a) => f(el, a, i)), succeed(zero2)));
 var reduceWhile = /* @__PURE__ */ dual(3, (elements, zero2, options) => flatMap7(sync(() => elements[Symbol.iterator]()), (iterator) => reduceWhileLoop(iterator, 0, zero2, options.while, options.body)));
 var reduceWhileLoop = (iterator, index, state, predicate, f) => {
   const next = iterator.next();
@@ -8265,7 +8752,7 @@ var reduceWhileLoop = (iterator, index, state, predicate, f) => {
   return succeed(state);
 };
 var repeatN = /* @__PURE__ */ dual(2, (self, n) => suspend(() => repeatNLoop(self, n)));
-var repeatNLoop = (self, n) => flatMap7(self, (a) => n <= 0 ? succeed(a) : zipRight(yieldNow(), repeatNLoop(self, n - 1)));
+var repeatNLoop = (self, n) => flatMap7(self, (a) => n <= 0 ? succeed(a) : zipRight2(yieldNow(), repeatNLoop(self, n - 1)));
 var sandbox = (self) => matchCauseEffect(self, {
   onFailure: fail2,
   onSuccess: succeed
@@ -8324,25 +8811,25 @@ var tapBoth = /* @__PURE__ */ dual(2, (self, {
     const either3 = failureOrCause(cause2);
     switch (either3._tag) {
       case "Left": {
-        return zipRight(onFailure(either3.left), failCause(cause2));
+        return zipRight2(onFailure(either3.left), failCause(cause2));
       }
       case "Right": {
         return failCause(cause2);
       }
     }
   },
-  onSuccess: (a) => as(onSuccess(a), a)
+  onSuccess: (a) => as3(onSuccess(a), a)
 }));
 var tapDefect = /* @__PURE__ */ dual(2, (self, f) => catchAllCause(self, (cause2) => match2(keepDefects(cause2), {
   onNone: () => failCause(cause2),
-  onSome: (a) => zipRight(f(a), failCause(cause2))
+  onSome: (a) => zipRight2(f(a), failCause(cause2))
 })));
 var tapError = /* @__PURE__ */ dual(2, (self, f) => matchCauseEffect(self, {
   onFailure: (cause2) => {
     const either3 = failureOrCause(cause2);
     switch (either3._tag) {
       case "Left":
-        return zipRight(f(either3.left), failCause(cause2));
+        return zipRight2(f(either3.left), failCause(cause2));
       case "Right":
         return failCause(cause2);
     }
@@ -8353,10 +8840,10 @@ var tapErrorTag = /* @__PURE__ */ dual(3, (self, k, f) => tapError(self, (e) => 
   if (isTagged(e, k)) {
     return f(e);
   }
-  return void_;
+  return void_2;
 }));
 var tapErrorCause = /* @__PURE__ */ dual(2, (self, f) => matchCauseEffect(self, {
-  onFailure: (cause2) => zipRight(f(cause2), failCause(cause2)),
+  onFailure: (cause2) => zipRight2(f(cause2), failCause(cause2)),
   onSuccess: succeed
 }));
 var timed = (self) => timedWith(self, currentTimeNanos2);
@@ -8372,21 +8859,21 @@ var tryPromise = (arg) => {
     evaluate2 = arg.try;
     catcher = arg.catch;
   }
-  const fail3 = (e) => catcher ? failSync(() => catcher(e)) : fail2(new UnknownException(e, "An unknown error occurred in Effect.tryPromise"));
+  const fail4 = (e) => catcher ? failSync(() => catcher(e)) : fail2(new UnknownException(e, "An unknown error occurred in Effect.tryPromise"));
   if (evaluate2.length >= 1) {
     return async_((resolve, signal) => {
       try {
-        evaluate2(signal).then((a) => resolve(succeed(a)), (e) => resolve(fail3(e)));
+        evaluate2(signal).then((a) => resolve(succeed(a)), (e) => resolve(fail4(e)));
       } catch (e) {
-        resolve(fail3(e));
+        resolve(fail4(e));
       }
     });
   }
   return async_((resolve) => {
     try {
-      evaluate2().then((a) => resolve(succeed(a)), (e) => resolve(fail3(e)));
+      evaluate2().then((a) => resolve(succeed(a)), (e) => resolve(fail4(e)));
     } catch (e) {
-      resolve(fail3(e));
+      resolve(fail4(e));
     }
   });
 };
@@ -8403,9 +8890,9 @@ var unlessEffect = /* @__PURE__ */ dual(2, (self, condition) => flatMap7(conditi
 var unsandbox = (self) => mapErrorCause(self, flatten3);
 var updateFiberRefs = (f) => withFiberRuntime((state) => {
   state.setFiberRefs(f(state.id(), state.getFiberRefs()));
-  return void_;
+  return void_2;
 });
-var updateService = /* @__PURE__ */ dual(3, (self, tag, f) => mapInputContext(self, (context2) => add2(context2, tag, f(unsafeGet2(context2, tag)))));
+var updateService = /* @__PURE__ */ dual(3, (self, tag, f) => mapInputContext(self, (context2) => add4(context2, tag, f(unsafeGet4(context2, tag)))));
 var when = /* @__PURE__ */ dual(2, (self, condition) => suspend(() => condition() ? map9(self, some2) : succeed(none2())));
 var whenFiberRef = /* @__PURE__ */ dual(3, (self, fiberRef, predicate) => flatMap7(fiberRefGet(fiberRef), (s) => predicate(s) ? map9(self, (a) => [s, some2(a)]) : succeed([s, none2()])));
 var whenRef = /* @__PURE__ */ dual(3, (self, ref, predicate) => flatMap7(get11(ref), (s) => predicate(s) ? map9(self, (a) => [s, some2(a)]) : succeed([s, none2()])));
@@ -8468,9 +8955,9 @@ var linkSpans = /* @__PURE__ */ dual((args2) => isEffect(args2[0]), (self, span2
   attributes: attributes ?? {}
 })));
 var bigint02 = /* @__PURE__ */ BigInt(0);
-var filterDisablePropagation = /* @__PURE__ */ flatMap((span2) => get2(span2.context, DisablePropagation) ? span2._tag === "Span" ? filterDisablePropagation(span2.parent) : none2() : some2(span2));
+var filterDisablePropagation = /* @__PURE__ */ flatMap((span2) => get5(span2.context, DisablePropagation) ? span2._tag === "Span" ? filterDisablePropagation(span2.parent) : none2() : some2(span2));
 var unsafeMakeSpan = (fiber, name, options) => {
-  const disablePropagation = !fiber.getFiberRef(currentTracerEnabled) || options.context && get2(options.context, DisablePropagation);
+  const disablePropagation = !fiber.getFiberRef(currentTracerEnabled) || options.context && get5(options.context, DisablePropagation);
   const context2 = fiber.getFiberRef(currentContext);
   const parent = options.parent ? some2(options.parent) : options.root ? none2() : filterDisablePropagation(getOption2(context2, spanTag));
   let span2;
@@ -8478,18 +8965,18 @@ var unsafeMakeSpan = (fiber, name, options) => {
     span2 = noopSpan({
       name,
       parent,
-      context: add2(options.context ?? empty2(), DisablePropagation, true)
+      context: add4(options.context ?? empty8(), DisablePropagation, true)
     });
   } else {
     const services = fiber.getFiberRef(currentServices);
-    const tracer2 = get2(services, tracerTag);
-    const clock2 = get2(services, Clock);
+    const tracer2 = get5(services, tracerTag);
+    const clock2 = get5(services, Clock);
     const timingEnabled = fiber.getFiberRef(currentTracerTimingEnabled);
     const fiberRefs3 = fiber.getFiberRefs();
     const annotationsFromEnv = get9(fiberRefs3, currentTracerSpanAnnotations);
     const linksFromEnv = get9(fiberRefs3, currentTracerSpanLinks);
-    const links = linksFromEnv._tag === "Some" ? options.links !== undefined ? [...toReadonlyArray(linksFromEnv.value), ...options.links ?? []] : toReadonlyArray(linksFromEnv.value) : options.links ?? empty3();
-    span2 = tracer2.span(name, parent, options.context ?? empty2(), links, timingEnabled ? clock2.unsafeCurrentTimeNanos() : bigint02, options.kind ?? "internal", options);
+    const links = linksFromEnv._tag === "Some" ? options.links !== undefined ? [...toReadonlyArray(linksFromEnv.value), ...options.links ?? []] : toReadonlyArray(linksFromEnv.value) : options.links ?? empty();
+    span2 = tracer2.span(name, parent, options.context ?? empty8(), links, timingEnabled ? clock2.unsafeCurrentTimeNanos() : bigint02, options.kind ?? "internal", options);
     if (annotationsFromEnv._tag === "Some") {
       forEach3(annotationsFromEnv.value, (value, key) => span2.attribute(key, value));
     }
@@ -8523,7 +9010,7 @@ var useSpan = (name, ...args2) => {
   return withFiberRuntime((fiber) => {
     const span2 = unsafeMakeSpan(fiber, name, options);
     const timingEnabled = fiber.getFiberRef(currentTracerTimingEnabled);
-    const clock2 = get2(fiber.getFiberRef(currentServices), clockTag);
+    const clock2 = get5(fiber.getFiberRef(currentServices), clockTag);
     return onExit(evaluate2(span2), (exit2) => endSpan(span2, exit2, clock2, timingEnabled));
   });
 };
@@ -8574,8 +9061,8 @@ var optionFromOptional = (self) => catchAll(map9(self, some2), (error) => isNoSu
 var isExit = exitIsExit;
 var isSuccess2 = exitIsSuccess;
 var failCause3 = exitFailCause;
-var flatten5 = exitFlatten;
-var match9 = exitMatch;
+var flatten7 = exitFlatten;
+var match10 = exitMatch;
 var succeed3 = exitSucceed;
 
 // node_modules/effect/dist/esm/internal/fiberMessage.js
@@ -8671,7 +9158,7 @@ var interruptAllAs = /* @__PURE__ */ dual(2, /* @__PURE__ */ fnUntraced(function
   }
 }));
 var interruptAsFork = /* @__PURE__ */ dual(2, (self, fiberId2) => self.interruptAsFork(fiberId2));
-var join2 = (self) => zipLeft(flatten4(self.await), self.inheritAll);
+var join2 = (self) => zipLeft2(flatten5(self.await), self.inheritAll);
 var _never = {
   ...CommitPrototype,
   commit() {
@@ -8778,7 +9265,7 @@ class MetricBoundariesImpl {
   [MetricBoundariesTypeId] = MetricBoundariesTypeId;
   constructor(values3) {
     this.values = values3;
-    this._hash = pipe(string(MetricBoundariesSymbolKey), combine(array(this.values)));
+    this._hash = pipe(string(MetricBoundariesSymbolKey), combine(array2(this.values)));
   }
   _hash;
   [symbol]() {
@@ -8792,11 +9279,11 @@ class MetricBoundariesImpl {
   }
 }
 var isMetricBoundaries = (u) => hasProperty(u, MetricBoundariesTypeId);
-var fromIterable8 = (iterable) => {
+var fromIterable9 = (iterable) => {
   const values3 = pipe(iterable, appendAll(of2(Number.POSITIVE_INFINITY)), dedupe);
   return new MetricBoundariesImpl(values3);
 };
-var exponential = (options) => pipe(makeBy(options.count - 1, (i) => options.start * Math.pow(options.factor, i)), unsafeFromArray, fromIterable8);
+var exponential = (options) => pipe(makeBy(options.count - 1, (i) => options.start * Math.pow(options.factor, i)), unsafeFromArray, fromIterable9);
 
 // node_modules/effect/dist/esm/internal/metric/keyType.js
 var MetricKeyTypeSymbolKey = "effect/MetricKeyType";
@@ -8885,7 +9372,7 @@ class MetricKeyImpl {
     this.keyType = keyType;
     this.description = description;
     this.tags = tags;
-    this._hash = pipe(string(this.name + this.description), combine(hash(this.keyType)), combine(array(this.tags)));
+    this._hash = pipe(string(this.name + this.description), combine(hash(this.keyType)), combine(array2(this.tags)));
   }
   _hash;
   [symbol]() {
@@ -8904,9 +9391,9 @@ var histogram2 = (name, boundaries, description) => new MetricKeyImpl(name, hist
 var taggedWithLabels = /* @__PURE__ */ dual(2, (self, extraTags) => extraTags.length === 0 ? self : new MetricKeyImpl(self.name, self.keyType, self.description, union(self.tags, extraTags)));
 
 // node_modules/effect/dist/esm/MutableHashMap.js
-var TypeId11 = /* @__PURE__ */ Symbol.for("effect/MutableHashMap");
+var TypeId12 = /* @__PURE__ */ Symbol.for("effect/MutableHashMap");
 var MutableHashMapProto = {
-  [TypeId11]: TypeId11,
+  [TypeId12]: TypeId12,
   [Symbol.iterator]() {
     return new MutableHashMapIterator(this);
   },
@@ -8973,7 +9460,7 @@ class BucketIterator {
     return result;
   }
 }
-var empty21 = () => {
+var empty22 = () => {
   const self = Object.create(MutableHashMapProto);
   self.referential = new Map;
   self.buckets = new Map;
@@ -9047,7 +9534,7 @@ var remove5 = /* @__PURE__ */ dual(2, (self, key) => {
   }
   return self;
 });
-var size4 = (self) => {
+var size6 = (self) => {
   return self.referential.size + self.bucketsSize;
 };
 
@@ -9096,10 +9583,10 @@ class FrequencyState {
   }
   _hash;
   [symbol]() {
-    return pipe(string(FrequencyStateSymbolKey), combine(array(fromIterable(this.occurrences.entries()))), cached(this));
+    return pipe(string(FrequencyStateSymbolKey), combine(array2(fromIterable2(this.occurrences.entries()))), cached(this));
   }
   [symbol2](that) {
-    return isFrequencyState(that) && arrayEquals(fromIterable(this.occurrences.entries()), fromIterable(that.occurrences.entries()));
+    return isFrequencyState(that) && arrayEquals(fromIterable2(this.occurrences.entries()), fromIterable2(that.occurrences.entries()));
   }
   pipe() {
     return pipeArguments(this, arguments);
@@ -9248,9 +9735,9 @@ var gauge3 = (_key, startAt) => {
 };
 var histogram4 = (key) => {
   const bounds = key.keyType.boundaries.values;
-  const size5 = bounds.length;
-  const values3 = new Uint32Array(size5 + 1);
-  const boundaries = new Float64Array(size5);
+  const size7 = bounds.length;
+  const values3 = new Uint32Array(size7 + 1);
+  const boundaries = new Float64Array(size7);
   let count = 0;
   let sum = 0;
   let min2 = Number.MAX_VALUE;
@@ -9260,7 +9747,7 @@ var histogram4 = (key) => {
   }));
   const update4 = (value) => {
     let from = 0;
-    let to = size5;
+    let to = size7;
     while (from !== to) {
       const mid = Math.floor(from + (to - from) / 2);
       const boundary = boundaries[mid];
@@ -9288,9 +9775,9 @@ var histogram4 = (key) => {
     }
   };
   const getBuckets = () => {
-    const builder = allocate(size5);
+    const builder = allocate(size7);
     let cumulated = 0;
-    for (let i = 0;i < size5; i++) {
+    for (let i = 0;i < size7; i++) {
       const boundary = boundaries[i];
       const value = values3[i];
       cumulated = cumulated + value;
@@ -9367,7 +9854,7 @@ var summary3 = (key) => {
 var calculateQuantiles = (error, sortedQuantiles, sortedSamples) => {
   const sampleCount = sortedSamples.length;
   if (!isNonEmptyReadonlyArray(sortedQuantiles)) {
-    return empty3();
+    return empty();
   }
   const head4 = sortedQuantiles[0];
   const tail = sortedQuantiles.slice(1);
@@ -9506,7 +9993,7 @@ var MetricRegistryTypeId = /* @__PURE__ */ Symbol.for(MetricRegistrySymbolKey);
 
 class MetricRegistryImpl {
   [MetricRegistryTypeId] = MetricRegistryTypeId;
-  map = /* @__PURE__ */ empty21();
+  map = /* @__PURE__ */ empty22();
   snapshot() {
     const result = [];
     for (const [key, hook] of this.map) {
@@ -9607,7 +10094,7 @@ var metricVariance = {
 };
 var globalMetricRegistry = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/Metric/globalMetricRegistry"), () => make29());
 var make30 = function(keyType, unsafeUpdate, unsafeValue, unsafeModify) {
-  const metric = Object.assign((effect) => tap(effect, (a) => update4(metric, a)), {
+  const metric = Object.assign((effect) => tap2(effect, (a) => update4(metric, a)), {
     [MetricTypeId]: metricVariance,
     keyType,
     unsafeUpdate,
@@ -9673,9 +10160,9 @@ var Class3 = /* @__PURE__ */ function() {
   Class4.prototype = RequestPrototype;
   return Class4;
 }();
-var complete = /* @__PURE__ */ dual(2, (self, result) => fiberRefGetWith(currentRequestMap, (map10) => sync(() => {
-  if (map10.has(self)) {
-    const entry = map10.get(self);
+var complete = /* @__PURE__ */ dual(2, (self, result) => fiberRefGetWith(currentRequestMap, (map11) => sync(() => {
+  if (map11.has(self)) {
+    const entry = map11.get(self);
     if (!entry.state.completed) {
       entry.state.completed = true;
       deferredUnsafeDone(entry.result, result);
@@ -9940,9 +10427,9 @@ var makeImpl3 = (ord, root) => {
   return tree;
 };
 var isRedBlackTree = (u) => hasProperty(u, RedBlackTreeTypeId);
-var empty22 = (ord) => makeImpl3(ord, undefined);
-var fromIterable9 = /* @__PURE__ */ dual(2, (entries2, ord) => {
-  let tree = empty22(ord);
+var empty23 = (ord) => makeImpl3(ord, undefined);
+var fromIterable10 = /* @__PURE__ */ dual(2, (entries2, ord) => {
+  let tree = empty23(ord);
   for (const [key, value] of entries2) {
     tree = insert(tree, key, value);
   }
@@ -10169,18 +10656,18 @@ var keys3 = (self, direction) => {
 };
 
 // node_modules/effect/dist/esm/RedBlackTree.js
-var fromIterable10 = fromIterable9;
+var fromIterable11 = fromIterable10;
 var has6 = has5;
 var keys4 = keysForward;
 
 // node_modules/effect/dist/esm/SortedSet.js
-var TypeId12 = /* @__PURE__ */ Symbol.for("effect/SortedSet");
+var TypeId13 = /* @__PURE__ */ Symbol.for("effect/SortedSet");
 var SortedSetProto = {
-  [TypeId12]: {
+  [TypeId13]: {
     _A: (_) => _
   },
   [symbol]() {
-    return pipe(hash(this.keyTree), combine(hash(TypeId12)), cached(this));
+    return pipe(hash(this.keyTree), combine(hash(TypeId13)), cached(this));
   },
   [symbol2](that) {
     return isSortedSet(that) && equals(this.keyTree, that.keyTree);
@@ -10209,8 +10696,8 @@ var fromTree = (keyTree) => {
   a.keyTree = keyTree;
   return a;
 };
-var isSortedSet = (u) => hasProperty(u, TypeId12);
-var fromIterable11 = /* @__PURE__ */ dual(2, (iterable, ord) => fromTree(fromIterable10(Array.from(iterable).map((k) => [k, true]), ord)));
+var isSortedSet = (u) => hasProperty(u, TypeId13);
+var fromIterable12 = /* @__PURE__ */ dual(2, (iterable, ord) => fromTree(fromIterable11(Array.from(iterable).map((k) => [k, true]), ord)));
 var every5 = /* @__PURE__ */ dual(2, (self, predicate) => {
   for (const value of self) {
     if (!predicate(value)) {
@@ -10363,7 +10850,7 @@ var track = /* @__PURE__ */ sync(unsafeTrack);
 var fromEffect = (effect) => {
   return new Const(effect);
 };
-var none8 = /* @__PURE__ */ globalValue("effect/Supervisor/none", () => fromEffect(void_));
+var none8 = /* @__PURE__ */ globalValue("effect/Supervisor/none", () => fromEffect(void_2));
 
 // node_modules/effect/dist/esm/Differ.js
 var make32 = make14;
@@ -10373,7 +10860,7 @@ var OP_EMPTY3 = "Empty";
 var OP_ADD_SUPERVISOR = "AddSupervisor";
 var OP_REMOVE_SUPERVISOR = "RemoveSupervisor";
 var OP_AND_THEN2 = "AndThen";
-var empty24 = {
+var empty25 = {
   _tag: OP_EMPTY3
 };
 var combine8 = (self, that) => {
@@ -10427,33 +10914,33 @@ var removeSupervisor = (self, that) => {
 };
 var toSet2 = (self) => {
   if (equals(self, none8)) {
-    return empty7();
+    return empty5();
   } else {
     if (isZip(self)) {
       return pipe(toSet2(self.left), union3(toSet2(self.right)));
     } else {
-      return make10(self);
+      return make7(self);
     }
   }
 };
 var diff7 = (oldValue, newValue) => {
   if (equals(oldValue, newValue)) {
-    return empty24;
+    return empty25;
   }
   const oldSupervisors = toSet2(oldValue);
   const newSupervisors = toSet2(newValue);
-  const added = pipe(newSupervisors, difference3(oldSupervisors), reduce4(empty24, (patch9, supervisor) => combine8(patch9, {
+  const added = pipe(newSupervisors, difference3(oldSupervisors), reduce4(empty25, (patch9, supervisor) => combine8(patch9, {
     _tag: OP_ADD_SUPERVISOR,
     supervisor
   })));
-  const removed = pipe(oldSupervisors, difference3(newSupervisors), reduce4(empty24, (patch9, supervisor) => combine8(patch9, {
+  const removed = pipe(oldSupervisors, difference3(newSupervisors), reduce4(empty25, (patch9, supervisor) => combine8(patch9, {
     _tag: OP_REMOVE_SUPERVISOR,
     supervisor
   })));
   return combine8(added, removed);
 };
 var differ2 = /* @__PURE__ */ make32({
-  empty: empty24,
+  empty: empty25,
   patch: patch8,
   combine: combine8,
   diff: diff7
@@ -10513,7 +11000,7 @@ var contOpSuccess = {
       self.pushStack(cont);
       return internalCall(() => cont.effect_instruction_i1());
     } else {
-      return void_;
+      return void_2;
     }
   },
   [OP_ITERATOR]: (self, cont, value) => {
@@ -10549,19 +11036,19 @@ var drainQueueWhileRunningTable = {
     return flatMap7(yieldNow(), () => cur);
   }
 };
-var runBlockedRequests = (self) => forEachSequentialDiscard(flatten2(self), (requestsByRequestResolver) => forEachConcurrentDiscard(sequentialCollectionToChunk(requestsByRequestResolver), ([dataSource, sequential4]) => {
-  const map10 = new Map;
+var runBlockedRequests = (self) => forEachSequentialDiscard(flatten4(self), (requestsByRequestResolver) => forEachConcurrentDiscard(sequentialCollectionToChunk(requestsByRequestResolver), ([dataSource, sequential5]) => {
+  const map11 = new Map;
   const arr = [];
-  for (const block of sequential4) {
+  for (const block of sequential5) {
     arr.push(toReadonlyArray(block));
     for (const entry of block) {
-      map10.set(entry.request, entry);
+      map11.set(entry.request, entry);
     }
   }
   const flat = arr.flat();
   return fiberRefLocally(invokeWithInterrupt(dataSource.runAll(arr), flat, () => flat.forEach((entry) => {
     entry.listeners.interrupted = true;
-  })), currentRequestMap, map10);
+  })), currentRequestMap, map11);
 }, false, false));
 var _version = /* @__PURE__ */ getCurrentVersion();
 
@@ -10797,7 +11284,7 @@ class FiberRuntime extends Class2 {
     return cur;
   }
   isInterrupted() {
-    return !isEmpty5(this.getFiberRef(currentInterruptedCause));
+    return !isEmpty3(this.getFiberRef(currentInterruptedCause));
   }
   addInterruptedCause(cause2) {
     const oldSC = this.getFiberRef(currentInterruptedCause);
@@ -10826,7 +11313,7 @@ class FiberRuntime extends Class2 {
       const body = () => {
         const next = it.next();
         if (!next.done) {
-          return asVoid(next.value.await);
+          return asVoid2(next.value.await);
         } else {
           return sync(() => {
             isDone3 = true;
@@ -10888,7 +11375,7 @@ class FiberRuntime extends Class2 {
     const loggers = this.getLoggers();
     const contextMap = this.getFiberRefs();
     if (size3(loggers) > 0) {
-      const clockService = get2(this.getFiberRef(currentServices), clockTag);
+      const clockService = get5(this.getFiberRef(currentServices), clockTag);
       const date = new Date(clockService.unsafeCurrentTimeMillis());
       withRedactableContext(contextMap, () => {
         for (const logger of loggers) {
@@ -11056,7 +11543,7 @@ class FiberRuntime extends Class2 {
     }
   }
   [OP_TAG](op) {
-    return sync(() => unsafeGet2(this.currentContext, op));
+    return sync(() => unsafeGet4(this.currentContext, op));
   }
   ["Left"](op) {
     return fail2(op.left);
@@ -11092,7 +11579,7 @@ class FiberRuntime extends Class2 {
       });
       return unsafeAsync((abortResume) => {
         resume2 = (_) => {
-          abortResume(void_);
+          abortResume(void_2);
         };
         fiber.unsafeInterrupt();
       });
@@ -11281,7 +11768,7 @@ class FiberRuntime extends Class2 {
             const level = this.getFiberRef(currentVersionMismatchErrorLogLevel);
             if (level._tag === "Some") {
               const effectVersion = cur[EffectTypeId2]._V;
-              this.log(`Executing an Effect versioned ${effectVersion} with a Runtime of version ${getCurrentVersion()}, you may want to dedupe the effect dependencies, you can use the language service plugin to detect this at compile time: https://github.com/Effect-TS/language-service`, empty16, level);
+              this.log(`Executing an Effect versioned ${effectVersion} with a Runtime of version ${getCurrentVersion()}, you may want to dedupe the effect dependencies, you can use the language service plugin to detect this at compile time: https://github.com/Effect-TS/language-service`, empty6, level);
             }
           }
           return this[cur._op](cur);
@@ -11312,7 +11799,7 @@ class FiberRuntime extends Class2 {
 var currentMinimumLogLevel = /* @__PURE__ */ globalValue("effect/FiberRef/currentMinimumLogLevel", () => fiberRefUnsafeMake(fromLiteral("Info")));
 var loggerWithConsoleLog = (self) => makeLogger((opts) => {
   const services = getOrDefault2(opts.context, currentServices);
-  get2(services, consoleTag).unsafe.log(self.log(opts));
+  get5(services, consoleTag).unsafe.log(self.log(opts));
 });
 var defaultLogger = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/Logger/defaultLogger"), () => loggerWithConsoleLog(stringLogger));
 var tracerLogger = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/Logger/tracerLogger"), () => makeLogger(({
@@ -11327,7 +11814,7 @@ var tracerLogger = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effec
   if (span2._tag === "None" || span2.value._tag === "ExternalSpan") {
     return;
   }
-  const clockService = unsafeGet2(getOrDefault(context2, currentServices), clockTag);
+  const clockService = unsafeGet4(getOrDefault(context2, currentServices), clockTag);
   const attributes = {};
   for (const [key, value] of annotations) {
     attributes[key] = value;
@@ -11341,7 +11828,7 @@ var tracerLogger = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effec
   }
   span2.value.event(toStringUnknown(Array.isArray(message) && message.length === 1 ? message[0] : message), clockService.unsafeCurrentTimeNanos(), attributes);
 }));
-var currentLoggers = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentLoggers"), () => fiberRefUnsafeMakeHashSet(make10(defaultLogger, tracerLogger)));
+var currentLoggers = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentLoggers"), () => fiberRefUnsafeMakeHashSet(make7(defaultLogger, tracerLogger)));
 var annotateLogsScoped = function() {
   if (typeof arguments[0] === "string") {
     return fiberRefLocallyScopedWith(currentLogAnnotations, set3(arguments[0], arguments[1]));
@@ -11365,7 +11852,7 @@ var whenLogLevel = /* @__PURE__ */ dual(2, (effect, level) => {
     return map9(effect, some2);
   });
 });
-var acquireRelease = /* @__PURE__ */ dual((args2) => isEffect(args2[0]), (acquire, release) => uninterruptible(tap(acquire, (a) => addFinalizer((exit2) => release(a, exit2)))));
+var acquireRelease = /* @__PURE__ */ dual((args2) => isEffect(args2[0]), (acquire, release) => uninterruptible(tap2(acquire, (a) => addFinalizer((exit2) => release(a, exit2)))));
 var acquireReleaseInterruptible = /* @__PURE__ */ dual((args2) => isEffect(args2[0]), (acquire, release) => ensuring(acquire, addFinalizer((exit2) => release(exit2))));
 var addFinalizer = (finalizer) => withFiberRuntime((runtime3) => {
   const acquireRefs = runtime3.getFiberRefs();
@@ -11389,7 +11876,7 @@ var daemonChildren = (self) => {
 var _existsParFound = /* @__PURE__ */ Symbol.for("effect/Effect/existsPar/found");
 var exists2 = /* @__PURE__ */ dual((args2) => isIterable(args2[0]) && !isEffect(args2[0]), (elements, predicate, options) => matchSimple(options?.concurrency, () => suspend(() => existsLoop(elements[Symbol.iterator](), 0, predicate)), () => matchEffect(forEach6(elements, (a, i) => if_(predicate(a, i), {
   onTrue: () => fail2(_existsParFound),
-  onFalse: () => void_
+  onFalse: () => void_2
 }), options), {
   onFailure: (e) => e === _existsParFound ? succeed(true) : fail2(e),
   onSuccess: () => succeed(false)
@@ -11401,19 +11888,19 @@ var existsLoop = (iterator, index, f) => {
   }
   return flatMap7(f(next.value, index), (b) => b ? succeed(b) : existsLoop(iterator, index + 1, f));
 };
-var filter5 = /* @__PURE__ */ dual((args2) => isIterable(args2[0]) && !isEffect(args2[0]), (elements, predicate, options) => {
+var filter7 = /* @__PURE__ */ dual((args2) => isIterable(args2[0]) && !isEffect(args2[0]), (elements, predicate, options) => {
   const predicate_ = options?.negate ? (a, i) => map9(predicate(a, i), not) : predicate;
-  return matchSimple(options?.concurrency, () => suspend(() => fromIterable(elements).reduceRight((effect, a, i) => zipWith2(effect, suspend(() => predicate_(a, i)), (list, b) => b ? [a, ...list] : list), sync(() => new Array))), () => map9(forEach6(elements, (a, i) => map9(predicate_(a, i), (b) => b ? some2(a) : none2()), options), getSomes));
+  return matchSimple(options?.concurrency, () => suspend(() => fromIterable2(elements).reduceRight((effect, a, i) => zipWith3(effect, suspend(() => predicate_(a, i)), (list, b) => b ? [a, ...list] : list), sync(() => new Array))), () => map9(forEach6(elements, (a, i) => map9(predicate_(a, i), (b) => b ? some2(a) : none2()), options), getSomes));
 });
 var allResolveInput = (input) => {
   if (Array.isArray(input) || isIterable(input)) {
     return [input, none2()];
   }
   const keys5 = Object.keys(input);
-  const size7 = keys5.length;
+  const size9 = keys5.length;
   return [keys5.map((k) => input[k]), some2((values4) => {
     const res = {};
-    for (let i = 0;i < size7; i++) {
+    for (let i = 0;i < size9; i++) {
       res[keys5[i]] = values4[i];
     }
     return res;
@@ -11430,11 +11917,11 @@ var allValidate = (effects, reconcile, options) => {
     concurrentFinalizers: options?.concurrentFinalizers
   }), (eithers) => {
     const none9 = none2();
-    const size7 = eithers.length;
-    const errors = new Array(size7);
-    const successes = new Array(size7);
+    const size9 = eithers.length;
+    const errors = new Array(size9);
+    const successes = new Array(size9);
     let errored = false;
-    for (let i = 0;i < size7; i++) {
+    for (let i = 0;i < size9; i++) {
       const either3 = eithers[i];
       if (either3._tag === "Left") {
         errors[i] = some2(either3.left);
@@ -11447,7 +11934,7 @@ var allValidate = (effects, reconcile, options) => {
     if (errored) {
       return reconcile._tag === "Some" ? fail2(reconcile.value(errors)) : fail2(errors);
     } else if (options?.discard) {
-      return void_;
+      return void_2;
     }
     return reconcile._tag === "Some" ? succeed(reconcile.value(successes)) : succeed(successes);
   });
@@ -11481,7 +11968,7 @@ var all2 = (arg, options) => {
   return options?.discard !== true && reconcile._tag === "Some" ? map9(forEach6(effects, identity, options), reconcile.value) : forEach6(effects, identity, options);
 };
 var allWith = (options) => (arg) => all2(arg, options);
-var allSuccesses = (elements, options) => map9(all2(fromIterable(elements).map(exit), options), filterMap2((exit2) => exitIsSuccess(exit2) ? some2(exit2.effect_instruction_i0) : none2()));
+var allSuccesses = (elements, options) => map9(all2(fromIterable2(elements).map(exit), options), filterMap2((exit2) => exitIsSuccess(exit2) ? some2(exit2.effect_instruction_i0) : none2()));
 var replicate = /* @__PURE__ */ dual(2, (self, n) => Array.from({
   length: n
 }, () => self));
@@ -11489,21 +11976,21 @@ var replicateEffect = /* @__PURE__ */ dual((args2) => isEffect(args2[0]), (self,
 var forEach6 = /* @__PURE__ */ dual((args2) => isIterable(args2[0]), (self, f, options) => withFiberRuntime((r) => {
   const isRequestBatchingEnabled = options?.batching === true || options?.batching === "inherit" && r.getFiberRef(currentRequestBatching);
   if (options?.discard) {
-    return match7(options.concurrency, () => finalizersMaskInternal(sequential3, options?.concurrentFinalizers)((restore) => isRequestBatchingEnabled ? forEachConcurrentDiscard(self, (a, i) => restore(f(a, i)), true, false, 1) : forEachSequentialDiscard(self, (a, i) => restore(f(a, i)))), () => finalizersMaskInternal(parallel3, options?.concurrentFinalizers)((restore) => forEachConcurrentDiscard(self, (a, i) => restore(f(a, i)), isRequestBatchingEnabled, false)), (n) => finalizersMaskInternal(parallelN2(n), options?.concurrentFinalizers)((restore) => forEachConcurrentDiscard(self, (a, i) => restore(f(a, i)), isRequestBatchingEnabled, false, n)));
+    return match8(options.concurrency, () => finalizersMaskInternal(sequential4, options?.concurrentFinalizers)((restore) => isRequestBatchingEnabled ? forEachConcurrentDiscard(self, (a, i) => restore(f(a, i)), true, false, 1) : forEachSequentialDiscard(self, (a, i) => restore(f(a, i)))), () => finalizersMaskInternal(parallel4, options?.concurrentFinalizers)((restore) => forEachConcurrentDiscard(self, (a, i) => restore(f(a, i)), isRequestBatchingEnabled, false)), (n) => finalizersMaskInternal(parallelN2(n), options?.concurrentFinalizers)((restore) => forEachConcurrentDiscard(self, (a, i) => restore(f(a, i)), isRequestBatchingEnabled, false, n)));
   }
-  return match7(options?.concurrency, () => finalizersMaskInternal(sequential3, options?.concurrentFinalizers)((restore) => isRequestBatchingEnabled ? forEachParN(self, 1, (a, i) => restore(f(a, i)), true) : forEachSequential(self, (a, i) => restore(f(a, i)))), () => finalizersMaskInternal(parallel3, options?.concurrentFinalizers)((restore) => forEachParUnbounded(self, (a, i) => restore(f(a, i)), isRequestBatchingEnabled)), (n) => finalizersMaskInternal(parallelN2(n), options?.concurrentFinalizers)((restore) => forEachParN(self, n, (a, i) => restore(f(a, i)), isRequestBatchingEnabled)));
+  return match8(options?.concurrency, () => finalizersMaskInternal(sequential4, options?.concurrentFinalizers)((restore) => isRequestBatchingEnabled ? forEachParN(self, 1, (a, i) => restore(f(a, i)), true) : forEachSequential(self, (a, i) => restore(f(a, i)))), () => finalizersMaskInternal(parallel4, options?.concurrentFinalizers)((restore) => forEachParUnbounded(self, (a, i) => restore(f(a, i)), isRequestBatchingEnabled)), (n) => finalizersMaskInternal(parallelN2(n), options?.concurrentFinalizers)((restore) => forEachParN(self, n, (a, i) => restore(f(a, i)), isRequestBatchingEnabled)));
 }));
 var forEachParUnbounded = (self, f, batching) => suspend(() => {
-  const as2 = fromIterable(self);
-  const array4 = new Array(as2.length);
+  const as5 = fromIterable2(self);
+  const array4 = new Array(as5.length);
   const fn = (a, i) => flatMap7(f(a, i), (b) => sync(() => array4[i] = b));
-  return zipRight(forEachConcurrentDiscard(as2, fn, batching, false), succeed(array4));
+  return zipRight2(forEachConcurrentDiscard(as5, fn, batching, false), succeed(array4));
 });
 var forEachConcurrentDiscard = (self, f, batching, processAll, n) => uninterruptibleMask((restore) => transplant((graft) => withFiberRuntime((parent) => {
   let todos = Array.from(self).reverse();
   let target = todos.length;
   if (target === 0) {
-    return void_;
+    return void_2;
   }
   let counter6 = 0;
   let interrupted = false;
@@ -11601,13 +12088,13 @@ var forEachConcurrentDiscard = (self, f, batching, processAll, n) => uninterrupt
           fibers.delete(fiber);
           pushResult(exit2, index);
           if (results.length === target) {
-            resume2(succeed(getOrElse3(exitCollectAll(collectExits(), {
+            resume2(succeed(getOrElse(exitCollectAll(collectExits(), {
               parallel: true
             }), () => exitVoid)));
           } else if (residual.length + results.length === target) {
             const exits = collectExits();
             const requests = residual.map((blocked2) => blocked2.effect_instruction_i0).reduce(par);
-            resume2(succeed(blocked(requests, forEachConcurrentDiscard([getOrElse3(exitCollectAll(exits, {
+            resume2(succeed(blocked(requests, forEachConcurrentDiscard([getOrElse(exitCollectAll(exits, {
               parallel: true
             }), () => exitVoid), ...residual.map((blocked2) => blocked2.effect_instruction_i1)], (i) => i, batching, true, n))));
           } else {
@@ -11620,7 +12107,7 @@ var forEachConcurrentDiscard = (self, f, batching, processAll, n) => uninterrupt
       next();
     }
   }));
-  return asVoid(onExit(flatten4(restore(join2(processingFiber))), exitMatch({
+  return asVoid2(onExit(flatten5(restore(join2(processingFiber))), exitMatch({
     onFailure: (cause2) => {
       onInterruptSignal();
       const target2 = residual.length + 1;
@@ -11655,10 +12142,10 @@ var forEachConcurrentDiscard = (self, f, batching, processAll, n) => uninterrupt
   })));
 })));
 var forEachParN = (self, n, f, batching) => suspend(() => {
-  const as2 = fromIterable(self);
-  const array4 = new Array(as2.length);
+  const as5 = fromIterable2(self);
+  const array4 = new Array(as5.length);
   const fn = (a, i) => map9(f(a, i), (b) => array4[i] = b);
-  return zipRight(forEachConcurrentDiscard(as2, fn, batching, false, n), succeed(array4));
+  return zipRight2(forEachConcurrentDiscard(as5, fn, batching, false, n), succeed(array4));
 });
 var fork = (self) => withFiberRuntime((state, status) => succeed(unsafeFork(self, state, status.runtimeFlags)));
 var forkDaemon = (self) => forkWithScopeOverride(self, globalScope);
@@ -11689,31 +12176,31 @@ var unsafeMakeChildFiber = (effect, parentFiber, parentRuntimeFlags, overrideSco
   const supervisor = childFiber.currentSupervisor;
   supervisor.onStart(childContext, effect, some2(parentFiber), childFiber);
   childFiber.addObserver((exit2) => supervisor.onEnd(exit2, childFiber));
-  const parentScope = overrideScope !== null ? overrideScope : pipe(parentFiber.getFiberRef(currentForkScopeOverride), getOrElse3(() => parentFiber.scope()));
+  const parentScope = overrideScope !== null ? overrideScope : pipe(parentFiber.getFiberRef(currentForkScopeOverride), getOrElse(() => parentFiber.scope()));
   parentScope.add(parentRuntimeFlags, childFiber);
   return childFiber;
 };
 var forkWithScopeOverride = (self, scopeOverride) => withFiberRuntime((parentFiber, parentStatus) => succeed(unsafeFork(self, parentFiber, parentStatus.runtimeFlags, scopeOverride)));
-var mergeAll3 = /* @__PURE__ */ dual((args2) => isFunction2(args2[2]), (elements, zero2, f, options) => matchSimple(options?.concurrency, () => fromIterable(elements).reduce((acc, a, i) => zipWith2(acc, a, (acc2, a2) => f(acc2, a2, i)), succeed(zero2)), () => flatMap7(make24(zero2), (acc) => flatMap7(forEach6(elements, (effect, i) => flatMap7(effect, (a) => update3(acc, (b) => f(b, a, i))), options), () => get11(acc)))));
-var partition3 = /* @__PURE__ */ dual((args2) => isIterable(args2[0]), (elements, f, options) => pipe(forEach6(elements, (a, i) => either2(f(a, i)), options), map9((chunk2) => partitionMap2(chunk2, identity))));
+var mergeAll3 = /* @__PURE__ */ dual((args2) => isFunction2(args2[2]), (elements, zero2, f, options) => matchSimple(options?.concurrency, () => fromIterable2(elements).reduce((acc, a, i) => zipWith3(acc, a, (acc2, a2) => f(acc2, a2, i)), succeed(zero2)), () => flatMap7(make24(zero2), (acc) => flatMap7(forEach6(elements, (effect, i) => flatMap7(effect, (a) => update3(acc, (b) => f(b, a, i))), options), () => get11(acc)))));
+var partition3 = /* @__PURE__ */ dual((args2) => isIterable(args2[0]), (elements, f, options) => pipe(forEach6(elements, (a, i) => either2(f(a, i)), options), map9((chunk2) => partitionMap3(chunk2, identity))));
 var validateAll = /* @__PURE__ */ dual((args2) => isIterable(args2[0]), (elements, f, options) => flatMap7(partition3(elements, f, {
   concurrency: options?.concurrency,
   batching: options?.batching,
   concurrentFinalizers: options?.concurrentFinalizers
-}), ([es, bs]) => isNonEmptyArray2(es) ? fail2(es) : options?.discard ? void_ : succeed(bs)));
+}), ([es, bs]) => isNonEmptyArray2(es) ? fail2(es) : options?.discard ? void_2 : succeed(bs)));
 var raceAll = (all3) => withFiberRuntime((state, status) => async_((resume2) => {
   const fibers = new Set;
   let winner;
-  let failures2 = empty16;
+  let failures3 = empty6;
   const interruptAll = () => {
     for (const fiber of fibers) {
       fiber.unsafeInterruptAsFork(state.id());
     }
   };
   let latch = false;
-  let empty25 = true;
+  let empty26 = true;
   for (const self of all3) {
-    empty25 = false;
+    empty26 = false;
     const fiber = unsafeFork(interruptible2(self), state, status.runtimeFlags);
     fibers.add(fiber);
     fiber.addObserver((exit2) => {
@@ -11722,26 +12209,26 @@ var raceAll = (all3) => withFiberRuntime((state, status) => async_((resume2) => 
         if (exit2._tag === "Success") {
           latch = true;
           winner = fiber;
-          failures2 = empty16;
+          failures3 = empty6;
           interruptAll();
         } else {
-          failures2 = parallel(exit2.cause, failures2);
+          failures3 = parallel(exit2.cause, failures3);
         }
       }
       if (latch && fibers.size === 0) {
-        resume2(winner ? zipRight(inheritAll(winner), winner.unsafePoll()) : failCause(failures2));
+        resume2(winner ? zipRight2(inheritAll(winner), winner.unsafePoll()) : failCause(failures3));
       }
     });
     if (winner)
       break;
   }
-  if (empty25) {
+  if (empty26) {
     return resume2(dieSync(() => new IllegalArgumentException(`Received an empty collection of effects`)));
   }
   latch = true;
   return interruptAllAs(fibers, state.id());
 }));
-var reduceEffect = /* @__PURE__ */ dual((args2) => isIterable(args2[0]) && !isEffect(args2[0]), (elements, zero2, f, options) => matchSimple(options?.concurrency, () => fromIterable(elements).reduce((acc, a, i) => zipWith2(acc, a, (acc2, a2) => f(acc2, a2, i)), zero2), () => suspend(() => pipe(mergeAll3([zero2, ...elements], none2(), (acc, elem, i) => {
+var reduceEffect = /* @__PURE__ */ dual((args2) => isIterable(args2[0]) && !isEffect(args2[0]), (elements, zero2, f, options) => matchSimple(options?.concurrency, () => fromIterable2(elements).reduce((acc, a, i) => zipWith3(acc, a, (acc2, a2) => f(acc2, a2, i)), zero2), () => suspend(() => pipe(mergeAll3([zero2, ...elements], none2(), (acc, elem, i) => {
   switch (acc._tag) {
     case "None": {
       return some2(elem);
@@ -11768,7 +12255,7 @@ var parallelFinalizers = (self) => contextWithEffect((context2) => match2(getOpt
         return self;
       case "Sequential":
       case "ParallelN":
-        return flatMap7(scopeFork(scope, parallel3), (inner) => scopeExtend(self, inner));
+        return flatMap7(scopeFork(scope, parallel4), (inner) => scopeExtend(self, inner));
     }
   }
 }));
@@ -11811,7 +12298,7 @@ var sequentialFinalizers = (self) => contextWithEffect((context2) => match2(getO
         return self;
       case "Parallel":
       case "ParallelN":
-        return flatMap7(scopeFork(scope, sequential3), (inner) => scopeExtend(self, inner));
+        return flatMap7(scopeFork(scope, sequential4), (inner) => scopeExtend(self, inner));
     }
   }
 }));
@@ -11819,25 +12306,25 @@ var tagMetricsScoped = (key, value) => labelMetricsScoped([make27(key, value)]);
 var labelMetricsScoped = (labels) => fiberRefLocallyScopedWith(currentMetricLabels, (old) => union(old, labels));
 var using = /* @__PURE__ */ dual(2, (self, use) => scopedWith((scope) => flatMap7(scopeExtend(self, scope), use)));
 var validate = /* @__PURE__ */ dual((args2) => isEffect(args2[1]), (self, that, options) => validateWith(self, that, (a, b) => [a, b], options));
-var validateWith = /* @__PURE__ */ dual((args2) => isEffect(args2[1]), (self, that, f, options) => flatten4(zipWithOptions(exit(self), exit(that), (ea, eb) => exitZipWith(ea, eb, {
+var validateWith = /* @__PURE__ */ dual((args2) => isEffect(args2[1]), (self, that, f, options) => flatten5(zipWithOptions(exit(self), exit(that), (ea, eb) => exitZipWith(ea, eb, {
   onSuccess: f,
   onFailure: (ca, cb) => options?.concurrent ? parallel(ca, cb) : sequential(ca, cb)
 }), options)));
 var validateFirst = /* @__PURE__ */ dual((args2) => isIterable(args2[0]), (elements, f, options) => flip(forEach6(elements, (a, i) => flip(f(a, i)), options)));
-var withClockScoped = (c) => fiberRefLocallyScopedWith(currentServices, add2(clockTag, c));
-var withRandomScoped = (value) => fiberRefLocallyScopedWith(currentServices, add2(randomTag, value));
-var withConfigProviderScoped = (provider) => fiberRefLocallyScopedWith(currentServices, add2(configProviderTag, provider));
-var withEarlyRelease = (self) => scopeWith((parent) => flatMap7(scopeFork(parent, sequential2), (child) => pipe(self, scopeExtend(child), map9((value) => [fiberIdWith((fiberId2) => scopeClose(child, exitInterrupt(fiberId2))), value]))));
+var withClockScoped = (c) => fiberRefLocallyScopedWith(currentServices, add4(clockTag, c));
+var withRandomScoped = (value) => fiberRefLocallyScopedWith(currentServices, add4(randomTag, value));
+var withConfigProviderScoped = (provider) => fiberRefLocallyScopedWith(currentServices, add4(configProviderTag, provider));
+var withEarlyRelease = (self) => scopeWith((parent) => flatMap7(scopeFork(parent, sequential3), (child) => pipe(self, scopeExtend(child), map9((value) => [fiberIdWith((fiberId2) => scopeClose(child, exitInterrupt(fiberId2))), value]))));
 var zipOptions = /* @__PURE__ */ dual((args2) => isEffect(args2[1]), (self, that, options) => zipWithOptions(self, that, (a, b) => [a, b], options));
 var zipLeftOptions = /* @__PURE__ */ dual((args2) => isEffect(args2[1]), (self, that, options) => {
   if (options?.concurrent !== true && (options?.batching === undefined || options.batching === false)) {
-    return zipLeft(self, that);
+    return zipLeft2(self, that);
   }
   return zipWithOptions(self, that, (a, _) => a, options);
 });
 var zipRightOptions = /* @__PURE__ */ dual((args2) => isEffect(args2[1]), (self, that, options) => {
   if (options?.concurrent !== true && (options?.batching === undefined || options.batching === false)) {
-    return zipRight(self, that);
+    return zipRight2(self, that);
   }
   return zipWithOptions(self, that, (_, b) => b, options);
 });
@@ -11847,13 +12334,13 @@ var zipWithOptions = /* @__PURE__ */ dual((args2) => isEffect(args2[1]), (self, 
   concurrentFinalizers: options?.concurrentFinalizers
 }), ([a, a2]) => f(a, a2)));
 var withRuntimeFlagsScoped = (update5) => {
-  if (update5 === empty14) {
-    return void_;
+  if (update5 === empty15) {
+    return void_2;
   }
   return pipe(runtimeFlags, flatMap7((runtimeFlags2) => {
     const updatedRuntimeFlags = patch4(runtimeFlags2, update5);
     const revertRuntimeFlags = diff4(updatedRuntimeFlags, runtimeFlags2);
-    return pipe(updateRuntimeFlags(update5), zipRight(addFinalizer(() => updateRuntimeFlags(revertRuntimeFlags))), asVoid);
+    return pipe(updateRuntimeFlags(update5), zipRight2(addFinalizer(() => updateRuntimeFlags(revertRuntimeFlags))), asVoid2);
   }), uninterruptible);
 };
 var scopeTag = /* @__PURE__ */ GenericTag("effect/Scope");
@@ -11890,7 +12377,7 @@ var ScopeImplProto = {
   close(exit2) {
     return suspend(() => {
       if (this.state._tag === "Closed") {
-        return void_;
+        return void_2;
       }
       const finalizers = Array.from(this.state.finalizers.values()).reverse();
       this.state = {
@@ -11898,13 +12385,13 @@ var ScopeImplProto = {
         exit: exit2
       };
       if (finalizers.length === 0) {
-        return void_;
+        return void_2;
       }
-      return isSequential(this.strategy) ? pipe(forEachSequential(finalizers, (fin) => exit(fin(exit2))), flatMap7((results) => pipe(exitCollectAll(results), map2(exitAsVoid), getOrElse3(() => exitVoid)))) : isParallel(this.strategy) ? pipe(forEachParUnbounded(finalizers, (fin) => exit(fin(exit2)), false), flatMap7((results) => pipe(exitCollectAll(results, {
+      return isSequential(this.strategy) ? pipe(forEachSequential(finalizers, (fin) => exit(fin(exit2))), flatMap7((results) => pipe(exitCollectAll(results), map2(exitAsVoid), getOrElse(() => exitVoid)))) : isParallel(this.strategy) ? pipe(forEachParUnbounded(finalizers, (fin) => exit(fin(exit2)), false), flatMap7((results) => pipe(exitCollectAll(results, {
         parallel: true
-      }), map2(exitAsVoid), getOrElse3(() => exitVoid)))) : pipe(forEachParN(finalizers, this.strategy.parallelism, (fin) => exit(fin(exit2)), false), flatMap7((results) => pipe(exitCollectAll(results, {
+      }), map2(exitAsVoid), getOrElse(() => exitVoid)))) : pipe(forEachParN(finalizers, this.strategy.parallelism, (fin) => exit(fin(exit2)), false), flatMap7((results) => pipe(exitCollectAll(results, {
         parallel: true
-      }), map2(exitAsVoid), getOrElse3(() => exitVoid))));
+      }), map2(exitAsVoid), getOrElse(() => exitVoid))));
     });
   },
   addFinalizer(fin) {
@@ -11913,11 +12400,11 @@ var ScopeImplProto = {
         return fin(this.state.exit);
       }
       this.state.finalizers.set({}, fin);
-      return void_;
+      return void_2;
     });
   }
 };
-var scopeUnsafeMake = (strategy = sequential2) => {
+var scopeUnsafeMake = (strategy = sequential3) => {
   const scope2 = Object.create(ScopeImplProto);
   scope2.strategy = strategy;
   scope2.state = {
@@ -11926,14 +12413,14 @@ var scopeUnsafeMake = (strategy = sequential2) => {
   };
   return scope2;
 };
-var scopeMake = (strategy = sequential2) => sync(() => scopeUnsafeMake(strategy));
-var scopeExtend = /* @__PURE__ */ dual(2, (effect, scope2) => mapInputContext(effect, merge2(make2(scopeTag, scope2))));
+var scopeMake = (strategy = sequential3) => sync(() => scopeUnsafeMake(strategy));
+var scopeExtend = /* @__PURE__ */ dual(2, (effect, scope2) => mapInputContext(effect, merge3(make9(scopeTag, scope2))));
 var scopeUse = /* @__PURE__ */ dual(2, (effect, scope2) => pipe(effect, scopeExtend(scope2), onExit((exit2) => scope2.close(exit2))));
 var fiberRefUnsafeMakeSupervisor = (initial) => fiberRefUnsafeMakePatch(initial, {
   differ: differ2,
-  fork: empty24
+  fork: empty25
 });
-var fiberRefLocallyScoped = /* @__PURE__ */ dual(2, (self, value) => asVoid(acquireRelease(flatMap7(fiberRefGet(self), (oldValue) => as(fiberRefSet(self, value), oldValue)), (oldValue) => fiberRefSet(self, oldValue))));
+var fiberRefLocallyScoped = /* @__PURE__ */ dual(2, (self, value) => asVoid2(acquireRelease(flatMap7(fiberRefGet(self), (oldValue) => as3(fiberRefSet(self, value), oldValue)), (oldValue) => fiberRefSet(self, oldValue))));
 var fiberRefLocallyScopedWith = /* @__PURE__ */ dual(2, (self, f) => fiberRefGetWith(self, (a) => fiberRefLocallyScoped(self, f(a))));
 var currentRuntimeFlags = /* @__PURE__ */ fiberRefUnsafeMakeRuntimeFlags(none5);
 var currentSupervisor = /* @__PURE__ */ fiberRefUnsafeMakeSupervisor(none8);
@@ -11945,9 +12432,9 @@ var fiberAll = (fibers) => {
       return join2(this);
     },
     [FiberTypeId]: fiberVariance2,
-    id: () => fromIterable(fibers).reduce((id, fiber) => combine3(id, fiber.id()), none4),
-    await: exit(forEachParUnbounded(fibers, (fiber) => flatten4(fiber.await), false)),
-    children: map9(forEachParUnbounded(fibers, (fiber) => fiber.children, false), flatten),
+    id: () => fromIterable2(fibers).reduce((id, fiber) => combine3(id, fiber.id()), none4),
+    await: exit(forEachParUnbounded(fibers, (fiber) => flatten5(fiber.await), false)),
+    children: map9(forEachParUnbounded(fibers, (fiber) => fiber.children, false), flatten2),
     inheritAll: forEachSequentialDiscard(fibers, (fiber) => fiber.inheritAll),
     poll: map9(forEachSequential(fibers, (fiber) => fiber.poll), reduceRight(some2(exitSucceed(new Array)), (optionB, optionA) => {
       switch (optionA._tag) {
@@ -11999,11 +12486,11 @@ var disconnect = (self) => uninterruptibleMask((restore) => fiberIdWith((fiberId
 var race = /* @__PURE__ */ dual(2, (self, that) => fiberIdWith((parentFiberId) => raceWith(self, that, {
   onSelfDone: (exit2, right3) => exitMatchEffect(exit2, {
     onFailure: (cause2) => pipe(join2(right3), mapErrorCause((cause22) => parallel(cause2, cause22))),
-    onSuccess: (value) => pipe(right3, interruptAsFiber(parentFiberId), as(value))
+    onSuccess: (value) => pipe(right3, interruptAsFiber(parentFiberId), as3(value))
   }),
   onOtherDone: (exit2, left3) => exitMatchEffect(exit2, {
     onFailure: (cause2) => pipe(join2(left3), mapErrorCause((cause22) => parallel(cause22, cause2))),
-    onSuccess: (value) => pipe(left3, interruptAsFiber(parentFiberId), as(value))
+    onSuccess: (value) => pipe(left3, interruptAsFiber(parentFiberId), as3(value))
   })
 })));
 var raceFibersWith = /* @__PURE__ */ dual(3, (self, other, options) => withFiberRuntime((parentFiber, parentStatus) => {
@@ -12028,7 +12515,7 @@ var ensuring = /* @__PURE__ */ dual(2, (self, finalizer) => uninterruptibleMask(
     onFailure: (cause2) => failCause(sequential(cause1, cause2)),
     onSuccess: () => failCause(cause1)
   }),
-  onSuccess: (a) => as(finalizer, a)
+  onSuccess: (a) => as3(finalizer, a)
 })));
 var invokeWithInterrupt = (self, entries2, onInterrupt2) => fiberIdWith((id) => ensuring(flatMap7(forkDaemon(interruptible2(self)), (processing) => async_((cb) => {
   const counts = entries2.map((_) => _.listeners.count);
@@ -12077,14 +12564,14 @@ var invokeWithInterrupt = (self, entries2, onInterrupt2) => fiberIdWith((id) => 
 var makeSpanScoped = (name, options) => {
   options = addSpanStackTrace(options);
   return uninterruptible(withFiberRuntime((fiber) => {
-    const scope2 = unsafeGet2(fiber.getFiberRef(currentContext), scopeTag);
+    const scope2 = unsafeGet4(fiber.getFiberRef(currentContext), scopeTag);
     const span2 = unsafeMakeSpan(fiber, name, options);
     const timingEnabled = fiber.getFiberRef(currentTracerTimingEnabled);
-    const clock_ = get2(fiber.getFiberRef(currentServices), clockTag);
-    return as(scopeAddFinalizerExit(scope2, (exit2) => endSpan(span2, exit2, clock_, timingEnabled)), span2);
+    const clock_ = get5(fiber.getFiberRef(currentServices), clockTag);
+    return as3(scopeAddFinalizerExit(scope2, (exit2) => endSpan(span2, exit2, clock_, timingEnabled)), span2);
   }));
 };
-var withTracerScoped = (value) => fiberRefLocallyScopedWith(currentServices, add2(tracerTag, value));
+var withTracerScoped = (value) => fiberRefLocallyScopedWith(currentServices, add4(tracerTag, value));
 var withSpanScoped = function() {
   const dataFirst = typeof arguments[0] !== "string";
   const name = dataFirst ? arguments[1] : arguments[0];
@@ -12095,19 +12582,6 @@ var withSpanScoped = function() {
   }
   return (self) => flatMap7(makeSpanScoped(name, addSpanStackTrace(options)), (span2) => provideService(self, spanTag, span2));
 };
-
-// node_modules/effect/dist/esm/Cause.js
-var empty25 = empty16;
-var fail3 = fail;
-var die3 = die;
-var interrupt3 = interrupt;
-var parallel4 = parallel;
-var sequential4 = sequential;
-var isCause2 = isCause;
-var isFailType2 = isFailType;
-var failureOrCause2 = failureOrCause;
-var IllegalArgumentException2 = IllegalArgumentException;
-var pretty2 = pretty;
 
 // node_modules/effect/dist/esm/internal/schedule/interval.js
 var IntervalSymbolKey = "effect/ScheduleInterval";
@@ -12141,7 +12615,7 @@ var min2 = /* @__PURE__ */ dual(2, (self, that) => {
     return self;
   return that;
 });
-var isEmpty6 = (self) => {
+var isEmpty7 = (self) => {
   return self.startMillis >= self.endMillis;
 };
 var intersect = /* @__PURE__ */ dual(2, (self, that) => {
@@ -12156,7 +12630,7 @@ var after = (startMilliseconds) => {
 // node_modules/effect/dist/esm/ScheduleInterval.js
 var empty27 = empty26;
 var lessThan4 = lessThan3;
-var isEmpty7 = isEmpty6;
+var isEmpty8 = isEmpty7;
 var intersect2 = intersect;
 var after2 = after;
 
@@ -12169,14 +12643,14 @@ var make35 = (intervals) => {
     intervals
   };
 };
-var intersect3 = /* @__PURE__ */ dual(2, (self, that) => intersectLoop(self.intervals, that.intervals, empty4()));
+var intersect3 = /* @__PURE__ */ dual(2, (self, that) => intersectLoop(self.intervals, that.intervals, empty2()));
 var intersectLoop = (_left, _right, _acc) => {
   let left3 = _left;
   let right3 = _right;
   let acc = _acc;
   while (isNonEmpty(left3) && isNonEmpty(right3)) {
     const interval = pipe(headNonEmpty2(left3), intersect2(headNonEmpty2(right3)));
-    const intervals = isEmpty7(interval) ? acc : pipe(acc, prepend2(interval));
+    const intervals = isEmpty8(interval) ? acc : pipe(acc, prepend2(interval));
     if (pipe(headNonEmpty2(left3), lessThan4(headNonEmpty2(right3)))) {
       left3 = tailNonEmpty2(left3);
     } else {
@@ -12187,10 +12661,10 @@ var intersectLoop = (_left, _right, _acc) => {
   return make35(reverse2(acc));
 };
 var start = (self) => {
-  return pipe(self.intervals, head2, getOrElse3(() => empty27)).startMillis;
+  return pipe(self.intervals, head2, getOrElse(() => empty27)).startMillis;
 };
 var end = (self) => {
-  return pipe(self.intervals, head2, getOrElse3(() => empty27)).endMillis;
+  return pipe(self.intervals, head2, getOrElse(() => empty27)).endMillis;
 };
 var lessThan5 = /* @__PURE__ */ dual(2, (self, that) => start(self) < start(that));
 var isNonEmpty3 = (self) => {
@@ -12296,10 +12770,10 @@ class Semaphore {
   updateTaken(f) {
     return withFiberRuntime((fiber) => this.updateTakenUnsafe(fiber, f));
   }
-  resize = (permits) => asVoid(withFiberRuntime((fiber) => {
+  resize = (permits) => asVoid2(withFiberRuntime((fiber) => {
     this.permits = permits;
     if (this.free < 0) {
-      return void_;
+      return void_2;
     }
     return this.updateTakenUnsafe(fiber, (taken) => taken);
   }));
@@ -12330,11 +12804,11 @@ class Latch extends Class2 {
   }
   unsafeSchedule(fiber) {
     if (this.scheduled || this.waiters.length === 0) {
-      return void_;
+      return void_2;
     }
     this.scheduled = true;
     fiber.currentScheduler.scheduleTask(this.flushWaiters, fiber.getFiberRef(currentSchedulingPriority), fiber);
-    return void_;
+    return void_2;
   }
   flushWaiters = () => {
     this.scheduled = false;
@@ -12346,7 +12820,7 @@ class Latch extends Class2 {
   };
   open = /* @__PURE__ */ withFiberRuntime((fiber) => {
     if (this.isOpen) {
-      return void_;
+      return void_2;
     }
     this.isOpen = true;
     return this.unsafeSchedule(fiber);
@@ -12359,13 +12833,13 @@ class Latch extends Class2 {
   }
   release = /* @__PURE__ */ withFiberRuntime((fiber) => {
     if (this.isOpen) {
-      return void_;
+      return void_2;
     }
     return this.unsafeSchedule(fiber);
   });
   await = /* @__PURE__ */ asyncInterrupt((resume2) => {
     if (this.isOpen) {
-      return resume2(void_);
+      return resume2(void_2);
     }
     this.waiters.push(resume2);
     return sync(() => {
@@ -12382,7 +12856,7 @@ class Latch extends Class2 {
     this.isOpen = false;
   });
   whenOpen = (self) => {
-    return zipRight(this.await, self);
+    return zipRight2(this.await, self);
   };
 }
 var unsafeMakeLatch = (open) => new Latch(open ?? false);
@@ -12395,7 +12869,7 @@ var cachedInvalidateWithTTL = /* @__PURE__ */ dual(2, (self, timeToLive) => {
 });
 var computeCachedValue = (self, timeToLive, start3) => {
   const timeToLiveMillis = toMillis(decode(timeToLive));
-  return pipe(deferredMake(), tap((deferred) => intoDeferred(self, deferred)), map9((deferred) => some2([start3 + timeToLiveMillis, deferred])));
+  return pipe(deferredMake(), tap2((deferred) => intoDeferred(self, deferred)), map9((deferred) => some2([start3 + timeToLiveMillis, deferred])));
 };
 var getCachedValue = (self, timeToLive, cache) => uninterruptibleMask((restore) => pipe(clockWith3((clock2) => clock2.currentTimeMillis), flatMap7((time) => updateSomeAndGetEffectSynchronized(cache, (option2) => {
   switch (option2._tag) {
@@ -12416,7 +12890,7 @@ var forkIn = /* @__PURE__ */ dual(2, (self, scope2) => withFiberRuntime((parent,
   const scopeImpl = scope2;
   const fiber = unsafeFork(self, parent, parentStatus.runtimeFlags, globalScope);
   if (scopeImpl.state._tag === "Open") {
-    const finalizer = () => fiberIdWith((fiberId2) => equals(fiberId2, fiber.id()) ? void_ : asVoid(interruptFiber(fiber)));
+    const finalizer = () => fiberIdWith((fiberId2) => equals(fiberId2, fiber.id()) ? void_2 : asVoid2(interruptFiber(fiber)));
     const key = {};
     scopeImpl.state.finalizers.set(key, finalizer);
     fiber.addObserver(() => {
@@ -12457,15 +12931,15 @@ class Key {
   }
 }
 var cachedFunction = (f, eq) => {
-  return pipe(sync(() => empty21()), flatMap7(makeSynchronized), map9((ref) => (a) => pipe(ref.modifyEffect((map10) => {
-    const result = pipe(map10, get12(new Key(a, eq)));
+  return pipe(sync(() => empty22()), flatMap7(makeSynchronized), map9((ref) => (a) => pipe(ref.modifyEffect((map11) => {
+    const result = pipe(map11, get12(new Key(a, eq)));
     if (isNone2(result)) {
-      return pipe(deferredMake(), tap((deferred) => pipe(diffFiberRefs(f(a)), intoDeferred(deferred), fork)), map9((deferred) => [deferred, pipe(map10, set6(new Key(a, eq), deferred))]));
+      return pipe(deferredMake(), tap2((deferred) => pipe(diffFiberRefs(f(a)), intoDeferred(deferred), fork)), map9((deferred) => [deferred, pipe(map11, set6(new Key(a, eq), deferred))]));
     }
-    return succeed([result.value, map10]);
-  }), flatMap7(deferredAwait), flatMap7(([patch9, b]) => pipe(patchFiberRefs(patch9), as(b))))));
+    return succeed([result.value, map11]);
+  }), flatMap7(deferredAwait), flatMap7(([patch9, b]) => pipe(patchFiberRefs(patch9), as3(b))))));
 };
-var raceFirst = /* @__PURE__ */ dual(2, (self, that) => pipe(exit(self), race(exit(that)), (effect) => flatten4(effect)));
+var raceFirst = /* @__PURE__ */ dual(2, (self, that) => pipe(exit(self), race(exit(that)), (effect) => flatten5(effect)));
 var supervised = /* @__PURE__ */ dual(2, (self, supervisor) => {
   const supervise = fiberRefLocallyWith(currentSupervisor, (s) => s.zip(supervisor));
   return supervise(self);
@@ -12477,7 +12951,7 @@ var timeout = /* @__PURE__ */ dual(2, (self, duration) => timeoutFail(self, {
 var timeoutFail = /* @__PURE__ */ dual(2, (self, {
   duration,
   onTimeout
-}) => flatten4(timeoutTo(self, {
+}) => flatten5(timeoutTo(self, {
   onTimeout: () => failSync(onTimeout),
   onSuccess: succeed,
   duration
@@ -12485,7 +12959,7 @@ var timeoutFail = /* @__PURE__ */ dual(2, (self, {
 var timeoutFailCause = /* @__PURE__ */ dual(2, (self, {
   duration,
   onTimeout
-}) => flatten4(timeoutTo(self, {
+}) => flatten5(timeoutTo(self, {
   onTimeout: () => failCauseSync(onTimeout),
   onSuccess: succeed,
   duration
@@ -12502,14 +12976,14 @@ var timeoutTo = /* @__PURE__ */ dual(2, (self, {
 }) => fiberIdWith((parentFiberId) => uninterruptibleMask((restore) => raceFibersWith(restore(self), interruptible2(sleep3(duration)), {
   onSelfWin: (winner, loser) => flatMap7(winner.await, (exit2) => {
     if (exit2._tag === "Success") {
-      return flatMap7(winner.inheritAll, () => as(interruptAsFiber(loser, parentFiberId), onSuccess(exit2.value)));
+      return flatMap7(winner.inheritAll, () => as3(interruptAsFiber(loser, parentFiberId), onSuccess(exit2.value)));
     } else {
       return flatMap7(interruptAsFiber(loser, parentFiberId), () => exitFailCause(exit2.cause));
     }
   }),
   onOtherWin: (winner, loser) => flatMap7(winner.await, (exit2) => {
     if (exit2._tag === "Success") {
-      return flatMap7(winner.inheritAll, () => as(interruptAsFiber(loser, parentFiberId), onTimeout()));
+      return flatMap7(winner.inheritAll, () => as3(interruptAsFiber(loser, parentFiberId), onTimeout()));
     } else {
       return flatMap7(interruptAsFiber(loser, parentFiberId), () => exitFailCause(exit2.cause));
     }
@@ -12527,7 +13001,7 @@ class SynchronizedImpl extends Class2 {
   withLock;
   [SynchronizedTypeId] = synchronizedVariance;
   [RefTypeId] = refVariance;
-  [TypeId10] = TypeId10;
+  [TypeId11] = TypeId11;
   constructor(ref, withLock) {
     super();
     this.ref = ref;
@@ -12542,7 +13016,7 @@ class SynchronizedImpl extends Class2 {
     return this.modifyEffect((a) => succeed(f(a)));
   }
   modifyEffect(f) {
-    return this.withLock(pipe(flatMap7(get10(this.ref), f), flatMap7(([b, a]) => as(set4(this.ref, a), b))));
+    return this.withLock(pipe(flatMap7(get10(this.ref), f), flatMap7(([b, a]) => as3(set4(this.ref, a), b))));
   }
 }
 var makeSynchronized = (value) => sync(() => unsafeMakeSynchronized(value));
@@ -12565,7 +13039,7 @@ var updateSomeAndGetEffectSynchronized = /* @__PURE__ */ dual(2, (self, pf) => s
 var bindAll = /* @__PURE__ */ dual((args2) => isEffect(args2[0]), (self, f, options) => flatMap7(self, (a) => all2(f(a), options).pipe(map9((record) => Object.assign({}, a, record)))));
 
 // node_modules/effect/dist/esm/internal/managedRuntime/circular.js
-var TypeId13 = /* @__PURE__ */ Symbol.for("effect/ManagedRuntime");
+var TypeId14 = /* @__PURE__ */ Symbol.for("effect/ManagedRuntime");
 
 // node_modules/effect/dist/esm/internal/opCodes/layer.js
 var OP_EXTEND_SCOPE = "ExtendScope";
@@ -12606,7 +13080,7 @@ var unsafeFork2 = /* @__PURE__ */ makeDual((runtime3, self, options) => {
   const fiberRuntime = new FiberRuntime(fiberId2, fiberRefs3, runtime3.runtimeFlags);
   let effect = self;
   if (options?.scope) {
-    effect = flatMap7(fork2(options.scope, sequential2), (closeableScope) => zipRight(scopeAddFinalizer(closeableScope, fiberIdWith((id) => equals(id, fiberRuntime.id()) ? void_ : interruptAsFiber(fiberRuntime, id))), onExit(self, (exit2) => close(closeableScope, exit2))));
+    effect = flatMap7(fork2(options.scope, sequential3), (closeableScope) => zipRight2(scopeAddFinalizer(closeableScope, fiberIdWith((id) => equals(id, fiberRuntime.id()) ? void_2 : interruptAsFiber(fiberRuntime, id))), onExit(self, (exit2) => close(closeableScope, exit2))));
   }
   const supervisor = fiberRuntime.currentSupervisor;
   if (supervisor !== none8) {
@@ -12630,7 +13104,7 @@ var unsafeRunCallback = /* @__PURE__ */ makeDual((runtime3, effect, options = {}
   }
   return (id, cancelOptions) => unsafeRunCallback(runtime3)(pipe(fiberRuntime, interruptAs(id ?? none4)), {
     ...cancelOptions,
-    onExit: cancelOptions?.onExit ? (exit2) => cancelOptions.onExit(flatten5(exit2)) : undefined
+    onExit: cancelOptions?.onExit ? (exit2) => cancelOptions.onExit(flatten7(exit2)) : undefined
   });
 });
 var unsafeRunSync = /* @__PURE__ */ makeDual((runtime3, effect) => {
@@ -12782,9 +13256,9 @@ var make37 = (options) => new RuntimeImpl(options.context, options.runtimeFlags,
 var runtime3 = () => withFiberRuntime((state, status) => succeed(new RuntimeImpl(state.getFiberRef(currentContext), status.runtimeFlags, state.getFiberRefs())));
 var defaultRuntimeFlags = /* @__PURE__ */ make16(Interruption, CooperativeYielding, RuntimeMetrics);
 var defaultRuntime = /* @__PURE__ */ make37({
-  context: /* @__PURE__ */ empty2(),
+  context: /* @__PURE__ */ empty8(),
   runtimeFlags: defaultRuntimeFlags,
-  fiberRefs: /* @__PURE__ */ empty19()
+  fiberRefs: /* @__PURE__ */ empty20()
 });
 var unsafeRunEffect = /* @__PURE__ */ unsafeRunCallback(defaultRuntime);
 var unsafeForkEffect = /* @__PURE__ */ unsafeFork2(defaultRuntime);
@@ -12794,13 +13268,13 @@ var unsafeRunSyncEffect = /* @__PURE__ */ unsafeRunSync(defaultRuntime);
 var unsafeRunSyncExitEffect = /* @__PURE__ */ unsafeRunSyncExit(defaultRuntime);
 var asyncEffect = (register) => suspend(() => {
   let cleanup = undefined;
-  return flatMap7(deferredMake(), (deferred) => flatMap7(runtime3(), (runtime4) => uninterruptibleMask((restore) => zipRight(fork(restore(matchCauseEffect(register((cb) => unsafeRunCallback(runtime4)(intoDeferred(cb, deferred))), {
+  return flatMap7(deferredMake(), (deferred) => flatMap7(runtime3(), (runtime4) => uninterruptibleMask((restore) => zipRight2(fork(restore(matchCauseEffect(register((cb) => unsafeRunCallback(runtime4)(intoDeferred(cb, deferred))), {
     onFailure: (cause2) => deferredFailCause(deferred, cause2),
     onSuccess: (cleanup_) => {
       cleanup = cleanup_;
-      return void_;
+      return void_2;
     }
-  }))), restore(onInterrupt(deferredAwait(deferred), () => cleanup ?? void_))))));
+  }))), restore(onInterrupt(deferredAwait(deferred), () => cleanup ?? void_2))))));
 });
 
 // node_modules/effect/dist/esm/internal/synchronizedRef.js
@@ -12838,34 +13312,34 @@ class MemoMapImpl {
     this[MemoMapTypeId] = MemoMapTypeId;
   }
   getOrElseMemoize(layer, scope2) {
-    return pipe(modifyEffect(this.ref, (map10) => {
-      const inMap = map10.get(layer);
+    return pipe(modifyEffect(this.ref, (map11) => {
+      const inMap = map11.get(layer);
       if (inMap !== undefined) {
         const [acquire, release] = inMap;
-        const cached3 = pipe(acquire, flatMap7(([patch9, b]) => pipe(patchFiberRefs(patch9), as(b))), onExit(exitMatch({
-          onFailure: () => void_,
+        const cached3 = pipe(acquire, flatMap7(([patch9, b]) => pipe(patchFiberRefs(patch9), as3(b))), onExit(exitMatch({
+          onFailure: () => void_2,
           onSuccess: () => scopeAddFinalizerExit(scope2, release)
         })));
-        return succeed([cached3, map10]);
+        return succeed([cached3, map11]);
       }
-      return pipe(make23(0), flatMap7((observers) => pipe(deferredMake(), flatMap7((deferred) => pipe(make23(() => void_), map9((finalizerRef) => {
+      return pipe(make23(0), flatMap7((observers) => pipe(deferredMake(), flatMap7((deferred) => pipe(make23(() => void_2), map9((finalizerRef) => {
         const resource = uninterruptibleMask((restore) => pipe(scopeMake(), flatMap7((innerScope) => pipe(restore(flatMap7(makeBuilder(layer, innerScope, true), (f) => diffFiberRefs(f(this)))), exit, flatMap7((exit2) => {
           switch (exit2._tag) {
             case OP_FAILURE: {
-              return pipe(deferredFailCause(deferred, exit2.effect_instruction_i0), zipRight(scopeClose(innerScope, exit2)), zipRight(failCause(exit2.effect_instruction_i0)));
+              return pipe(deferredFailCause(deferred, exit2.effect_instruction_i0), zipRight2(scopeClose(innerScope, exit2)), zipRight2(failCause(exit2.effect_instruction_i0)));
             }
             case OP_SUCCESS: {
-              return pipe(set4(finalizerRef, (exit3) => pipe(scopeClose(innerScope, exit3), whenEffect(modify3(observers, (n) => [n === 1, n - 1])), asVoid)), zipRight(update2(observers, (n) => n + 1)), zipRight(scopeAddFinalizerExit(scope2, (exit3) => pipe(sync(() => map10.delete(layer)), zipRight(get10(finalizerRef)), flatMap7((finalizer) => finalizer(exit3))))), zipRight(deferredSucceed(deferred, exit2.effect_instruction_i0)), as(exit2.effect_instruction_i0[1]));
+              return pipe(set4(finalizerRef, (exit3) => pipe(scopeClose(innerScope, exit3), whenEffect(modify3(observers, (n) => [n === 1, n - 1])), asVoid2)), zipRight2(update2(observers, (n) => n + 1)), zipRight2(scopeAddFinalizerExit(scope2, (exit3) => pipe(sync(() => map11.delete(layer)), zipRight2(get10(finalizerRef)), flatMap7((finalizer) => finalizer(exit3))))), zipRight2(deferredSucceed(deferred, exit2.effect_instruction_i0)), as3(exit2.effect_instruction_i0[1]));
             }
           }
         })))));
         const memoized = [pipe(deferredAwait(deferred), onExit(exitMatchEffect({
-          onFailure: () => void_,
+          onFailure: () => void_2,
           onSuccess: () => update2(observers, (n) => n + 1)
         }))), (exit2) => pipe(get10(finalizerRef), flatMap7((finalizer) => finalizer(exit2)))];
-        return [resource, isFresh(layer) ? map10 : map10.set(layer, memoized)];
+        return [resource, isFresh(layer) ? map11 : map11.set(layer, memoized)];
       }))))));
-    }), flatten4);
+    }), flatten5);
   }
 }
 var makeMemoMap = /* @__PURE__ */ suspend(() => map9(makeSynchronized(new Map), (ref) => new MemoMapImpl(ref)));
@@ -12904,13 +13378,13 @@ var makeBuilder = (self, scope2, inMemoMap = false) => {
       return sync(() => (memoMap) => memoMap.getOrElseMemoize(op.evaluate(), scope2));
     }
     case "ProvideMerge": {
-      return sync(() => (memoMap) => pipe(memoMap.getOrElseMemoize(op.first, scope2), zipWith2(memoMap.getOrElseMemoize(op.second, scope2), op.zipK)));
+      return sync(() => (memoMap) => pipe(memoMap.getOrElseMemoize(op.first, scope2), zipWith3(memoMap.getOrElseMemoize(op.second, scope2), op.zipK)));
     }
     case "ZipWith": {
-      return gen(function* () {
-        const parallelScope = yield* scopeFork(scope2, parallel2);
-        const firstScope = yield* scopeFork(parallelScope, sequential2);
-        const secondScope = yield* scopeFork(parallelScope, sequential2);
+      return gen2(function* () {
+        const parallelScope = yield* scopeFork(scope2, parallel3);
+        const firstScope = yield* scopeFork(parallelScope, sequential3);
+        const secondScope = yield* scopeFork(parallelScope, sequential3);
         return (memoMap) => pipe(memoMap.getOrElseMemoize(op.first, firstScope), zipWithOptions(memoMap.getOrElseMemoize(op.second, secondScope), op.zipK, {
           concurrent: true
         }));
@@ -12918,10 +13392,10 @@ var makeBuilder = (self, scope2, inMemoMap = false) => {
     }
     case "MergeAll": {
       const layers = op.layers;
-      return map9(scopeFork(scope2, parallel2), (parallelScope) => (memoMap) => {
+      return map9(scopeFork(scope2, parallel3), (parallelScope) => (memoMap) => {
         const contexts = new Array(layers.length);
         return map9(forEachConcurrentDiscard(layers, fnUntraced(function* (layer, i) {
-          const scope3 = yield* scopeFork(parallelScope, sequential2);
+          const scope3 = yield* scopeFork(parallelScope, sequential3);
           const context2 = yield* memoMap.getOrElseMemoize(layer, scope3);
           contexts[i] = context2;
         }), false, false), () => mergeAll2(...contexts));
@@ -12929,7 +13403,7 @@ var makeBuilder = (self, scope2, inMemoMap = false) => {
     }
   }
 };
-var catchAll2 = /* @__PURE__ */ dual(2, (self, onFailure) => match10(self, {
+var catchAll2 = /* @__PURE__ */ dual(2, (self, onFailure) => match11(self, {
   onFailure,
   onSuccess: succeedContext
 }));
@@ -12939,7 +13413,7 @@ var catchAllCause2 = /* @__PURE__ */ dual(2, (self, onFailure) => matchCause2(se
 }));
 var die4 = (defect) => failCause4(die3(defect));
 var dieSync2 = (evaluate2) => failCauseSync2(() => die3(evaluate2()));
-var discard = (self) => map10(self, () => empty2());
+var discard = (self) => map11(self, () => empty8());
 var context2 = () => fromEffectContext(context());
 var extendScope = (self) => {
   const extendScope2 = Object.create(proto3);
@@ -12951,11 +13425,11 @@ var fail4 = (error) => failCause4(fail3(error));
 var failSync2 = (evaluate2) => failCauseSync2(() => fail3(evaluate2()));
 var failCause4 = (cause2) => fromEffectContext(failCause(cause2));
 var failCauseSync2 = (evaluate2) => fromEffectContext(failCauseSync(evaluate2));
-var flatMap9 = /* @__PURE__ */ dual(2, (self, f) => match10(self, {
+var flatMap10 = /* @__PURE__ */ dual(2, (self, f) => match11(self, {
   onFailure: fail4,
   onSuccess: f
 }));
-var flatten6 = /* @__PURE__ */ dual(2, (self, tag) => flatMap9(self, get2(tag)));
+var flatten8 = /* @__PURE__ */ dual(2, (self, tag) => flatMap10(self, get5(tag)));
 var fresh = (self) => {
   const fresh2 = Object.create(proto3);
   fresh2._op_layer = OP_FRESH;
@@ -12966,9 +13440,9 @@ var fromEffect2 = /* @__PURE__ */ dual(2, (a, b) => {
   const tagFirst = isTag2(a);
   const tag = tagFirst ? a : b;
   const effect = tagFirst ? b : a;
-  return fromEffectContext(map9(effect, (service) => make2(tag, service)));
+  return fromEffectContext(map9(effect, (service) => make9(tag, service)));
 });
-var fromEffectDiscard = (effect) => fromEffectContext(map9(effect, () => empty2()));
+var fromEffectDiscard = (effect) => fromEffectContext(map9(effect, () => empty8()));
 function fromEffectContext(effect) {
   const fromEffect3 = Object.create(proto3);
   fromEffect3._op_layer = OP_FROM_EFFECT;
@@ -12986,8 +13460,8 @@ var locallyEffect = /* @__PURE__ */ dual(2, (self, f) => {
 var fiberRefLocallyWith2 = /* @__PURE__ */ dual(3, (self, ref, value) => locallyEffect(self, fiberRefLocallyWith(ref, value)));
 var fiberRefLocallyScoped2 = (self, value) => scopedDiscard(fiberRefLocallyScoped(self, value));
 var fiberRefLocallyScopedWith2 = (self, value) => scopedDiscard(fiberRefLocallyScopedWith(self, value));
-var fromFunction = (tagA, tagB, f) => fromEffectContext(map9(tagA, (a) => make2(tagB, f(a))));
-var launch = (self) => scopedEffect(zipRight(scopeWith((scope2) => pipe(self, buildWithScope(scope2))), never));
+var fromFunction = (tagA, tagB, f) => fromEffectContext(map9(tagA, (a) => make9(tagB, f(a))));
+var launch = (self) => scopedEffect(zipRight2(scopeWith((scope2) => pipe(self, buildWithScope(scope2))), never));
 var mock = function() {
   if (arguments.length === 1) {
     return (service) => mockImpl(arguments[0], service);
@@ -13019,7 +13493,7 @@ var makeUnimplemented = (error) => {
   Object.setPrototypeOf(unimplemented, Object.getPrototypeOf(dead));
   return unimplemented;
 };
-var map10 = /* @__PURE__ */ dual(2, (self, f) => flatMap9(self, (context3) => succeedContext(f(context3))));
+var map11 = /* @__PURE__ */ dual(2, (self, f) => flatMap10(self, (context3) => succeedContext(f(context3))));
 var mapError2 = /* @__PURE__ */ dual(2, (self, f) => catchAll2(self, (error) => failSync2(() => f(error))));
 var matchCause2 = /* @__PURE__ */ dual(2, (self, {
   onFailure,
@@ -13032,7 +13506,7 @@ var matchCause2 = /* @__PURE__ */ dual(2, (self, {
   fold.successK = onSuccess;
   return fold;
 });
-var match10 = /* @__PURE__ */ dual(2, (self, {
+var match11 = /* @__PURE__ */ dual(2, (self, {
   onFailure,
   onSuccess
 }) => matchCause2(self, {
@@ -13050,7 +13524,7 @@ var match10 = /* @__PURE__ */ dual(2, (self, {
   onSuccess
 }));
 var memoize2 = (self) => scopeWith((scope2) => map9(memoize(buildWithScope(self, scope2)), fromEffectContext));
-var merge6 = /* @__PURE__ */ dual(2, (self, that) => zipWith3(self, that, (a, b) => merge2(a, b)));
+var merge6 = /* @__PURE__ */ dual(2, (self, that) => zipWith4(self, that, (a, b) => merge3(a, b)));
 var mergeAll4 = (...layers) => {
   const mergeAll5 = Object.create(proto3);
   mergeAll5._op_layer = OP_MERGE_ALL;
@@ -13060,18 +13534,18 @@ var mergeAll4 = (...layers) => {
 var orDie2 = (self) => catchAll2(self, (defect) => die4(defect));
 var orElse3 = /* @__PURE__ */ dual(2, (self, that) => catchAll2(self, that));
 var passthrough = (self) => merge6(context2(), self);
-var project = /* @__PURE__ */ dual(4, (self, tagA, tagB, f) => map10(self, (context3) => make2(tagB, f(unsafeGet2(context3, tagA)))));
+var project = /* @__PURE__ */ dual(4, (self, tagA, tagB, f) => map11(self, (context3) => make9(tagB, f(unsafeGet4(context3, tagA)))));
 var retry = /* @__PURE__ */ dual(2, (self, schedule) => suspend2(() => {
   const stateTag = GenericTag("effect/Layer/retry/{ state: unknown }");
   return pipe(succeed4(stateTag, {
     state: schedule.initial
-  }), flatMap9((env) => retryLoop(self, schedule, stateTag, pipe(env, get2(stateTag)).state)));
+  }), flatMap10((env) => retryLoop(self, schedule, stateTag, pipe(env, get5(stateTag)).state)));
 }));
 var retryLoop = (self, schedule, stateTag, state) => {
-  return pipe(self, catchAll2((error) => pipe(retryUpdate(schedule, stateTag, error, state), flatMap9((env) => fresh(retryLoop(self, schedule, stateTag, pipe(env, get2(stateTag)).state))))));
+  return pipe(self, catchAll2((error) => pipe(retryUpdate(schedule, stateTag, error, state), flatMap10((env) => fresh(retryLoop(self, schedule, stateTag, pipe(env, get5(stateTag)).state))))));
 };
 var retryUpdate = (schedule, stateTag, error, state) => {
-  return fromEffect2(stateTag, pipe(currentTimeMillis2, flatMap7((now) => pipe(schedule.step(now, error, state), flatMap7(([state2, _, decision]) => isDone4(decision) ? fail2(error) : pipe(sleep2(millis(start2(decision.intervals) - now)), as({
+  return fromEffect2(stateTag, pipe(currentTimeMillis2, flatMap7((now) => pipe(schedule.step(now, error, state), flatMap7(([state2, _, decision]) => isDone4(decision) ? fail2(error) : pipe(sleep2(millis(start2(decision.intervals) - now)), as3({
     state: state2
   })))))));
 };
@@ -13079,27 +13553,27 @@ var scoped = /* @__PURE__ */ dual(2, (a, b) => {
   const tagFirst = isTag2(a);
   const tag = tagFirst ? a : b;
   const effect = tagFirst ? b : a;
-  return scopedContext(map9(effect, (service) => make2(tag, service)));
+  return scopedContext(map9(effect, (service) => make9(tag, service)));
 });
-var scopedDiscard = (effect) => scopedContext(pipe(effect, as(empty2())));
+var scopedDiscard = (effect) => scopedContext(pipe(effect, as3(empty8())));
 var scopedContext = (effect) => {
   const scoped2 = Object.create(proto3);
   scoped2._op_layer = OP_SCOPED;
   scoped2.effect = effect;
   return scoped2;
 };
-var scope2 = /* @__PURE__ */ scopedContext(/* @__PURE__ */ map9(/* @__PURE__ */ acquireRelease(/* @__PURE__ */ scopeMake(), (scope3, exit2) => scope3.close(exit2)), (scope3) => make2(Scope, scope3)));
+var scope2 = /* @__PURE__ */ scopedContext(/* @__PURE__ */ map9(/* @__PURE__ */ acquireRelease(/* @__PURE__ */ scopeMake(), (scope3, exit2) => scope3.close(exit2)), (scope3) => make9(Scope, scope3)));
 var service = (tag) => fromEffect2(tag, tag);
 var succeed4 = /* @__PURE__ */ dual(2, (a, b) => {
   const tagFirst = isTag2(a);
   const tag = tagFirst ? a : b;
   const resource = tagFirst ? b : a;
-  return fromEffectContext(succeed(make2(tag, resource)));
+  return fromEffectContext(succeed(make9(tag, resource)));
 });
 var succeedContext = (context3) => {
   return fromEffectContext(succeed(context3));
 };
-var empty29 = /* @__PURE__ */ succeedContext(/* @__PURE__ */ empty2());
+var empty29 = /* @__PURE__ */ succeedContext(/* @__PURE__ */ empty8());
 var suspend2 = (evaluate2) => {
   const suspend3 = Object.create(proto3);
   suspend3._op_layer = OP_SUSPEND;
@@ -13110,12 +13584,12 @@ var sync2 = /* @__PURE__ */ dual(2, (a, b) => {
   const tagFirst = isTag2(a);
   const tag = tagFirst ? a : b;
   const evaluate2 = tagFirst ? b : a;
-  return fromEffectContext(sync(() => make2(tag, evaluate2())));
+  return fromEffectContext(sync(() => make9(tag, evaluate2())));
 });
 var syncContext = (evaluate2) => {
   return fromEffectContext(sync(evaluate2));
 };
-var tap2 = /* @__PURE__ */ dual(2, (self, f) => flatMap9(self, (context3) => fromEffectContext(as(f(context3), context3))));
+var tap3 = /* @__PURE__ */ dual(2, (self, f) => flatMap10(self, (context3) => fromEffectContext(as3(f(context3), context3))));
 var tapError2 = /* @__PURE__ */ dual(2, (self, f) => catchAll2(self, (e) => fromEffectContext(flatMap7(f(e), () => fail2(e)))));
 var tapErrorCause2 = /* @__PURE__ */ dual(2, (self, f) => catchAllCause2(self, (cause2) => fromEffectContext(flatMap7(f(cause2), () => failCause(cause2)))));
 var toRuntime = (self) => pipe(scopeWith((scope3) => buildWithScope(self, scope3)), flatMap7((context3) => pipe(runtime3(), provideContext(context3))));
@@ -13136,37 +13610,37 @@ var provide = /* @__PURE__ */ dual(2, (self, that) => suspend2(() => {
       value: Array.isArray(that) ? mergeAll4(...that) : that
     },
     zipK: {
-      value: (a, b) => pipe(a, merge2(b))
+      value: (a, b) => pipe(a, merge3(b))
     }
   });
   provideTo.second = self;
   return provideTo;
 }));
 var provideMerge = /* @__PURE__ */ dual(2, (that, self) => {
-  const zipWith3 = Object.create(proto3);
-  zipWith3._op_layer = OP_PROVIDE_MERGE;
-  zipWith3.first = self;
-  zipWith3.second = provide(that, self);
-  zipWith3.zipK = (a, b) => {
-    return pipe(a, merge2(b));
-  };
-  return zipWith3;
-});
-var zipWith3 = /* @__PURE__ */ dual(3, (self, that, f) => suspend2(() => {
   const zipWith4 = Object.create(proto3);
-  zipWith4._op_layer = OP_ZIP_WITH2;
+  zipWith4._op_layer = OP_PROVIDE_MERGE;
   zipWith4.first = self;
-  zipWith4.second = that;
-  zipWith4.zipK = f;
+  zipWith4.second = provide(that, self);
+  zipWith4.zipK = (a, b) => {
+    return pipe(a, merge3(b));
+  };
   return zipWith4;
+});
+var zipWith4 = /* @__PURE__ */ dual(3, (self, that, f) => suspend2(() => {
+  const zipWith5 = Object.create(proto3);
+  zipWith5._op_layer = OP_ZIP_WITH2;
+  zipWith5.first = self;
+  zipWith5.second = that;
+  zipWith5.zipK = f;
+  return zipWith5;
 }));
 var unwrapEffect = (self) => {
   const tag = GenericTag("effect/Layer/unwrapEffect/Layer.Layer<R1, E1, A>");
-  return flatMap9(fromEffect2(tag, self), (context3) => get2(context3, tag));
+  return flatMap10(fromEffect2(tag, self), (context3) => get5(context3, tag));
 };
 var unwrapScoped = (self) => {
   const tag = GenericTag("effect/Layer/unwrapScoped/Layer.Layer<R1, E1, A>");
-  return flatMap9(scoped(tag, self), (context3) => get2(context3, tag));
+  return flatMap10(scoped(tag, self), (context3) => get5(context3, tag));
 };
 var annotateLogs2 = /* @__PURE__ */ dual((args2) => isLayer(args2[0]), function() {
   const args2 = arguments;
@@ -13182,11 +13656,11 @@ var withSpan2 = function() {
   const options = addSpanStackTrace(dataFirst ? arguments[2] : arguments[1]);
   if (dataFirst) {
     const self = arguments[0];
-    return unwrapScoped(map9(options?.onEnd ? tap(makeSpanScoped(name, options), (span2) => addFinalizer((exit2) => options.onEnd(span2, exit2))) : makeSpanScoped(name, options), (span2) => withParentSpan2(self, span2)));
+    return unwrapScoped(map9(options?.onEnd ? tap2(makeSpanScoped(name, options), (span2) => addFinalizer((exit2) => options.onEnd(span2, exit2))) : makeSpanScoped(name, options), (span2) => withParentSpan2(self, span2)));
   }
-  return (self) => unwrapScoped(map9(options?.onEnd ? tap(makeSpanScoped(name, options), (span2) => addFinalizer((exit2) => options.onEnd(span2, exit2))) : makeSpanScoped(name, options), (span2) => withParentSpan2(self, span2)));
+  return (self) => unwrapScoped(map9(options?.onEnd ? tap2(makeSpanScoped(name, options), (span2) => addFinalizer((exit2) => options.onEnd(span2, exit2))) : makeSpanScoped(name, options), (span2) => withParentSpan2(self, span2)));
 };
-var withParentSpan2 = /* @__PURE__ */ dual(2, (self, span2) => provide(self, succeedContext(make2(spanTag, span2))));
+var withParentSpan2 = /* @__PURE__ */ dual(2, (self, span2) => provide(self, succeedContext(make9(spanTag, span2))));
 var provideSomeLayer = /* @__PURE__ */ dual(2, (self, layer) => scopedWith((scope3) => flatMap7(buildWithScope(layer, scope3), (context3) => provideSomeContext(self, context3))));
 var provideSomeRuntime = /* @__PURE__ */ dual(2, (self, rt) => {
   const patchRefs = diff6(defaultRuntime.fiberRefs, rt.fiberRefs);
@@ -13201,10 +13675,10 @@ var provideSomeRuntime = /* @__PURE__ */ dual(2, (self, rt) => {
     const rollbackFlags = diff4(newFlags, oldFlags);
     fiber.setFiberRefs(newRefs);
     fiber.currentRuntimeFlags = newFlags;
-    return ensuring(provideSomeContext(restore(self), merge2(oldContext, rt.context)), withFiberRuntime((fiber2) => {
+    return ensuring(provideSomeContext(restore(self), merge3(oldContext, rt.context)), withFiberRuntime((fiber2) => {
       fiber2.setFiberRefs(patch7(fiber2.id(), fiber2.getFiberRefs())(rollbackRefs));
       fiber2.currentRuntimeFlags = patch4(rollbackFlags)(fiber2.currentRuntimeFlags);
-      return void_;
+      return void_2;
     }));
   }));
 });
@@ -13215,7 +13689,7 @@ var effect_provide = /* @__PURE__ */ dual(2, (self, source) => {
     return provideSomeLayer(self, source);
   } else if (isContext2(source)) {
     return provideSomeContext(self, source);
-  } else if (TypeId13 in source) {
+  } else if (TypeId14 in source) {
     return flatMap7(source.runtimeEffect, (rt) => provideSomeRuntime(self, rt));
   } else {
     return provideSomeRuntime(self, source);
@@ -13223,16 +13697,16 @@ var effect_provide = /* @__PURE__ */ dual(2, (self, source) => {
 });
 
 // node_modules/effect/dist/esm/internal/console.js
-var console2 = /* @__PURE__ */ map9(/* @__PURE__ */ fiberRefGet(currentServices), /* @__PURE__ */ get2(consoleTag));
-var consoleWith = (f) => fiberRefGetWith(currentServices, (services) => f(get2(services, consoleTag)));
-var withConsole = /* @__PURE__ */ dual(2, (effect, value) => fiberRefLocallyWith(effect, currentServices, add2(consoleTag, value)));
-var withConsoleScoped = (console3) => fiberRefLocallyScopedWith(currentServices, add2(consoleTag, console3));
+var console2 = /* @__PURE__ */ map9(/* @__PURE__ */ fiberRefGet(currentServices), /* @__PURE__ */ get5(consoleTag));
+var consoleWith = (f) => fiberRefGetWith(currentServices, (services) => f(get5(services, consoleTag)));
+var withConsole = /* @__PURE__ */ dual(2, (effect, value) => fiberRefLocallyWith(effect, currentServices, add4(consoleTag, value)));
+var withConsoleScoped = (console3) => fiberRefLocallyScopedWith(currentServices, add4(consoleTag, console3));
 
 // node_modules/effect/dist/esm/internal/dateTime.js
-var TypeId14 = /* @__PURE__ */ Symbol.for("effect/DateTime");
+var TypeId15 = /* @__PURE__ */ Symbol.for("effect/DateTime");
 var TimeZoneTypeId = /* @__PURE__ */ Symbol.for("effect/DateTime/TimeZone");
 var Proto2 = {
-  [TypeId14]: TypeId14,
+  [TypeId15]: TypeId15,
   pipe() {
     return pipeArguments(this, arguments);
   },
@@ -13247,7 +13721,7 @@ var ProtoUtc = {
   ...Proto2,
   _tag: "Utc",
   [symbol]() {
-    return cached(this, number(this.epochMillis));
+    return cached(this, number2(this.epochMillis));
   },
   [symbol2](that) {
     return isDateTime(that) && that._tag === "Utc" && this.epochMillis === that.epochMillis;
@@ -13260,7 +13734,7 @@ var ProtoZoned = {
   ...Proto2,
   _tag: "Zoned",
   [symbol]() {
-    return pipe(number(this.epochMillis), combine(hash(this.zone)), cached(this));
+    return pipe(number2(this.epochMillis), combine(hash(this.zone)), cached(this));
   },
   [symbol2](that) {
     return isDateTime(that) && that._tag === "Zoned" && this.epochMillis === that.epochMillis && equals(this.zone, that.zone);
@@ -13336,13 +13810,13 @@ var makeZonedProto = (epochMillis, zone, partsUtc) => {
   });
   return self;
 };
-var isDateTime = (u) => hasProperty(u, TypeId14);
+var isDateTime = (u) => hasProperty(u, TypeId15);
 var isTimeZone = (u) => hasProperty(u, TimeZoneTypeId);
 var isTimeZoneOffset = (u) => isTimeZone(u) && u._tag === "Offset";
 var isTimeZoneNamed = (u) => isTimeZone(u) && u._tag === "Named";
 var isUtc = (self) => self._tag === "Utc";
 var isZoned = (self) => self._tag === "Zoned";
-var Equivalence2 = /* @__PURE__ */ make3((a, b) => a.epochMillis === b.epochMillis);
+var Equivalence2 = /* @__PURE__ */ make((a, b) => a.epochMillis === b.epochMillis);
 var makeUtc = (epochMillis) => {
   const self = Object.create(ProtoUtc);
   self.epochMillis = epochMillis;
@@ -13408,14 +13882,14 @@ var unsafeMakeZoned = (input, options) => {
 var makeZoned = /* @__PURE__ */ liftThrowable(unsafeMakeZoned);
 var zonedStringRegex = /^(.{17,35})\[(.+)\]$/;
 var makeZonedFromString = (input) => {
-  const match11 = zonedStringRegex.exec(input);
-  if (match11 === null) {
+  const match12 = zonedStringRegex.exec(input);
+  if (match12 === null) {
     const offset = parseOffset(input);
     return offset !== null ? makeZoned(input, {
       timeZone: offset
     }) : none2();
   }
-  const [, isoString, timeZone] = match11;
+  const [, isoString, timeZone] = match12;
   return makeZoned(isoString, {
     timeZone
   });
@@ -13587,11 +14061,11 @@ var makeZonedFromAdjusted = (adjustedMillis, zone, disambiguation) => {
 };
 var offsetRegex = /([+-])(\d{2}):(\d{2})$/;
 var parseOffset = (offset) => {
-  const match11 = offsetRegex.exec(offset);
-  if (match11 === null) {
+  const match12 = offsetRegex.exec(offset);
+  if (match12 === null) {
     return null;
   }
-  const [, sign, hours2, minutes2] = match11;
+  const [, sign, hours2, minutes2] = match12;
   return (sign === "+" ? 1 : -1) * (Number(hours2) * 60 + Number(minutes2)) * 60 * 1000;
 };
 var calculateNamedOffset = (utcMillis, adjustedMillis, zone) => {
@@ -13714,25 +14188,25 @@ class ScheduleDriverImpl {
   }
   iterationMeta = /* @__PURE__ */ unsafeMake5(defaultIterationMetadata);
   get reset() {
-    return set4(this.ref, [none2(), this.schedule.initial]).pipe(zipLeft(set4(this.iterationMeta, defaultIterationMetadata)));
+    return set4(this.ref, [none2(), this.schedule.initial]).pipe(zipLeft2(set4(this.iterationMeta, defaultIterationMetadata)));
   }
   next(input) {
     return pipe(map9(get10(this.ref), (tuple2) => tuple2[1]), flatMap7((state) => pipe(currentTimeMillis2, flatMap7((now) => pipe(suspend(() => this.schedule.step(now, input, state)), flatMap7(([state2, out, decision]) => {
       const setState = set4(this.ref, [some2(out), state2]);
       if (isDone4(decision)) {
-        return setState.pipe(zipRight(fail2(none2())));
+        return setState.pipe(zipRight2(fail2(none2())));
       }
       const millis2 = start2(decision.intervals) - now;
       if (millis2 <= 0) {
-        return setState.pipe(zipRight(updateInfo(this.iterationMeta, now, input, out)), as(out));
+        return setState.pipe(zipRight2(updateInfo(this.iterationMeta, now, input, out)), as3(out));
       }
       const duration = millis(millis2);
-      return pipe(setState, zipRight(updateInfo(this.iterationMeta, now, input, out)), zipRight(sleep3(duration)), as(out));
+      return pipe(setState, zipRight2(updateInfo(this.iterationMeta, now, input, out)), zipRight2(sleep3(duration)), as3(out));
     }))))));
   }
 }
 var makeWithState = (initial, step3) => new ScheduleImpl(initial, step3);
-var asVoid2 = (self) => map11(self, constVoid);
+var asVoid3 = (self) => map12(self, constVoid);
 var check = /* @__PURE__ */ dual(2, (self, test) => checkEffect(self, (input, out) => sync(() => test(input, out))));
 var checkEffect = /* @__PURE__ */ dual(2, (self, test) => makeWithState(self.initial, (now, input, state) => flatMap7(self.step(now, input, state), ([state2, out, decision]) => {
   if (isDone4(decision)) {
@@ -13742,7 +14216,7 @@ var checkEffect = /* @__PURE__ */ dual(2, (self, test) => makeWithState(self.ini
 })));
 var driver = (self) => pipe(make23([none2(), self.initial]), map9((ref) => new ScheduleDriverImpl(self, ref)));
 var intersect5 = /* @__PURE__ */ dual(2, (self, that) => intersectWith(self, that, intersect4));
-var intersectWith = /* @__PURE__ */ dual(3, (self, that, f) => makeWithState([self.initial, that.initial], (now, input, state) => pipe(zipWith2(self.step(now, input, state[0]), that.step(now, input, state[1]), (a, b) => [a, b]), flatMap7(([[lState, out, lDecision], [rState, out2, rDecision]]) => {
+var intersectWith = /* @__PURE__ */ dual(3, (self, that, f) => makeWithState([self.initial, that.initial], (now, input, state) => pipe(zipWith3(self.step(now, input, state[0]), that.step(now, input, state[1]), (a, b) => [a, b]), flatMap7(([[lState, out, lDecision], [rState, out2, rDecision]]) => {
   if (isContinue2(lDecision) && isContinue2(rDecision)) {
     return intersectWithLoop(self, that, input, lState, out, lDecision.intervals, rState, out2, rDecision.intervals, f);
   }
@@ -13768,7 +14242,7 @@ var intersectWithLoop = (self, that, input, lState, out, lInterval, rState, out2
     return intersectWithLoop(self, that, input, lState, out, lInterval, rState2, out22, decision.intervals, f);
   });
 };
-var map11 = /* @__PURE__ */ dual(2, (self, f) => mapEffect(self, (out) => sync(() => f(out))));
+var map12 = /* @__PURE__ */ dual(2, (self, f) => mapEffect(self, (out) => sync(() => f(out))));
 var mapEffect = /* @__PURE__ */ dual(2, (self, f) => makeWithState(self.initial, (now, input, state) => flatMap7(self.step(now, input, state), ([state2, out, decision]) => map9(f(out), (out2) => [state2, out2, decision]))));
 var passthrough2 = (self) => makeWithState(self.initial, (now, input, state) => pipe(self.step(now, input, state), map9(([state2, _, decision]) => [state2, input, decision])));
 var recurs = (n) => whileOutput(forever2, (out) => out < n);
@@ -13813,7 +14287,7 @@ var repeat_combined = /* @__PURE__ */ dual(2, (self, options) => {
     }
     return scheduleDefectWrap(applied);
   }) : withWhile;
-  const withTimes = options.times ? intersect5(withUntil, recurs(options.times)).pipe(map11((intersectionPair) => intersectionPair[0])) : withUntil;
+  const withTimes = options.times ? intersect5(withUntil, recurs(options.times)).pipe(map12((intersectionPair) => intersectionPair[0])) : withUntil;
   return scheduleDefectRefail(repeat_Effect(self, withTimes));
 });
 var repeatOrElse_Effect = /* @__PURE__ */ dual(3, (self, schedule, orElse4) => flatMap7(driver(schedule), (driver2) => matchEffect(self, {
@@ -13866,7 +14340,7 @@ var scheduleFrom_EffectLoop = (self, initial, driver2) => matchEffect(driver2.ne
   onSuccess: () => flatMap7(self, (a) => scheduleFrom_EffectLoop(self, a, driver2))
 });
 var forever2 = /* @__PURE__ */ unfold2(0, (n) => n + 1);
-var once2 = /* @__PURE__ */ asVoid2(/* @__PURE__ */ recurs(1));
+var once2 = /* @__PURE__ */ asVoid3(/* @__PURE__ */ recurs(1));
 var scheduleForked = /* @__PURE__ */ dual(2, (self, schedule) => forkScoped(schedule_Effect(self, schedule)));
 
 // node_modules/effect/dist/esm/internal/executionPlan.js
@@ -13924,9 +14398,9 @@ var interrupt4 = deferredInterrupt;
 var unsafeMake10 = deferredUnsafeMake;
 
 // node_modules/effect/dist/esm/MutableList.js
-var TypeId15 = /* @__PURE__ */ Symbol.for("effect/MutableList");
+var TypeId16 = /* @__PURE__ */ Symbol.for("effect/MutableList");
 var MutableListProto = {
-  [TypeId15]: TypeId15,
+  [TypeId16]: TypeId16,
   [Symbol.iterator]() {
     let done7 = false;
     let head4 = this.head;
@@ -13986,7 +14460,7 @@ var empty30 = () => {
   list._length = 0;
   return list;
 };
-var isEmpty8 = (self) => length(self) === 0;
+var isEmpty9 = (self) => length(self) === 0;
 var length = (self) => self._length;
 var append3 = /* @__PURE__ */ dual(2, (self, value) => {
   const node = makeNode(value);
@@ -14035,10 +14509,10 @@ var remove6 = (self, node) => {
 };
 
 // node_modules/effect/dist/esm/MutableQueue.js
-var TypeId16 = /* @__PURE__ */ Symbol.for("effect/MutableQueue");
+var TypeId17 = /* @__PURE__ */ Symbol.for("effect/MutableQueue");
 var EmptyMutableQueue = /* @__PURE__ */ Symbol.for("effect/mutable/MutableQueue/Empty");
 var MutableQueueProto = {
-  [TypeId16]: TypeId16,
+  [TypeId17]: TypeId17,
   [Symbol.iterator]() {
     return Array.from(this.queue)[Symbol.iterator]();
   },
@@ -14074,7 +14548,7 @@ var offer = /* @__PURE__ */ dual(2, (self, value) => {
   return true;
 });
 var poll = /* @__PURE__ */ dual(2, (self, def) => {
-  if (isEmpty8(self.queue)) {
+  if (isEmpty9(self.queue)) {
     return def;
   }
   return shift(self.queue);
@@ -14165,15 +14639,15 @@ class KeySetImpl {
   }
 }
 var makeKeySet = () => new KeySetImpl;
-var makeCacheState = (map12, keys5, accesses, updating, hits, misses) => ({
-  map: map12,
+var makeCacheState = (map13, keys5, accesses, updating, hits, misses) => ({
+  map: map13,
   keys: keys5,
   accesses,
   updating,
   hits,
   misses
 });
-var initialCacheState = () => makeCacheState(empty21(), makeKeySet(), unbounded(), make11(false), 0, 0);
+var initialCacheState = () => makeCacheState(empty22(), makeKeySet(), unbounded(), make11(false), 0, 0);
 var CacheSymbolKey = "effect/Cache";
 var CacheTypeId = /* @__PURE__ */ Symbol.for(CacheSymbolKey);
 var cacheVariance = {
@@ -14211,13 +14685,13 @@ class CacheImpl {
     this.cacheState = initialCacheState();
   }
   get(key) {
-    return map9(this.getEither(key), merge3);
+    return map9(this.getEither(key), merge);
   }
   get cacheStats() {
     return sync(() => makeCacheStats({
       hits: this.cacheState.hits,
       misses: this.cacheState.misses,
-      size: size4(this.cacheState.map)
+      size: size6(this.cacheState.map)
     }));
   }
   getOption(key) {
@@ -14312,7 +14786,7 @@ class CacheImpl {
   }
   get invalidateAll() {
     return sync(() => {
-      this.cacheState.map = empty21();
+      this.cacheState.map = empty22();
     });
   }
   refresh(key) {
@@ -14328,7 +14802,7 @@ class CacheImpl {
         }
       }
       if (value === undefined) {
-        return asVoid(this.lookupValueOf(key, deferred));
+        return asVoid2(this.lookupValueOf(key, deferred));
       } else {
         switch (value._tag) {
           case "Complete": {
@@ -14337,7 +14811,7 @@ class CacheImpl {
               if (equals(found, value)) {
                 remove5(this.cacheState.map, k);
               }
-              return asVoid(this.get(key));
+              return asVoid2(this.get(key));
             }
             return pipe(this.lookupValueOf(key, deferred), when(() => {
               const current = getOrUndefined(get12(this.cacheState.map, k));
@@ -14347,7 +14821,7 @@ class CacheImpl {
                 return true;
               }
               return false;
-            }), asVoid);
+            }), asVoid2);
           }
           case "Pending": {
             return _await2(value.deferred);
@@ -14370,7 +14844,7 @@ class CacheImpl {
   }
   get size() {
     return sync(() => {
-      return size4(this.cacheState.map);
+      return size6(this.cacheState.map);
     });
   }
   get values() {
@@ -14458,15 +14932,15 @@ class CacheImpl {
           this.cacheState.keys.add(key2);
         }
       }
-      let size10 = size4(this.cacheState.map);
-      loop2 = size10 > this.capacity;
+      let size11 = size6(this.cacheState.map);
+      loop2 = size11 > this.capacity;
       while (loop2) {
         const key2 = this.cacheState.keys.remove();
         if (key2 !== undefined) {
           if (has4(this.cacheState.map, key2.current)) {
             remove5(this.cacheState.map, key2.current);
-            size10 = size10 - 1;
-            loop2 = size10 > this.capacity;
+            size11 = size11 - 1;
+            loop2 = size11 > this.capacity;
           }
         } else {
           loop2 = false;
@@ -14486,14 +14960,14 @@ class CacheImpl {
         const stats = makeEntryStats(now);
         const value = complete2(makeMapKey(key), exit2, stats, now + toMillis(decode(this.timeToLive(exit2))));
         set6(this.cacheState.map, key, value);
-        return zipRight(done6(deferred, exit2), exit2);
-      }), onInterrupt(() => zipRight(interrupt4(deferred), sync(() => {
+        return zipRight2(done6(deferred, exit2), exit2);
+      }), onInterrupt(() => zipRight2(interrupt4(deferred), sync(() => {
         remove5(this.cacheState.map, key);
       }))));
     }));
   }
 }
-var unsafeMakeWith = (capacity, lookup, timeToLive) => new CacheImpl(capacity, empty2(), none3, lookup, (exit2) => decode(timeToLive(exit2)));
+var unsafeMakeWith = (capacity, lookup, timeToLive) => new CacheImpl(capacity, empty8(), none3, lookup, (exit2) => decode(timeToLive(exit2)));
 
 // node_modules/effect/dist/esm/internal/query.js
 var currentCache = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/FiberRef/currentCache"), () => fiberRefUnsafeMake(unsafeMakeWith(65536, () => map9(deferredMake(), (handle) => ({
@@ -14512,7 +14986,7 @@ var fromRequest = (request, dataSource) => flatMap7(isEffect(dataSource) ? dataS
               return flatMap7(cache.invalidateWhen(proxy, (entry) => entry.handle === orNew.left.handle), () => cached3);
             }
             orNew.left.listeners.increment();
-            return uninterruptibleMask((restore) => flatMap7(exit(blocked(empty15, restore(deferredAwait(orNew.left.handle)))), (exit2) => {
+            return uninterruptibleMask((restore) => flatMap7(exit(blocked(empty16, restore(deferredAwait(orNew.left.handle)))), (exit2) => {
               orNew.left.listeners.decrement();
               return exit2;
             }));
@@ -14555,7 +15029,7 @@ var cacheRequest = (request, result) => {
       return fiberRefGetWith(currentCache, (cache) => flatMap7(cache.getEither(request), (orNew) => {
         switch (orNew._tag) {
           case "Left": {
-            return void_;
+            return void_2;
           }
           case "Right": {
             return deferredComplete(orNew.right.handle, result);
@@ -14563,7 +15037,7 @@ var cacheRequest = (request, result) => {
         }
       }));
     }
-    return void_;
+    return void_2;
   });
 };
 var withRequestCaching = /* @__PURE__ */ dual(2, (self, strategy) => fiberRefLocally(self, currentCacheEnabled, strategy));
@@ -14590,14 +15064,14 @@ var takeUntil2 = takeUntil;
 var takeWhile2 = takeWhile;
 var every6 = every4;
 var exists3 = exists2;
-var filter7 = filter5;
+var filter8 = filter7;
 var filterMap5 = filterMap4;
 var findFirst6 = findFirst4;
 var forEach7 = forEach6;
 var head4 = head3;
 var mergeAll5 = mergeAll3;
 var partition4 = partition3;
-var reduce10 = reduce8;
+var reduce11 = reduce9;
 var reduceWhile2 = reduceWhile;
 var reduceRight3 = reduceRight2;
 var reduceEffect2 = reduceEffect;
@@ -14616,7 +15090,7 @@ var failCauseSync3 = failCauseSync;
 var die5 = die2;
 var dieMessage2 = dieMessage;
 var dieSync3 = dieSync;
-var gen2 = gen;
+var gen3 = gen2;
 var never2 = never;
 var none9 = none6;
 var promise2 = promise;
@@ -14625,7 +15099,7 @@ var succeedNone2 = succeedNone;
 var succeedSome2 = succeedSome;
 var suspend3 = suspend;
 var sync3 = sync;
-var _void = void_;
+var _void = void_2;
 var yieldNow4 = yieldNow;
 var _catch2 = _catch;
 var catchAll3 = catchAll;
@@ -14661,14 +15135,14 @@ var interruptibleMask2 = interruptibleMask;
 var onInterrupt2 = onInterrupt;
 var uninterruptible2 = uninterruptible;
 var uninterruptibleMask3 = uninterruptibleMask;
-var liftPredicate2 = liftPredicate;
-var as3 = as;
+var liftPredicate3 = liftPredicate2;
+var as5 = as3;
 var asSome2 = asSome;
 var asSomeError2 = asSomeError;
-var asVoid3 = asVoid;
+var asVoid4 = asVoid2;
 var flip2 = flip;
 var flipWith2 = flipWith;
-var map12 = map9;
+var map13 = map9;
 var mapAccum3 = mapAccum2;
 var mapBoth3 = mapBoth2;
 var mapError3 = mapError;
@@ -14749,11 +15223,11 @@ var serviceMembers2 = serviceMembers;
 var serviceOption2 = serviceOption;
 var serviceOptional2 = serviceOptional;
 var updateService2 = updateService;
-var Do2 = Do;
-var bind3 = bind2;
+var Do3 = Do2;
+var bind4 = bind3;
 var bindAll2 = bindAll;
-var bindTo3 = bindTo2;
-var let_3 = let_2;
+var bindTo4 = bindTo3;
+var let_4 = let_3;
 var option2 = option;
 var either3 = either2;
 var exit2 = exit;
@@ -14771,15 +15245,15 @@ var when2 = when;
 var whenEffect2 = whenEffect;
 var whenFiberRef2 = whenFiberRef;
 var whenRef2 = whenRef;
-var flatMap10 = flatMap7;
-var andThen4 = andThen2;
-var flatten7 = flatten4;
+var flatMap11 = flatMap7;
+var andThen6 = andThen4;
+var flatten9 = flatten5;
 var race2 = race;
 var raceAll2 = raceAll;
 var raceFirst2 = raceFirst;
 var raceWith2 = raceWith;
 var summarized2 = summarized;
-var tap3 = tap;
+var tap4 = tap2;
 var tapBoth2 = tapBoth;
 var tapDefect2 = tapDefect;
 var tapError3 = tapError;
@@ -14804,9 +15278,9 @@ var locallyScopedWith = fiberRefLocallyScopedWith;
 var patchFiberRefs2 = patchFiberRefs;
 var setFiberRefs2 = setFiberRefs;
 var updateFiberRefs2 = updateFiberRefs;
-var isFailure3 = isFailure;
+var isFailure4 = isFailure3;
 var isSuccess3 = isSuccess;
-var match11 = match8;
+var match12 = match9;
 var matchCause3 = matchCause;
 var matchCauseEffect3 = matchCauseEffect;
 var matchEffect2 = matchEffect;
@@ -14859,10 +15333,10 @@ var runSyncExit = unsafeRunSyncExitEffect;
 var validate2 = validate;
 var validateWith2 = validateWith;
 var zip4 = zipOptions;
-var zipLeft2 = zipLeftOptions;
-var zipRight2 = zipRightOptions;
-var zipWith4 = zipWithOptions;
-var ap = /* @__PURE__ */ dual(2, (self, that) => zipWith4(self, that, (f, a) => f(a)));
+var zipLeft3 = zipLeftOptions;
+var zipRight3 = zipRightOptions;
+var zipWith5 = zipWithOptions;
+var ap2 = /* @__PURE__ */ dual(2, (self, that) => zipWith5(self, that, (f, a) => f(a)));
 var blocked2 = blocked;
 var runRequestBlock2 = runRequestBlock;
 var step3 = step2;
@@ -14896,9 +15370,9 @@ var withParentSpan3 = withParentSpan;
 var fromNullable3 = fromNullable2;
 var optionFromOptional2 = optionFromOptional;
 var transposeOption = (self) => {
-  return isNone(self) ? succeedNone2 : map12(self.value, some);
+  return isNone(self) ? succeedNone2 : map13(self.value, some);
 };
-var transposeMapOption = /* @__PURE__ */ dual(2, (self, f) => isNone(self) ? succeedNone2 : map12(f(self.value), some));
+var transposeMapOption = /* @__PURE__ */ dual(2, (self, f) => isNone(self) ? succeedNone2 : map13(f(self.value), some));
 var makeTagProxy = (TagClass) => {
   const cache = new Map;
   return new Proxy(TagClass, {
@@ -14909,22 +15383,22 @@ var makeTagProxy = (TagClass) => {
       if (cache.has(prop)) {
         return cache.get(prop);
       }
-      const fn = (...args2) => andThen2(target, (s) => {
+      const fn = (...args2) => andThen4(target, (s) => {
         if (typeof s[prop] === "function") {
-          cache.set(prop, (...args3) => andThen2(target, (s2) => s2[prop](...args3)));
+          cache.set(prop, (...args3) => andThen4(target, (s2) => s2[prop](...args3)));
           return s[prop](...args2);
         }
-        cache.set(prop, andThen2(target, (s2) => s2[prop]));
+        cache.set(prop, andThen4(target, (s2) => s2[prop]));
         return s[prop];
       });
-      const cn = andThen2(target, (s) => s[prop]);
+      const cn = andThen4(target, (s) => s[prop]);
       Object.assign(fn, cn);
       const apply = fn.apply;
-      const bind4 = fn.bind;
+      const bind5 = fn.bind;
       const call = fn.call;
       const proto4 = Object.setPrototypeOf({}, Object.getPrototypeOf(cn));
       proto4.apply = apply;
-      proto4.bind = bind4;
+      proto4.bind = bind5;
       proto4.call = call;
       Object.setPrototypeOf(fn, proto4);
       cache.set(prop, fn);
@@ -14942,7 +15416,7 @@ var Tag3 = (id) => () => {
   TagClass.key = id;
   Object.defineProperty(TagClass, "use", {
     get() {
-      return (body) => andThen2(this, body);
+      return (body) => andThen4(this, body);
     }
   });
   Object.defineProperty(TagClass, "stack", {
@@ -14987,7 +15461,7 @@ var Service = function() {
     });
     Object.defineProperty(TagClass, "use", {
       get() {
-        return (body) => andThen2(this, body);
+        return (body) => andThen4(this, body);
       }
     });
     TagClass.key = id;
@@ -15007,10 +15481,10 @@ var Service = function() {
         get() {
           if (isFunction3) {
             return function() {
-              return fromEffect2(TagClass, map12(maker.effect.apply(null, arguments), (_) => new this(_)));
+              return fromEffect2(TagClass, map13(maker.effect.apply(null, arguments), (_) => new this(_)));
             }.bind(this);
           }
-          return layerCache ??= fromEffect2(TagClass, map12(maker.effect, (_) => new this(_)));
+          return layerCache ??= fromEffect2(TagClass, map13(maker.effect, (_) => new this(_)));
         }
       });
     } else if ("scoped" in maker) {
@@ -15019,10 +15493,10 @@ var Service = function() {
         get() {
           if (isFunction3) {
             return function() {
-              return scoped(TagClass, map12(maker.scoped.apply(null, arguments), (_) => new this(_)));
+              return scoped(TagClass, map13(maker.scoped.apply(null, arguments), (_) => new this(_)));
             }.bind(this);
           }
-          return layerCache ??= scoped(TagClass, map12(maker.scoped, (_) => new this(_)));
+          return layerCache ??= scoped(TagClass, map13(maker.scoped, (_) => new this(_)));
         }
       });
     } else if ("sync" in maker) {
@@ -15166,7 +15640,7 @@ var ensureRequirementsType = () => (effect) => effect;
 // node_modules/effect/dist/esm/Layer.js
 var exports_Layer = {};
 __export(exports_Layer, {
-  zipWith: () => zipWith5,
+  zipWith: () => zipWith6,
   withSpan: () => withSpan4,
   withParentSpan: () => withParentSpan4,
   updateService: () => updateService3,
@@ -15176,7 +15650,7 @@ __export(exports_Layer, {
   toRuntime: () => toRuntime2,
   tapErrorCause: () => tapErrorCause4,
   tapError: () => tapError4,
-  tap: () => tap4,
+  tap: () => tap5,
   syncContext: () => syncContext2,
   sync: () => sync4,
   suspend: () => suspend4,
@@ -15213,9 +15687,9 @@ __export(exports_Layer, {
   merge: () => merge8,
   memoize: () => memoize3,
   matchCause: () => matchCause4,
-  match: () => match12,
+  match: () => match13,
   mapError: () => mapError4,
-  map: () => map13,
+  map: () => map14,
   makeMemoMap: () => makeMemoMap2,
   locallyWith: () => locallyWith2,
   locallyScoped: () => locallyScoped2,
@@ -15226,8 +15700,8 @@ __export(exports_Layer, {
   isFresh: () => isFresh2,
   function: () => fromFunction2,
   fresh: () => fresh2,
-  flatten: () => flatten8,
-  flatMap: () => flatMap11,
+  flatten: () => flatten10,
+  flatMap: () => flatMap12,
   fiberRefLocallyScopedWith: () => fiberRefLocallyScopedWith3,
   failSync: () => failSync4,
   failCauseSync: () => failCauseSync4,
@@ -15259,10 +15733,10 @@ __export(exports_Layer, {
 
 // node_modules/effect/dist/esm/internal/layer/circular.js
 var setConfigProvider = (configProvider) => scopedDiscard(withConfigProviderScoped(configProvider));
-var parentSpan = (span2) => succeedContext(make2(spanTag, span2));
+var parentSpan = (span2) => succeedContext(make9(spanTag, span2));
 var span2 = (name, options) => {
   options = addSpanStackTrace(options);
-  return scoped(spanTag, options?.onEnd ? tap(makeSpanScoped(name, options), (span3) => addFinalizer((exit3) => options.onEnd(span3, exit3))) : makeSpanScoped(name, options));
+  return scoped(spanTag, options?.onEnd ? tap2(makeSpanScoped(name, options), (span3) => addFinalizer((exit3) => options.onEnd(span3, exit3))) : makeSpanScoped(name, options));
 };
 var setTracer = (tracer3) => scopedDiscard(withTracerScoped(tracer3));
 
@@ -15291,15 +15765,15 @@ var fail7 = fail4;
 var failSync4 = failSync2;
 var failCause7 = failCause4;
 var failCauseSync4 = failCauseSync2;
-var flatMap11 = flatMap9;
-var flatten8 = flatten6;
+var flatMap12 = flatMap10;
+var flatten10 = flatten8;
 var fresh2 = fresh;
 var mock2 = mock;
 var fromFunction2 = fromFunction;
 var launch2 = launch;
-var map13 = map10;
+var map14 = map11;
 var mapError4 = mapError2;
-var match12 = match10;
+var match13 = match11;
 var matchCause4 = matchCause2;
 var memoize3 = memoize2;
 var merge8 = merge6;
@@ -15324,20 +15798,20 @@ var succeedContext2 = succeedContext;
 var suspend4 = suspend2;
 var sync4 = sync2;
 var syncContext2 = syncContext;
-var tap4 = tap2;
+var tap5 = tap3;
 var tapError4 = tapError2;
 var tapErrorCause4 = tapErrorCause2;
 var toRuntime2 = toRuntime;
 var toRuntimeWithMemoMap2 = toRuntimeWithMemoMap;
 var provide3 = provide;
 var provideMerge2 = provideMerge;
-var zipWith5 = zipWith3;
+var zipWith6 = zipWith4;
 var unwrapEffect2 = unwrapEffect;
 var unwrapScoped2 = unwrapScoped;
-var setClock = (clock3) => scopedDiscard2(fiberRefLocallyScopedWith(currentServices, add2(clockTag, clock3)));
+var setClock = (clock3) => scopedDiscard2(fiberRefLocallyScopedWith(currentServices, add4(clockTag, clock3)));
 var setConfigProvider2 = setConfigProvider;
 var parentSpan2 = parentSpan;
-var setRandom = (random4) => scopedDiscard2(fiberRefLocallyScopedWith(currentServices, add2(randomTag, random4)));
+var setRandom = (random4) => scopedDiscard2(fiberRefLocallyScopedWith(currentServices, add4(randomTag, random4)));
 var setRequestBatching = (requestBatching) => scopedDiscard2(fiberRefLocallyScoped(currentRequestBatching, requestBatching));
 var setRequestCaching = (requestCaching) => scopedDiscard2(fiberRefLocallyScoped(currentCacheEnabled, requestCaching));
 var setRequestCache = (cache) => scopedDiscard2(isEffect(cache) ? flatMap7(cache, (x) => fiberRefLocallyScoped(currentCache, x)) : fiberRefLocallyScoped(currentCache, cache));
@@ -15352,7 +15826,7 @@ var withSpan4 = withSpan2;
 var withParentSpan4 = withParentSpan2;
 var makeMemoMap2 = makeMemoMap;
 var buildWithMemoMap2 = buildWithMemoMap;
-var updateService3 = /* @__PURE__ */ dual(3, (layer, tag, f) => provide3(layer, map13(context4(), (c) => add2(c, tag, f(unsafeGet2(c, tag))))));
+var updateService3 = /* @__PURE__ */ dual(3, (layer, tag, f) => provide3(layer, map14(context4(), (c) => add4(c, tag, f(unsafeGet4(c, tag))))));
 var ensureSuccessType2 = () => (layer) => layer;
 var ensureErrorType2 = () => (layer) => layer;
 var ensureRequirementsType2 = () => (layer) => layer;
@@ -15361,11 +15835,11 @@ var exports_ManagedRuntime = {};
 __export(exports_ManagedRuntime, {
   make: () => make40,
   isManagedRuntime: () => isManagedRuntime2,
-  TypeId: () => TypeId17
+  TypeId: () => TypeId18
 });
 
 // node_modules/effect/dist/esm/internal/managedRuntime.js
-var isManagedRuntime = (u) => hasProperty(u, TypeId13);
+var isManagedRuntime = (u) => hasProperty(u, TypeId14);
 function provide4(managed, effect2) {
   return flatMap7(managed.runtimeEffect, (rt) => withFiberRuntime((fiber) => {
     fiber.setFiberRefs(rt.fiberRefs);
@@ -15375,7 +15849,7 @@ function provide4(managed, effect2) {
 }
 var ManagedRuntimeProto = {
   ...CommitPrototype2,
-  [TypeId13]: TypeId13,
+  [TypeId14]: TypeId14,
   pipe() {
     return pipeArguments(this, arguments);
   },
@@ -15390,7 +15864,7 @@ var make39 = (layer, memoMap) => {
   const runtimeEffect = suspend(() => {
     if (!buildFiber) {
       const scheduler = new SyncScheduler;
-      buildFiber = unsafeForkEffect(tap(extend2(toRuntimeWithMemoMap(layer, memoMap), scope5), (rt) => {
+      buildFiber = unsafeForkEffect(tap2(extend2(toRuntimeWithMemoMap(layer, memoMap), scope5), (rt) => {
         self.cachedRuntime = rt;
       }), {
         scope: scope5,
@@ -15398,7 +15872,7 @@ var make39 = (layer, memoMap) => {
       });
       scheduler.flush();
     }
-    return flatten4(buildFiber.await);
+    return flatten5(buildFiber.await);
   });
   const self = Object.assign(Object.create(ManagedRuntimeProto), {
     memoMap,
@@ -15439,7 +15913,7 @@ var make39 = (layer, memoMap) => {
 };
 
 // node_modules/effect/dist/esm/ManagedRuntime.js
-var TypeId17 = TypeId13;
+var TypeId18 = TypeId14;
 var isManagedRuntime2 = isManagedRuntime;
 var make40 = make39;
 // node_modules/effect/dist/esm/Schema.js
@@ -15555,7 +16029,7 @@ __export(exports_Schema, {
   format: () => format6,
   finite: () => finite,
   filterEffect: () => filterEffect,
-  filter: () => filter8,
+  filter: () => filter9,
   failureSchema: () => failureSchema,
   extend: () => extend3,
   exitSchema: () => exitSchema,
@@ -15634,7 +16108,7 @@ __export(exports_Schema, {
   URL: () => URL$,
   ULIDSchemaId: () => ULIDSchemaId,
   ULID: () => ULID,
-  TypeId: () => TypeId19,
+  TypeId: () => TypeId20,
   Tuple: () => Tuple,
   TrimmedSchemaId: () => TrimmedSchemaId,
   Trimmed: () => Trimmed,
@@ -15729,7 +16203,7 @@ __export(exports_Schema, {
   MaxItemsSchemaId: () => MaxItemsSchemaId2,
   MapFromSelf: () => MapFromSelf,
   MapFromRecord: () => MapFromRecord,
-  Map: () => map16,
+  Map: () => map17,
   LowercasedSchemaId: () => LowercasedSchemaId,
   Lowercased: () => Lowercased,
   Lowercase: () => Lowercase,
@@ -15831,12 +16305,12 @@ __export(exports_Schema, {
 
 // node_modules/effect/dist/esm/BigDecimal.js
 var FINITE_INT_REGEX = /^[+-]?\d+$/;
-var TypeId18 = /* @__PURE__ */ Symbol.for("effect/BigDecimal");
+var TypeId19 = /* @__PURE__ */ Symbol.for("effect/BigDecimal");
 var BigDecimalProto = {
-  [TypeId18]: TypeId18,
+  [TypeId19]: TypeId19,
   [symbol]() {
     const normalized = normalize(this);
-    return pipe(hash(normalized.value), combine(number(normalized.scale)), cached(this));
+    return pipe(hash(normalized.value), combine(number2(normalized.scale)), cached(this));
   },
   [symbol2](that) {
     return isBigDecimal(that) && equals3(this, that);
@@ -15858,7 +16332,7 @@ var BigDecimalProto = {
     return pipeArguments(this, arguments);
   }
 };
-var isBigDecimal = (u) => hasProperty(u, TypeId18);
+var isBigDecimal = (u) => hasProperty(u, TypeId19);
 var make41 = (value, scale) => {
   const o = Object.create(BigDecimalProto);
   o.value = value;
@@ -15909,7 +16383,7 @@ var scale = /* @__PURE__ */ dual(2, (self, scale2) => {
   }
   return self;
 });
-var Order4 = /* @__PURE__ */ make4((self, that) => {
+var Order4 = /* @__PURE__ */ make2((self, that) => {
   const scmp = number3(sign(self), sign(that));
   if (scmp !== 0) {
     return scmp;
@@ -15930,7 +16404,7 @@ var between3 = /* @__PURE__ */ between(Order4);
 var clamp5 = /* @__PURE__ */ clamp(Order4);
 var sign = (n) => n.value === bigint04 ? 0 : n.value < bigint04 ? -1 : 1;
 var abs = (n) => n.value < bigint04 ? make41(-n.value, n.scale) : n;
-var Equivalence3 = /* @__PURE__ */ make3((self, that) => {
+var Equivalence3 = /* @__PURE__ */ make((self, that) => {
   if (self.scale > that.scale) {
     return scale(that, self.scale).value === self.value;
   }
@@ -17298,8 +17772,8 @@ var MaxLengthUpperBound = 2147483647;
 var orderedSize = ["xsmall", "small", "medium", "large", "xlarge"];
 var orderedRelativeSize = ["-4", "-3", "-2", "-1", "=", "+1", "+2", "+3", "+4"];
 var DefaultSize = "small";
-function maxLengthFromMinLength(minLength, size10) {
-  switch (size10) {
+function maxLengthFromMinLength(minLength, size11) {
+  switch (size11) {
     case "xsmall":
       return safeMathFloor4(1.1 * minLength) + 1;
     case "small":
@@ -17311,13 +17785,13 @@ function maxLengthFromMinLength(minLength, size10) {
     case "xlarge":
       return 1001 * minLength + 1e4;
     default:
-      throw new Error(`Unable to compute lengths based on received size: ${size10}`);
+      throw new Error(`Unable to compute lengths based on received size: ${size11}`);
   }
 }
-function relativeSizeToSize(size10, defaultSize) {
-  const sizeInRelative = safeIndexOf(orderedRelativeSize, size10);
+function relativeSizeToSize(size11, defaultSize) {
+  const sizeInRelative = safeIndexOf(orderedRelativeSize, size11);
   if (sizeInRelative === -1) {
-    return size10;
+    return size11;
   }
   const defaultSizeInSize = safeIndexOf(orderedSize, defaultSize);
   if (defaultSizeInSize === -1) {
@@ -17326,9 +17800,9 @@ function relativeSizeToSize(size10, defaultSize) {
   const resultingSizeInSize = defaultSizeInSize + sizeInRelative - 4;
   return resultingSizeInSize < 0 ? orderedSize[0] : resultingSizeInSize >= orderedSize.length ? orderedSize[orderedSize.length - 1] : orderedSize[resultingSizeInSize];
 }
-function maxGeneratedLengthFromSizeForArbitrary(size10, minLength, maxLength, specifiedMaxLength) {
+function maxGeneratedLengthFromSizeForArbitrary(size11, minLength, maxLength, specifiedMaxLength) {
   const { baseSize: defaultSize = DefaultSize, defaultSizeToMaxWhenMaxSpecified } = readConfigureGlobal() || {};
-  const definedSize = size10 !== undefined ? size10 : specifiedMaxLength && defaultSizeToMaxWhenMaxSpecified ? "max" : defaultSize;
+  const definedSize = size11 !== undefined ? size11 : specifiedMaxLength && defaultSizeToMaxWhenMaxSpecified ? "max" : defaultSize;
   if (definedSize === "max") {
     return maxLength;
   }
@@ -17338,13 +17812,13 @@ function maxGeneratedLengthFromSizeForArbitrary(size10, minLength, maxLength, sp
 
 // node_modules/fast-check/lib/esm/arbitrary/array.js
 function array5(arb, constraints = {}) {
-  const size10 = constraints.size;
+  const size11 = constraints.size;
   const minLength = constraints.minLength || 0;
   const maxLengthOrUnset = constraints.maxLength;
   const depthIdentifier = constraints.depthIdentifier;
   const maxLength = maxLengthOrUnset !== undefined ? maxLengthOrUnset : MaxLengthUpperBound;
   const specifiedMaxLength = maxLengthOrUnset !== undefined;
-  const maxGeneratedLength = maxGeneratedLengthFromSizeForArbitrary(size10, minLength, maxLength, specifiedMaxLength);
+  const maxGeneratedLength = maxGeneratedLengthFromSizeForArbitrary(size11, minLength, maxLength, specifiedMaxLength);
   const customSlices = constraints.experimentalCustomSlices || [];
   return new ArrayArbitrary(arb, minLength, maxGeneratedLength, maxLength, depthIdentifier, undefined, customSlices);
 }
@@ -17491,7 +17965,7 @@ class Declaration {
     this.annotations = annotations;
   }
   toString() {
-    return getOrElse3(getExpected(this), () => "<declaration schema>");
+    return getOrElse(getExpected(this), () => "<declaration schema>");
   }
   toJSON() {
     return {
@@ -17511,7 +17985,7 @@ class Literal {
     this.annotations = annotations;
   }
   toString() {
-    return getOrElse3(getExpected(this), () => formatUnknown(this.literal));
+    return getOrElse(getExpected(this), () => formatUnknown(this.literal));
   }
   toJSON() {
     return {
@@ -17532,7 +18006,7 @@ class UniqueSymbol {
     this.annotations = annotations;
   }
   toString() {
-    return getOrElse3(getExpected(this), () => formatUnknown(this.symbol));
+    return getOrElse(getExpected(this), () => formatUnknown(this.symbol));
   }
   toJSON() {
     return {
@@ -17778,7 +18252,7 @@ class Enums {
     this.annotations = annotations;
   }
   toString() {
-    return getOrElse3(getExpected(this), () => `<enum ${this.enums.length} value(s): ${this.enums.map(([_, value2]) => JSON.stringify(value2)).join(" | ")}>`);
+    return getOrElse(getExpected(this), () => `<enum ${this.enums.length} value(s): ${this.enums.map(([_, value2]) => JSON.stringify(value2)).join(" | ")}>`);
   }
   toJSON() {
     return {
@@ -17863,7 +18337,7 @@ class TemplateLiteral {
     this.annotations = annotations;
   }
   toString() {
-    return getOrElse3(getExpected(this), () => formatTemplateLiteral(this));
+    return getOrElse(getExpected(this), () => formatTemplateLiteral(this));
   }
   toJSON() {
     return {
@@ -17940,7 +18414,7 @@ class TupleType {
     }
   }
   toString() {
-    return getOrElse3(getExpected(this), () => formatTuple(this));
+    return getOrElse(getExpected(this), () => formatTuple(this));
   }
   toJSON() {
     return {
@@ -18071,7 +18545,7 @@ class TypeLiteral {
     this.indexSignatures = indexSignatures;
   }
   toString() {
-    return getOrElse3(getExpected(this), () => formatTypeLiteral(this));
+    return getOrElse(getExpected(this), () => formatTypeLiteral(this));
   }
   toJSON() {
     return {
@@ -18123,7 +18597,7 @@ var literalMap = {
   boolean: "BooleanKeyword",
   bigint: "BigIntKeyword"
 };
-var flatten9 = (candidates) => flatMap2(candidates, (ast) => isUnion(ast) ? flatten9(ast.types) : [ast]);
+var flatten11 = (candidates) => flatMap2(candidates, (ast) => isUnion(ast) ? flatten11(ast.types) : [ast]);
 var unify = (candidates) => {
   const cs = sortCandidates(candidates);
   const out = [];
@@ -18213,7 +18687,7 @@ class Union {
     return isMembers(types) ? new Union(types, annotations) : types.length === 1 ? types[0] : neverKeyword;
   };
   static unify = (candidates, annotations) => {
-    return Union.make(unify(flatten9(candidates)), annotations);
+    return Union.make(unify(flatten11(candidates)), annotations);
   };
   _tag = "Union";
   constructor(types, annotations = {}) {
@@ -18221,7 +18695,7 @@ class Union {
     this.annotations = annotations;
   }
   toString() {
-    return getOrElse3(getExpected(this), () => this.types.map(String).join(" | "));
+    return getOrElse(getExpected(this), () => this.types.map(String).join(" | "));
   }
   toJSON() {
     return {
@@ -18232,7 +18706,7 @@ class Union {
   }
 }
 var mapMembers = (members, f) => members.map(f);
-var isMembers = (as4) => as4.length > 1;
+var isMembers = (as6) => as6.length > 1;
 var isUnion = /* @__PURE__ */ createASTGuard("Union");
 var toJSONMemoMap = /* @__PURE__ */ globalValue(/* @__PURE__ */ Symbol.for("effect/Schema/AST/toJSONMemoMap"), () => new WeakMap);
 
@@ -18246,7 +18720,7 @@ class Suspend {
     this.f = memoizeThunk(f);
   }
   toString() {
-    return getExpected(this).pipe(orElse(() => flatMap(liftThrowable(this.f)(), (ast) => getExpected(ast))), getOrElse3(() => "<suspended schema>"));
+    return getExpected(this).pipe(orElse(() => flatMap(liftThrowable(this.f)(), (ast) => getExpected(ast))), getOrElse(() => "<suspended schema>"));
   }
   toJSON() {
     const ast = this.f();
@@ -18271,13 +18745,13 @@ class Refinement {
   filter;
   annotations;
   _tag = "Refinement";
-  constructor(from, filter8, annotations = {}) {
+  constructor(from, filter9, annotations = {}) {
     this.from = from;
-    this.filter = filter8;
+    this.filter = filter9;
     this.annotations = annotations;
   }
   toString() {
-    return getIdentifierAnnotation(this).pipe(getOrElse3(() => match2(getOrElseExpected(this), {
+    return getIdentifierAnnotation(this).pipe(getOrElse(() => match2(getOrElseExpected(this), {
       onNone: () => `{ ${this.from} | filter }`,
       onSome: (expected) => isRefinement(this.from) ? String(this.from) + " & " + expected : expected
     })));
@@ -18306,7 +18780,7 @@ class Transformation {
     this.annotations = annotations;
   }
   toString() {
-    return getOrElse3(getExpected(this), () => `(${String(this.from)} <-> ${String(this.to)})`);
+    return getOrElse(getExpected(this), () => `(${String(this.from)} <-> ${String(this.to)})`);
   }
   toJSON() {
     return {
@@ -18800,18 +19274,18 @@ var typeAST = (ast) => {
   }
   return ast;
 };
-function changeMap(as4, f) {
+function changeMap(as6, f) {
   let changed = false;
-  const out = allocate(as4.length);
-  for (let i = 0;i < as4.length; i++) {
-    const a = as4[i];
+  const out = allocate(as6.length);
+  for (let i = 0;i < as6.length; i++) {
+    const a = as6[i];
     const fa = f(a);
     if (fa !== a) {
       changed = true;
     }
     out[i] = fa;
   }
-  return changed ? out : as4;
+  return changed ? out : as6;
 }
 var getTransformationFrom = (ast) => {
   switch (ast._tag) {
@@ -18988,7 +19462,7 @@ var rename = (ast, mapping) => {
   }
   throw new Error(getASTUnsupportedRenameSchemaErrorMessage(ast));
 };
-var formatKeyword = (ast) => getOrElse3(getExpected(ast), () => ast._tag);
+var formatKeyword = (ast) => getOrElse(getExpected(ast), () => ast._tag);
 function getBrands(ast) {
   return match2(getBrandAnnotation(ast), {
     onNone: () => "",
@@ -19153,14 +19627,14 @@ var fail9 = left2;
 var _try = try_;
 var fromOption3 = fromOption2;
 var isEither3 = isEither2;
-var flatMap12 = /* @__PURE__ */ dual(2, (self, f) => {
+var flatMap13 = /* @__PURE__ */ dual(2, (self, f) => {
   return isEither3(self) ? match(self, {
     onLeft: left2,
     onRight: f
-  }) : flatMap10(self, f);
+  }) : flatMap11(self, f);
 });
-var map15 = /* @__PURE__ */ dual(2, (self, f) => {
-  return isEither3(self) ? map(self, f) : map12(self, f);
+var map16 = /* @__PURE__ */ dual(2, (self, f) => {
+  return isEither3(self) ? map(self, f) : map13(self, f);
 });
 var mapError5 = /* @__PURE__ */ dual(2, (self, f) => {
   return isEither3(self) ? mapLeft(self, f) : mapError3(self, f);
@@ -19269,7 +19743,7 @@ var go = (ast, isDecoding) => {
         return (i, options) => {
           options = options ?? defaultParseOption;
           const allErrors = options?.errors === "all";
-          const result = flatMap12(orElse7(from(i, options), (ef) => {
+          const result = flatMap13(orElse7(from(i, options), (ef) => {
             const issue = new Refinement2(ast, i, "From", ef);
             if (allErrors && hasStableFilter(ast) && isComposite2(ef)) {
               return match2(ast.filter(i, options, ast), {
@@ -19287,14 +19761,14 @@ var go = (ast, isDecoding) => {
       } else {
         const from = goMemo(typeAST(ast), true);
         const to = goMemo(dropRightRefinement(ast.from), false);
-        return (i, options) => handleForbidden(flatMap12(from(i, options), (a) => to(a, options)), ast, i, options);
+        return (i, options) => handleForbidden(flatMap13(from(i, options), (a) => to(a, options)), ast, i, options);
       }
     }
     case "Transformation": {
       const transform2 = getFinalTransformation(ast.transformation, isDecoding);
       const from = isDecoding ? goMemo(ast.from, true) : goMemo(ast.to, false);
       const to = isDecoding ? goMemo(ast.to, true) : goMemo(ast.from, false);
-      return (i, options) => handleForbidden(flatMap12(mapError5(from(i, options), (e) => new Transformation2(ast, i, isDecoding ? "Encoded" : "Type", e)), (a) => flatMap12(mapError5(transform2(a, options ?? defaultParseOption, ast, i), (e) => new Transformation2(ast, i, "Transformation", e)), (i2) => mapError5(to(i2, options), (e) => new Transformation2(ast, i, isDecoding ? "Type" : "Encoded", e)))), ast, i, options);
+      return (i, options) => handleForbidden(flatMap13(mapError5(from(i, options), (e) => new Transformation2(ast, i, isDecoding ? "Encoded" : "Type", e)), (a) => flatMap13(mapError5(transform2(a, options ?? defaultParseOption, ast, i), (e) => new Transformation2(ast, i, "Transformation", e)), (i2) => mapError5(to(i2, options), (e) => new Transformation2(ast, i, isDecoding ? "Type" : "Encoded", e)))), ast, i, options);
     }
     case "Declaration": {
       const parse2 = isDecoding ? ast.decodeUnknown(...ast.typeParameters) : ast.encodeUnknown(...ast.typeParameters);
@@ -19400,7 +19874,7 @@ var go = (ast, isDecoding) => {
               queue.push(({
                 es: es2,
                 output: output2
-              }) => flatMap10(either3(te), (t) => {
+              }) => flatMap11(either3(te), (t) => {
                 if (isLeft2(t)) {
                   const e = new Pointer(index, input, t.left);
                   if (allErrors) {
@@ -19441,7 +19915,7 @@ var go = (ast, isDecoding) => {
               queue.push(({
                 es: es2,
                 output: output2
-              }) => flatMap10(either3(te), (t) => {
+              }) => flatMap11(either3(te), (t) => {
                 if (isLeft2(t)) {
                   const e = new Pointer(index, input, t.left);
                   if (allErrors) {
@@ -19482,7 +19956,7 @@ var go = (ast, isDecoding) => {
                 queue.push(({
                   es: es2,
                   output: output2
-                }) => flatMap10(either3(te), (t) => {
+                }) => flatMap11(either3(te), (t) => {
                   if (isLeft2(t)) {
                     const e = new Pointer(index, input, t.left);
                     if (allErrors) {
@@ -19510,7 +19984,7 @@ var go = (ast, isDecoding) => {
               es: copy(es),
               output: copy(output)
             };
-            return flatMap10(forEach7(cqueue, (f) => f(state), {
+            return flatMap11(forEach7(cqueue, (f) => f(state), {
               concurrency,
               batching,
               discard: true
@@ -19611,7 +20085,7 @@ var go = (ast, isDecoding) => {
             queue.push(({
               es: es2,
               output: output2
-            }) => flatMap10(either3(te), (t) => {
+            }) => flatMap11(either3(te), (t) => {
               if (isLeft2(t)) {
                 const e = new Pointer(index, input, hasKey ? t.left : new Missing(ps));
                 if (allErrors) {
@@ -19658,7 +20132,7 @@ var go = (ast, isDecoding) => {
                 queue.push(({
                   es: es2,
                   output: output2
-                }) => flatMap10(either3(vpr), (tv) => {
+                }) => flatMap11(either3(vpr), (tv) => {
                   if (isLeft2(tv)) {
                     const e = new Pointer(index, input, tv.left);
                     if (allErrors) {
@@ -19709,7 +20183,7 @@ var go = (ast, isDecoding) => {
               es: copy(es),
               output: Object.assign({}, output)
             };
-            return flatMap10(forEach7(cqueue, (f) => f(state), {
+            return flatMap11(forEach7(cqueue, (f) => f(state), {
               concurrency,
               batching,
               discard: true
@@ -19727,9 +20201,9 @@ var go = (ast, isDecoding) => {
       const ownKeys = Reflect.ownKeys(searchTree.keys);
       const ownKeysLen = ownKeys.length;
       const astTypesLen = ast.types.length;
-      const map16 = new Map;
+      const map17 = new Map;
       for (let i = 0;i < astTypesLen; i++) {
-        map16.set(ast.types[i], goMemo(ast.types[i], isDecoding));
+        map17.set(ast.types[i], goMemo(ast.types[i], isDecoding));
       }
       const concurrency = getConcurrency(ast) ?? 1;
       const batching = getBatching(ast);
@@ -19776,7 +20250,7 @@ var go = (ast, isDecoding) => {
         let queue = undefined;
         for (let i = 0;i < candidates.length; i++) {
           const candidate = candidates[i];
-          const pr = map16.get(candidate)(input, options);
+          const pr = map17.get(candidate)(input, options);
           if (isEither3(pr) && (!queue || queue.length === 0)) {
             if (isRight2(pr)) {
               return pr;
@@ -19792,7 +20266,7 @@ var go = (ast, isDecoding) => {
               if ("finalResult" in state) {
                 return _void;
               } else {
-                return flatMap10(either3(pr), (t) => {
+                return flatMap11(either3(pr), (t) => {
                   if (isRight2(t)) {
                     state.finalResult = t;
                   } else {
@@ -19811,7 +20285,7 @@ var go = (ast, isDecoding) => {
             const state = {
               es: copy(es)
             };
-            return flatMap10(forEach7(cqueue, (f) => f(state), {
+            return flatMap11(forEach7(cqueue, (f) => f(state), {
               concurrency,
               batching,
               discard: true
@@ -19965,7 +20439,7 @@ var getFinalTransformation = (transformation, isDecoding) => {
             }
             return input2;
           };
-          out = map15(out, f);
+          out = map16(out, f);
         }
         return out;
       };
@@ -19976,7 +20450,7 @@ var makeTree = (value2, forest = []) => ({
   forest
 });
 var TreeFormatter = {
-  formatIssue: (issue) => map15(formatTree(issue), drawTree),
+  formatIssue: (issue) => map16(formatTree(issue), drawTree),
   formatIssueSync: (issue) => {
     const e = TreeFormatter.formatIssue(issue);
     return isEither3(e) ? getOrThrow(e) : runSync(e);
@@ -20029,7 +20503,7 @@ var getCurrentMessage = (issue) => getAnnotated(issue).pipe(flatMap(getMessageAn
       });
     }
     if (isEffect2(union8)) {
-      return map12(union8, (message) => ({
+      return map13(union8, (message) => ({
         message,
         override: false
       }));
@@ -20040,7 +20514,7 @@ var getCurrentMessage = (issue) => getAnnotated(issue).pipe(flatMap(getMessageAn
         override: union8.override
       });
     }
-    return map12(union8.message, (message) => ({
+    return map13(union8.message, (message) => ({
       message,
       override: union8.override
     }));
@@ -20050,7 +20524,7 @@ var createParseIssueGuard = (tag) => (issue) => issue._tag === tag;
 var isComposite2 = /* @__PURE__ */ createParseIssueGuard("Composite");
 var isRefinement2 = /* @__PURE__ */ createParseIssueGuard("Refinement");
 var isTransformation2 = /* @__PURE__ */ createParseIssueGuard("Transformation");
-var getMessage = (issue) => flatMap12(getCurrentMessage(issue), (currentMessage) => {
+var getMessage = (issue) => flatMap13(getCurrentMessage(issue), (currentMessage) => {
   if (currentMessage !== undefined) {
     const useInnerMessage = !currentMessage.override && (isComposite2(issue) || isRefinement2(issue) && issue.kind === "From" || isTransformation2(issue) && issue.kind !== "Transformation");
     return useInnerMessage ? isTransformation2(issue) || isRefinement2(issue) ? getMessage(issue.issue) : Either_void : right2(currentMessage.message);
@@ -20059,7 +20533,7 @@ var getMessage = (issue) => flatMap12(getCurrentMessage(issue), (currentMessage)
 });
 var getParseIssueTitleAnnotation2 = (issue) => getAnnotated(issue).pipe(flatMap(getParseIssueTitleAnnotation), flatMapNullable((annotation) => annotation(issue)), getOrUndefined);
 function getRefinementExpected(ast) {
-  return getDescriptionAnnotation(ast).pipe(orElse(() => getTitleAnnotation(ast)), orElse(() => getAutoTitleAnnotation(ast)), orElse(() => getIdentifierAnnotation(ast)), getOrElse3(() => `{ ${ast.from} | filter }`));
+  return getDescriptionAnnotation(ast).pipe(orElse(() => getTitleAnnotation(ast)), orElse(() => getAutoTitleAnnotation(ast)), orElse(() => getIdentifierAnnotation(ast)), getOrElse(() => `{ ${ast.from} | filter }`));
 }
 function getDefaultTypeMessage(issue) {
   if (issue.message !== undefined) {
@@ -20068,7 +20542,7 @@ function getDefaultTypeMessage(issue) {
   const expected = isRefinement(issue.ast) ? getRefinementExpected(issue.ast) : String(issue.ast);
   return `Expected ${expected}, actual ${formatUnknown(issue.actual)}`;
 }
-var formatTypeMessage = (issue) => map15(getMessage(issue), (message) => message ?? getParseIssueTitleAnnotation2(issue) ?? getDefaultTypeMessage(issue));
+var formatTypeMessage = (issue) => map16(getMessage(issue), (message) => message ?? getParseIssueTitleAnnotation2(issue) ?? getDefaultTypeMessage(issue));
 var getParseIssueTitle = (issue) => getParseIssueTitleAnnotation2(issue) ?? String(issue.ast);
 var formatForbiddenMessage = (issue) => issue.message ?? "is forbidden";
 var formatUnexpectedMessage = (issue) => issue.message ?? "is unexpected";
@@ -20083,36 +20557,36 @@ var formatMissingMessage = (issue) => {
 var formatTree = (issue) => {
   switch (issue._tag) {
     case "Type":
-      return map15(formatTypeMessage(issue), makeTree);
+      return map16(formatTypeMessage(issue), makeTree);
     case "Forbidden":
       return right2(makeTree(getParseIssueTitle(issue), [makeTree(formatForbiddenMessage(issue))]));
     case "Unexpected":
       return right2(makeTree(formatUnexpectedMessage(issue)));
     case "Missing":
-      return map15(formatMissingMessage(issue), makeTree);
+      return map16(formatMissingMessage(issue), makeTree);
     case "Transformation":
-      return flatMap12(getMessage(issue), (message) => {
+      return flatMap13(getMessage(issue), (message) => {
         if (message !== undefined) {
           return right2(makeTree(message));
         }
-        return map15(formatTree(issue.issue), (tree) => makeTree(getParseIssueTitle(issue), [makeTree(formatTransformationKind(issue.kind), [tree])]));
+        return map16(formatTree(issue.issue), (tree) => makeTree(getParseIssueTitle(issue), [makeTree(formatTransformationKind(issue.kind), [tree])]));
       });
     case "Refinement":
-      return flatMap12(getMessage(issue), (message) => {
+      return flatMap13(getMessage(issue), (message) => {
         if (message !== undefined) {
           return right2(makeTree(message));
         }
-        return map15(formatTree(issue.issue), (tree) => makeTree(getParseIssueTitle(issue), [makeTree(formatRefinementKind(issue.kind), [tree])]));
+        return map16(formatTree(issue.issue), (tree) => makeTree(getParseIssueTitle(issue), [makeTree(formatRefinementKind(issue.kind), [tree])]));
       });
     case "Pointer":
-      return map15(formatTree(issue.issue), (tree) => makeTree(formatPath(issue.path), [tree]));
+      return map16(formatTree(issue.issue), (tree) => makeTree(formatPath(issue.path), [tree]));
     case "Composite":
-      return flatMap12(getMessage(issue), (message) => {
+      return flatMap13(getMessage(issue), (message) => {
         if (message !== undefined) {
           return right2(makeTree(message));
         }
         const parseIssueTitle = getParseIssueTitle(issue);
-        return isNonEmpty6(issue.issues) ? map15(forEach7(issue.issues, formatTree), (forest) => makeTree(parseIssueTitle, forest)) : map15(formatTree(issue.issues), (tree) => makeTree(parseIssueTitle, [tree]));
+        return isNonEmpty6(issue.issues) ? map16(forEach7(issue.issues, formatTree), (forest) => makeTree(parseIssueTitle, forest)) : map16(formatTree(issue.issues), (tree) => makeTree(parseIssueTitle, [tree]));
       });
   }
 };
@@ -20134,31 +20608,31 @@ var getArrayFormatterIssues = (issue, parentTag, path) => {
   const _tag = issue._tag;
   switch (_tag) {
     case "Type":
-      return map15(formatTypeMessage(issue), (message) => [makeArrayFormatterIssue(parentTag ?? _tag, path, message)]);
+      return map16(formatTypeMessage(issue), (message) => [makeArrayFormatterIssue(parentTag ?? _tag, path, message)]);
     case "Forbidden":
       return right2([makeArrayFormatterIssue(_tag, path, formatForbiddenMessage(issue))]);
     case "Unexpected":
       return right2([makeArrayFormatterIssue(_tag, path, formatUnexpectedMessage(issue))]);
     case "Missing":
-      return map15(formatMissingMessage(issue), (message) => [makeArrayFormatterIssue(_tag, path, message)]);
+      return map16(formatMissingMessage(issue), (message) => [makeArrayFormatterIssue(_tag, path, message)]);
     case "Pointer":
       return getArrayFormatterIssues(issue.issue, undefined, path.concat(issue.path));
     case "Composite":
-      return flatMap12(getMessage(issue), (message) => {
+      return flatMap13(getMessage(issue), (message) => {
         if (message !== undefined) {
           return right2([makeArrayFormatterIssue(_tag, path, message)]);
         }
-        return isNonEmpty6(issue.issues) ? map15(forEach7(issue.issues, (issue2) => getArrayFormatterIssues(issue2, undefined, path)), flatten) : getArrayFormatterIssues(issue.issues, undefined, path);
+        return isNonEmpty6(issue.issues) ? map16(forEach7(issue.issues, (issue2) => getArrayFormatterIssues(issue2, undefined, path)), flatten2) : getArrayFormatterIssues(issue.issues, undefined, path);
       });
     case "Refinement":
-      return flatMap12(getMessage(issue), (message) => {
+      return flatMap13(getMessage(issue), (message) => {
         if (message !== undefined) {
           return right2([makeArrayFormatterIssue(_tag, path, message)]);
         }
         return getArrayFormatterIssues(issue.issue, issue.kind === "Predicate" ? _tag : undefined, path);
       });
     case "Transformation":
-      return flatMap12(getMessage(issue), (message) => {
+      return flatMap13(getMessage(issue), (message) => {
         if (message !== undefined) {
           return right2([makeArrayFormatterIssue(_tag, path, message)]);
         }
@@ -20171,7 +20645,7 @@ var getArrayFormatterIssues = (issue, parentTag, path) => {
 var isRedacted2 = isRedacted;
 var make44 = make42;
 var value2 = value;
-var getEquivalence7 = (isEquivalent) => make3((x, y) => isEquivalent(value2(x), value2(y)));
+var getEquivalence7 = (isEquivalent) => make((x, y) => isEquivalent(value2(x), value2(y)));
 
 // node_modules/effect/dist/esm/Struct.js
 var pick4 = /* @__PURE__ */ dual((args2) => isObject(args2[0]), (s, ...keys5) => {
@@ -20194,10 +20668,10 @@ var omit4 = /* @__PURE__ */ dual((args2) => isObject(args2[0]), (s, ...keys5) =>
 });
 
 // node_modules/effect/dist/esm/Schema.js
-var TypeId19 = /* @__PURE__ */ Symbol.for("effect/Schema");
+var TypeId20 = /* @__PURE__ */ Symbol.for("effect/Schema");
 function make45(ast) {
   return class SchemaClass {
-    [TypeId19] = variance5;
+    [TypeId20] = variance5;
     static ast = ast;
     static annotations(annotations2) {
       return make45(mergeSchemaAnnotations(this.ast, annotations2));
@@ -20211,7 +20685,7 @@ function make45(ast) {
     static Type;
     static Encoded;
     static Context;
-    static [TypeId19] = variance5;
+    static [TypeId20] = variance5;
   };
 }
 var variance5 = {
@@ -20225,7 +20699,7 @@ var makeStandardFailureResult = (message) => ({
     message
   }]
 });
-var makeStandardFailureFromParseIssue = (issue) => map12(ArrayFormatter.formatIssue(issue), (issues) => ({
+var makeStandardFailureFromParseIssue = (issue) => map13(ArrayFormatter.formatIssue(issue), (issues) => ({
   issues: issues.map((issue2) => ({
     path: issue2.path,
     message: issue2.message
@@ -20350,7 +20824,7 @@ var validatePromise = (schema, options) => {
   const parser = validate5(schema, options);
   return (u, overrideOptions) => runPromise(parser(u, overrideOptions));
 };
-var isSchema = (u) => hasProperty(u, TypeId19) && isObject(u[TypeId19]);
+var isSchema = (u) => hasProperty(u, TypeId20) && isObject(u[TypeId20]);
 function getDefaultLiteralAST(literals) {
   return isMembers(literals) ? Union.make(mapMembers(literals, (literal2) => new Literal(literal2))) : new Literal(literals[0]);
 }
@@ -20481,8 +20955,8 @@ var TemplateLiteralParser = (...params) => {
   return class TemplateLiteralParserClass extends transformOrFail(from, to, {
     strict: false,
     decode: (i, _, ast) => {
-      const match14 = re.exec(i);
-      return match14 ? succeed9(match14.slice(1, params.length + 1)) : fail9(new Type2(ast, i, `${re.source}: no match for ${JSON.stringify(i)}`));
+      const match15 = re.exec(i);
+      return match15 ? succeed9(match15.slice(1, params.length + 1)) : fail9(new Type2(ast, i, `${re.source}: no match for ${JSON.stringify(i)}`));
     },
     encode: (tuple2) => succeed9(tuple2.join(""))
   }) {
@@ -20597,7 +21071,7 @@ var optionalElement = (self) => new ElementImpl(new OptionalType(self.ast, true)
 class ElementImpl {
   ast;
   from;
-  [TypeId19];
+  [TypeId20];
   _Token;
   constructor(ast, from) {
     this.ast = ast;
@@ -20742,7 +21216,7 @@ var isPropertySignature = (u) => hasProperty(u, PropertySignatureTypeId);
 
 class PropertySignatureImpl {
   ast;
-  [TypeId19];
+  [TypeId20];
   [PropertySignatureTypeId] = null;
   _TypeToken;
   _Key;
@@ -21183,10 +21657,10 @@ var intersectUnionMembers = (xs, ys, path) => flatMap2(xs, (x) => flatMap2(ys, (
             case "ComposeTransformation":
               return [new Transformation(from, to, composeTransformation)];
             case "FinalTransformation":
-              return [new Transformation(from, to, new FinalTransformation((fromA, options, ast, fromI) => map15(transformation.decode(fromA, options, ast, fromI), (partial3) => ({
+              return [new Transformation(from, to, new FinalTransformation((fromA, options, ast, fromI) => map16(transformation.decode(fromA, options, ast, fromI), (partial3) => ({
                 ...fromA,
                 ...partial3
-              })), (toI, options, ast, toA) => map15(transformation.encode(toI, options, ast, toA), (partial3) => ({
+              })), (toI, options, ast, toA) => map16(transformation.encode(toI, options, ast, toA), (partial3) => ({
                 ...toI,
                 ...partial3
               }))))];
@@ -21212,14 +21686,14 @@ var extend3 = /* @__PURE__ */ dual(2, (self, that) => make45(extendAST(self.ast,
 var compose2 = /* @__PURE__ */ dual((args2) => isSchema(args2[1]), (from, to) => makeTransformationClass(from, to, compose(from.ast, to.ast)));
 var suspend6 = (f) => make45(new Suspend(() => f().ast));
 var RefineSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Refine");
-function makeRefineClass(from, filter8, ast) {
+function makeRefineClass(from, filter9, ast) {
   return class RefineClass extends make45(ast) {
     static annotations(annotations2) {
       return makeRefineClass(this.from, this.filter, mergeSchemaAnnotations(this.ast, annotations2));
     }
     static [RefineSchemaId] = from;
     static from = from;
-    static filter = filter8;
+    static filter = filter9;
     static make = (a, options) => {
       return getDisableValidationMakeOption(options) ? a : validateSync(this)(a);
     };
@@ -21253,18 +21727,18 @@ var toFilterParseIssue = (out, ast, input) => {
   }
   return none2();
 };
-function filter8(predicate, annotations2) {
+function filter9(predicate, annotations2) {
   return (self) => {
-    function filter9(input, options, ast2) {
+    function filter10(input, options, ast2) {
       return toFilterParseIssue(predicate(input, options, ast2), ast2, input);
     }
-    const ast = new Refinement(self.ast, filter9, toASTAnnotations(annotations2));
-    return makeRefineClass(self, filter9, ast);
+    const ast = new Refinement(self.ast, filter10, toASTAnnotations(annotations2));
+    return makeRefineClass(self, filter10, ast);
   };
 }
 var filterEffect = /* @__PURE__ */ dual(2, (self, f) => transformOrFail(self, typeSchema(self), {
   strict: true,
-  decode: (i, options, ast) => flatMap12(f(i, options, ast), (filterReturnType) => match2(toFilterParseIssue(filterReturnType, ast, i), {
+  decode: (i, options, ast) => flatMap13(f(i, options, ast), (filterReturnType) => match2(toFilterParseIssue(filterReturnType, ast, i), {
     onNone: () => succeed9(i),
     onSome: fail9
   })),
@@ -21304,7 +21778,7 @@ var attachPropertySignature = /* @__PURE__ */ dual((args2) => isSchema(args2[0])
 var annotations2 = /* @__PURE__ */ dual(2, (self, annotations3) => self.annotations(annotations3));
 var rename2 = /* @__PURE__ */ dual(2, (self, mapping) => make45(rename(self.ast, mapping)));
 var TrimmedSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Trimmed");
-var trimmed = (annotations3) => (self) => self.pipe(filter8((a) => a === a.trim(), {
+var trimmed = (annotations3) => (self) => self.pipe(filter9((a) => a === a.trim(), {
   schemaId: TrimmedSchemaId,
   title: "trimmed",
   description: "a string with no leading or trailing whitespace",
@@ -21314,7 +21788,7 @@ var trimmed = (annotations3) => (self) => self.pipe(filter8((a) => a === a.trim(
   ...annotations3
 }));
 var MaxLengthSchemaId2 = MaxLengthSchemaId;
-var maxLength = (maxLength2, annotations3) => (self) => self.pipe(filter8((a) => a.length <= maxLength2, {
+var maxLength = (maxLength2, annotations3) => (self) => self.pipe(filter9((a) => a.length <= maxLength2, {
   schemaId: MaxLengthSchemaId2,
   title: `maxLength(${maxLength2})`,
   description: `a string at most ${maxLength2} character(s) long`,
@@ -21324,7 +21798,7 @@ var maxLength = (maxLength2, annotations3) => (self) => self.pipe(filter8((a) =>
   ...annotations3
 }));
 var MinLengthSchemaId2 = MinLengthSchemaId;
-var minLength = (minLength2, annotations3) => (self) => self.pipe(filter8((a) => a.length >= minLength2, {
+var minLength = (minLength2, annotations3) => (self) => self.pipe(filter9((a) => a.length >= minLength2, {
   schemaId: MinLengthSchemaId2,
   title: `minLength(${minLength2})`,
   description: `a string at least ${minLength2} character(s) long`,
@@ -21338,7 +21812,7 @@ var length2 = (length3, annotations3) => (self) => {
   const minLength2 = isObject(length3) ? Math.max(0, Math.floor(length3.min)) : Math.max(0, Math.floor(length3));
   const maxLength2 = isObject(length3) ? Math.max(minLength2, Math.floor(length3.max)) : minLength2;
   if (minLength2 !== maxLength2) {
-    return self.pipe(filter8((a) => a.length >= minLength2 && a.length <= maxLength2, {
+    return self.pipe(filter9((a) => a.length >= minLength2 && a.length <= maxLength2, {
       schemaId: LengthSchemaId2,
       title: `length({ min: ${minLength2}, max: ${maxLength2})`,
       description: `a string at least ${minLength2} character(s) and at most ${maxLength2} character(s) long`,
@@ -21349,7 +21823,7 @@ var length2 = (length3, annotations3) => (self) => {
       ...annotations3
     }));
   }
-  return self.pipe(filter8((a) => a.length === minLength2, {
+  return self.pipe(filter9((a) => a.length === minLength2, {
     schemaId: LengthSchemaId2,
     title: `length(${minLength2})`,
     description: minLength2 === 1 ? `a single character` : `a string ${minLength2} character(s) long`,
@@ -21363,7 +21837,7 @@ var length2 = (length3, annotations3) => (self) => {
 var PatternSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Pattern");
 var pattern = (regex, annotations3) => (self) => {
   const source = regex.source;
-  return self.pipe(filter8((a) => {
+  return self.pipe(filter9((a) => {
     regex.lastIndex = 0;
     return regex.test(a);
   }, {
@@ -21381,7 +21855,7 @@ var pattern = (regex, annotations3) => (self) => {
 var StartsWithSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/StartsWith");
 var startsWith = (startsWith2, annotations3) => (self) => {
   const formatted = JSON.stringify(startsWith2);
-  return self.pipe(filter8((a) => a.startsWith(startsWith2), {
+  return self.pipe(filter9((a) => a.startsWith(startsWith2), {
     schemaId: StartsWithSchemaId,
     [StartsWithSchemaId]: {
       startsWith: startsWith2
@@ -21397,7 +21871,7 @@ var startsWith = (startsWith2, annotations3) => (self) => {
 var EndsWithSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/EndsWith");
 var endsWith = (endsWith2, annotations3) => (self) => {
   const formatted = JSON.stringify(endsWith2);
-  return self.pipe(filter8((a) => a.endsWith(endsWith2), {
+  return self.pipe(filter9((a) => a.endsWith(endsWith2), {
     schemaId: EndsWithSchemaId,
     [EndsWithSchemaId]: {
       endsWith: endsWith2
@@ -21413,7 +21887,7 @@ var endsWith = (endsWith2, annotations3) => (self) => {
 var IncludesSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Includes");
 var includes = (searchString, annotations3) => (self) => {
   const formatted = JSON.stringify(searchString);
-  return self.pipe(filter8((a) => a.includes(searchString), {
+  return self.pipe(filter9((a) => a.includes(searchString), {
     schemaId: IncludesSchemaId,
     [IncludesSchemaId]: {
       includes: searchString
@@ -21427,7 +21901,7 @@ var includes = (searchString, annotations3) => (self) => {
   }));
 };
 var LowercasedSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Lowercased");
-var lowercased = (annotations3) => (self) => self.pipe(filter8((a) => a === a.toLowerCase(), {
+var lowercased = (annotations3) => (self) => self.pipe(filter9((a) => a === a.toLowerCase(), {
   schemaId: LowercasedSchemaId,
   title: "lowercased",
   description: "a lowercase string",
@@ -21442,7 +21916,7 @@ class Lowercased extends (/* @__PURE__ */ String$.pipe(/* @__PURE__ */ lowercase
 }))) {
 }
 var UppercasedSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Uppercased");
-var uppercased = (annotations3) => (self) => self.pipe(filter8((a) => a === a.toUpperCase(), {
+var uppercased = (annotations3) => (self) => self.pipe(filter9((a) => a === a.toUpperCase(), {
   schemaId: UppercasedSchemaId,
   title: "uppercased",
   description: "an uppercase string",
@@ -21457,7 +21931,7 @@ class Uppercased extends (/* @__PURE__ */ String$.pipe(/* @__PURE__ */ uppercase
 }))) {
 }
 var CapitalizedSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Capitalized");
-var capitalized = (annotations3) => (self) => self.pipe(filter8((a) => a[0]?.toUpperCase() === a[0], {
+var capitalized = (annotations3) => (self) => self.pipe(filter9((a) => a[0]?.toUpperCase() === a[0], {
   schemaId: CapitalizedSchemaId,
   title: "capitalized",
   description: "a capitalized string",
@@ -21472,7 +21946,7 @@ class Capitalized extends (/* @__PURE__ */ String$.pipe(/* @__PURE__ */ capitali
 }))) {
 }
 var UncapitalizedSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Uncapitalized");
-var uncapitalized = (annotations3) => (self) => self.pipe(filter8((a) => a[0]?.toLowerCase() === a[0], {
+var uncapitalized = (annotations3) => (self) => self.pipe(filter9((a) => a[0]?.toLowerCase() === a[0], {
   schemaId: UncapitalizedSchemaId,
   title: "uncapitalized",
   description: "a uncapitalized string",
@@ -21641,7 +22115,7 @@ class URL$ extends (/* @__PURE__ */ transformOrFail(String$.annotations({
 })) {
 }
 var FiniteSchemaId2 = FiniteSchemaId;
-var finite = (annotations3) => (self) => self.pipe(filter8(Number.isFinite, {
+var finite = (annotations3) => (self) => self.pipe(filter9(Number.isFinite, {
   schemaId: FiniteSchemaId2,
   title: "finite",
   description: "a finite number",
@@ -21649,7 +22123,7 @@ var finite = (annotations3) => (self) => self.pipe(filter8(Number.isFinite, {
   ...annotations3
 }));
 var GreaterThanSchemaId2 = GreaterThanSchemaId;
-var greaterThan6 = (exclusiveMinimum, annotations3) => (self) => self.pipe(filter8((a) => a > exclusiveMinimum, {
+var greaterThan6 = (exclusiveMinimum, annotations3) => (self) => self.pipe(filter9((a) => a > exclusiveMinimum, {
   schemaId: GreaterThanSchemaId2,
   title: `greaterThan(${exclusiveMinimum})`,
   description: exclusiveMinimum === 0 ? "a positive number" : `a number greater than ${exclusiveMinimum}`,
@@ -21659,7 +22133,7 @@ var greaterThan6 = (exclusiveMinimum, annotations3) => (self) => self.pipe(filte
   ...annotations3
 }));
 var GreaterThanOrEqualToSchemaId2 = GreaterThanOrEqualToSchemaId;
-var greaterThanOrEqualTo5 = (minimum, annotations3) => (self) => self.pipe(filter8((a) => a >= minimum, {
+var greaterThanOrEqualTo5 = (minimum, annotations3) => (self) => self.pipe(filter9((a) => a >= minimum, {
   schemaId: GreaterThanOrEqualToSchemaId2,
   title: `greaterThanOrEqualTo(${minimum})`,
   description: minimum === 0 ? "a non-negative number" : `a number greater than or equal to ${minimum}`,
@@ -21671,7 +22145,7 @@ var greaterThanOrEqualTo5 = (minimum, annotations3) => (self) => self.pipe(filte
 var MultipleOfSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/MultipleOf");
 var multipleOf = (divisor, annotations3) => (self) => {
   const positiveDivisor = Math.abs(divisor);
-  return self.pipe(filter8((a) => remainder(a, divisor) === 0, {
+  return self.pipe(filter9((a) => remainder(a, divisor) === 0, {
     schemaId: MultipleOfSchemaId,
     title: `multipleOf(${positiveDivisor})`,
     description: `a number divisible by ${positiveDivisor}`,
@@ -21682,7 +22156,7 @@ var multipleOf = (divisor, annotations3) => (self) => {
   }));
 };
 var IntSchemaId2 = IntSchemaId;
-var int = (annotations3) => (self) => self.pipe(filter8((a) => Number.isSafeInteger(a), {
+var int = (annotations3) => (self) => self.pipe(filter9((a) => Number.isSafeInteger(a), {
   schemaId: IntSchemaId2,
   title: "int",
   description: "an integer",
@@ -21692,7 +22166,7 @@ var int = (annotations3) => (self) => self.pipe(filter8((a) => Number.isSafeInte
   ...annotations3
 }));
 var LessThanSchemaId2 = LessThanSchemaId;
-var lessThan9 = (exclusiveMaximum, annotations3) => (self) => self.pipe(filter8((a) => a < exclusiveMaximum, {
+var lessThan9 = (exclusiveMaximum, annotations3) => (self) => self.pipe(filter9((a) => a < exclusiveMaximum, {
   schemaId: LessThanSchemaId2,
   title: `lessThan(${exclusiveMaximum})`,
   description: exclusiveMaximum === 0 ? "a negative number" : `a number less than ${exclusiveMaximum}`,
@@ -21702,7 +22176,7 @@ var lessThan9 = (exclusiveMaximum, annotations3) => (self) => self.pipe(filter8(
   ...annotations3
 }));
 var LessThanOrEqualToSchemaId2 = LessThanOrEqualToSchemaId;
-var lessThanOrEqualTo5 = (maximum, annotations3) => (self) => self.pipe(filter8((a) => a <= maximum, {
+var lessThanOrEqualTo5 = (maximum, annotations3) => (self) => self.pipe(filter9((a) => a <= maximum, {
   schemaId: LessThanOrEqualToSchemaId2,
   title: `lessThanOrEqualTo(${maximum})`,
   description: maximum === 0 ? "a non-positive number" : `a number less than or equal to ${maximum}`,
@@ -21712,7 +22186,7 @@ var lessThanOrEqualTo5 = (maximum, annotations3) => (self) => self.pipe(filter8(
   ...annotations3
 }));
 var BetweenSchemaId2 = BetweenSchemaId;
-var between5 = (minimum, maximum, annotations3) => (self) => self.pipe(filter8((a) => a >= minimum && a <= maximum, {
+var between5 = (minimum, maximum, annotations3) => (self) => self.pipe(filter9((a) => a >= minimum && a <= maximum, {
   schemaId: BetweenSchemaId2,
   title: `between(${minimum}, ${maximum})`,
   description: `a number between ${minimum} and ${maximum}`,
@@ -21723,7 +22197,7 @@ var between5 = (minimum, maximum, annotations3) => (self) => self.pipe(filter8((
   ...annotations3
 }));
 var NonNaNSchemaId2 = NonNaNSchemaId;
-var nonNaN = (annotations3) => (self) => self.pipe(filter8((a) => !Number.isNaN(a), {
+var nonNaN = (annotations3) => (self) => self.pipe(filter9((a) => !Number.isNaN(a), {
   schemaId: NonNaNSchemaId2,
   title: "nonNaN",
   description: "a number excluding NaN",
@@ -21837,7 +22311,7 @@ class Symbol$ extends (/* @__PURE__ */ transformOrFail(String$.annotations({
 })) {
 }
 var GreaterThanBigIntSchemaId = GreaterThanBigintSchemaId;
-var greaterThanBigInt = (min4, annotations3) => (self) => self.pipe(filter8((a) => a > min4, {
+var greaterThanBigInt = (min4, annotations3) => (self) => self.pipe(filter9((a) => a > min4, {
   schemaId: GreaterThanBigIntSchemaId,
   [GreaterThanBigIntSchemaId]: {
     min: min4
@@ -21847,7 +22321,7 @@ var greaterThanBigInt = (min4, annotations3) => (self) => self.pipe(filter8((a) 
   ...annotations3
 }));
 var GreaterThanOrEqualToBigIntSchemaId2 = GreaterThanOrEqualToBigIntSchemaId;
-var greaterThanOrEqualToBigInt = (min4, annotations3) => (self) => self.pipe(filter8((a) => a >= min4, {
+var greaterThanOrEqualToBigInt = (min4, annotations3) => (self) => self.pipe(filter9((a) => a >= min4, {
   schemaId: GreaterThanOrEqualToBigIntSchemaId2,
   [GreaterThanOrEqualToBigIntSchemaId2]: {
     min: min4
@@ -21857,7 +22331,7 @@ var greaterThanOrEqualToBigInt = (min4, annotations3) => (self) => self.pipe(fil
   ...annotations3
 }));
 var LessThanBigIntSchemaId2 = LessThanBigIntSchemaId;
-var lessThanBigInt = (max6, annotations3) => (self) => self.pipe(filter8((a) => a < max6, {
+var lessThanBigInt = (max6, annotations3) => (self) => self.pipe(filter9((a) => a < max6, {
   schemaId: LessThanBigIntSchemaId2,
   [LessThanBigIntSchemaId2]: {
     max: max6
@@ -21867,7 +22341,7 @@ var lessThanBigInt = (max6, annotations3) => (self) => self.pipe(filter8((a) => 
   ...annotations3
 }));
 var LessThanOrEqualToBigIntSchemaId2 = LessThanOrEqualToBigIntSchemaId;
-var lessThanOrEqualToBigInt = (max6, annotations3) => (self) => self.pipe(filter8((a) => a <= max6, {
+var lessThanOrEqualToBigInt = (max6, annotations3) => (self) => self.pipe(filter9((a) => a <= max6, {
   schemaId: LessThanOrEqualToBigIntSchemaId2,
   [LessThanOrEqualToBigIntSchemaId2]: {
     max: max6
@@ -21877,7 +22351,7 @@ var lessThanOrEqualToBigInt = (max6, annotations3) => (self) => self.pipe(filter
   ...annotations3
 }));
 var BetweenBigIntSchemaId = BetweenBigintSchemaId;
-var betweenBigInt = (min4, max6, annotations3) => (self) => self.pipe(filter8((a) => a >= min4 && a <= max6, {
+var betweenBigInt = (min4, max6, annotations3) => (self) => self.pipe(filter9((a) => a >= min4 && a <= max6, {
   schemaId: BetweenBigIntSchemaId,
   [BetweenBigIntSchemaId]: {
     min: min4,
@@ -21998,7 +22472,7 @@ class DurationFromSelf extends (/* @__PURE__ */ declare(isDuration, {
 
 class DurationFromNanos extends (/* @__PURE__ */ transformOrFail(NonNegativeBigIntFromSelf.annotations({
   description: "a bigint to be decoded into a Duration"
-}), DurationFromSelf.pipe(filter8((duration2) => isFinite(duration2), {
+}), DurationFromSelf.pipe(filter9((duration2) => isFinite(duration2), {
   description: "a finite duration"
 })), {
   strict: true,
@@ -22096,7 +22570,7 @@ var clampDuration = (minimum, maximum) => (self) => transform2(self, self.pipe(t
   encode: identity
 });
 var LessThanDurationSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/LessThanDuration");
-var lessThanDuration = (max6, annotations3) => (self) => self.pipe(filter8((a) => lessThan2(a, max6), {
+var lessThanDuration = (max6, annotations3) => (self) => self.pipe(filter9((a) => lessThan2(a, max6), {
   schemaId: LessThanDurationSchemaId,
   [LessThanDurationSchemaId]: {
     max: max6
@@ -22106,7 +22580,7 @@ var lessThanDuration = (max6, annotations3) => (self) => self.pipe(filter8((a) =
   ...annotations3
 }));
 var LessThanOrEqualToDurationSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/LessThanOrEqualToDuration");
-var lessThanOrEqualToDuration = (max6, annotations3) => (self) => self.pipe(filter8((a) => lessThanOrEqualTo2(a, max6), {
+var lessThanOrEqualToDuration = (max6, annotations3) => (self) => self.pipe(filter9((a) => lessThanOrEqualTo2(a, max6), {
   schemaId: LessThanDurationSchemaId,
   [LessThanDurationSchemaId]: {
     max: max6
@@ -22116,7 +22590,7 @@ var lessThanOrEqualToDuration = (max6, annotations3) => (self) => self.pipe(filt
   ...annotations3
 }));
 var GreaterThanDurationSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/GreaterThanDuration");
-var greaterThanDuration = (min4, annotations3) => (self) => self.pipe(filter8((a) => greaterThan2(a, min4), {
+var greaterThanDuration = (min4, annotations3) => (self) => self.pipe(filter9((a) => greaterThan2(a, min4), {
   schemaId: GreaterThanDurationSchemaId,
   [GreaterThanDurationSchemaId]: {
     min: min4
@@ -22126,7 +22600,7 @@ var greaterThanDuration = (min4, annotations3) => (self) => self.pipe(filter8((a
   ...annotations3
 }));
 var GreaterThanOrEqualToDurationSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/GreaterThanOrEqualToDuration");
-var greaterThanOrEqualToDuration = (min4, annotations3) => (self) => self.pipe(filter8((a) => greaterThanOrEqualTo2(a, min4), {
+var greaterThanOrEqualToDuration = (min4, annotations3) => (self) => self.pipe(filter9((a) => greaterThanOrEqualTo2(a, min4), {
   schemaId: GreaterThanOrEqualToDurationSchemaId,
   [GreaterThanOrEqualToDurationSchemaId]: {
     min: min4
@@ -22136,7 +22610,7 @@ var greaterThanOrEqualToDuration = (min4, annotations3) => (self) => self.pipe(f
   ...annotations3
 }));
 var BetweenDurationSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/BetweenDuration");
-var betweenDuration = (minimum, maximum, annotations3) => (self) => self.pipe(filter8((a) => between2(a, {
+var betweenDuration = (minimum, maximum, annotations3) => (self) => self.pipe(filter9((a) => between2(a, {
   minimum,
   maximum
 }), {
@@ -22216,7 +22690,7 @@ var minItems = (n, annotations3) => (self) => {
   if (minItems2 < 1) {
     throw new Error(getInvalidArgumentErrorMessage(`Expected an integer greater than or equal to 1, actual ${n}`));
   }
-  return self.pipe(filter8((a) => a.length >= minItems2, {
+  return self.pipe(filter9((a) => a.length >= minItems2, {
     schemaId: MinItemsSchemaId2,
     title: `minItems(${minItems2})`,
     description: `an array of at least ${minItems2} item(s)`,
@@ -22233,7 +22707,7 @@ var maxItems = (n, annotations3) => (self) => {
   if (maxItems2 < 1) {
     throw new Error(getInvalidArgumentErrorMessage(`Expected an integer greater than or equal to 1, actual ${n}`));
   }
-  return self.pipe(filter8((a) => a.length <= maxItems2, {
+  return self.pipe(filter9((a) => a.length <= maxItems2, {
     schemaId: MaxItemsSchemaId2,
     title: `maxItems(${maxItems2})`,
     description: `an array of at most ${maxItems2} item(s)`,
@@ -22250,7 +22724,7 @@ var itemsCount = (n, annotations3) => (self) => {
   if (itemsCount2 < 0) {
     throw new Error(getInvalidArgumentErrorMessage(`Expected an integer greater than or equal to 0, actual ${n}`));
   }
-  return self.pipe(filter8((a) => a.length === itemsCount2, {
+  return self.pipe(filter9((a) => a.length === itemsCount2, {
     schemaId: ItemsCountSchemaId2,
     title: `itemsCount(${itemsCount2})`,
     description: `an array of exactly ${itemsCount2} item(s)`,
@@ -22286,7 +22760,7 @@ var headOrElse = /* @__PURE__ */ dual((args2) => isSchema(args2[0]), (self, fall
   encode: (a) => succeed9(of(a))
 }));
 var ValidDateSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/ValidDate");
-var validDate = (annotations3) => (self) => self.pipe(filter8((a) => !Number.isNaN(a.getTime()), {
+var validDate = (annotations3) => (self) => self.pipe(filter9((a) => !Number.isNaN(a.getTime()), {
   schemaId: ValidDateSchemaId,
   [ValidDateSchemaId]: {
     noInvalidDate: true
@@ -22296,7 +22770,7 @@ var validDate = (annotations3) => (self) => self.pipe(filter8((a) => !Number.isN
   ...annotations3
 }));
 var LessThanDateSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/LessThanDate");
-var lessThanDate = (max6, annotations3) => (self) => self.pipe(filter8((a) => a < max6, {
+var lessThanDate = (max6, annotations3) => (self) => self.pipe(filter9((a) => a < max6, {
   schemaId: LessThanDateSchemaId,
   [LessThanDateSchemaId]: {
     max: max6
@@ -22306,7 +22780,7 @@ var lessThanDate = (max6, annotations3) => (self) => self.pipe(filter8((a) => a 
   ...annotations3
 }));
 var LessThanOrEqualToDateSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/LessThanOrEqualToDate");
-var lessThanOrEqualToDate = (max6, annotations3) => (self) => self.pipe(filter8((a) => a <= max6, {
+var lessThanOrEqualToDate = (max6, annotations3) => (self) => self.pipe(filter9((a) => a <= max6, {
   schemaId: LessThanOrEqualToDateSchemaId,
   [LessThanOrEqualToDateSchemaId]: {
     max: max6
@@ -22316,7 +22790,7 @@ var lessThanOrEqualToDate = (max6, annotations3) => (self) => self.pipe(filter8(
   ...annotations3
 }));
 var GreaterThanDateSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/GreaterThanDate");
-var greaterThanDate = (min4, annotations3) => (self) => self.pipe(filter8((a) => a > min4, {
+var greaterThanDate = (min4, annotations3) => (self) => self.pipe(filter9((a) => a > min4, {
   schemaId: GreaterThanDateSchemaId,
   [GreaterThanDateSchemaId]: {
     min: min4
@@ -22326,7 +22800,7 @@ var greaterThanDate = (min4, annotations3) => (self) => self.pipe(filter8((a) =>
   ...annotations3
 }));
 var GreaterThanOrEqualToDateSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/GreaterThanOrEqualToDate");
-var greaterThanOrEqualToDate = (min4, annotations3) => (self) => self.pipe(filter8((a) => a >= min4, {
+var greaterThanOrEqualToDate = (min4, annotations3) => (self) => self.pipe(filter9((a) => a >= min4, {
   schemaId: GreaterThanOrEqualToDateSchemaId,
   [GreaterThanOrEqualToDateSchemaId]: {
     min: min4
@@ -22336,7 +22810,7 @@ var greaterThanOrEqualToDate = (min4, annotations3) => (self) => self.pipe(filte
   ...annotations3
 }));
 var BetweenDateSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/BetweenDate");
-var betweenDate = (min4, max6, annotations3) => (self) => self.pipe(filter8((a) => a <= max6 && a >= min4, {
+var betweenDate = (min4, max6, annotations3) => (self) => self.pipe(filter9((a) => a <= max6 && a >= min4, {
   schemaId: BetweenDateSchemaId,
   [BetweenDateSchemaId]: {
     max: max6,
@@ -22637,7 +23111,7 @@ function OptionFromUndefinedOr(value3) {
 class OptionFromNonEmptyTrimmedString extends (/* @__PURE__ */ transform2(String$, /* @__PURE__ */ OptionFromSelf(NonEmptyTrimmedString), {
   strict: true,
   decode: (i) => filter(some2(i.trim()), isNonEmpty5),
-  encode: (a) => getOrElse3(a, () => "")
+  encode: (a) => getOrElse(a, () => "")
 })) {
 }
 var rightEncoded = (right3) => Struct({
@@ -22752,15 +23226,15 @@ var EitherFromUnion = ({
 var mapArbitrary = (key, value3, ctx) => {
   return (fc) => {
     const items = fc.array(fc.tuple(key(fc), value3(fc)));
-    return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map((as4) => new Map(as4));
+    return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map((as6) => new Map(as6));
   };
 };
-var readonlyMapPretty = (key, value3) => (map16) => `new Map([${Array.from(map16.entries()).map(([k, v]) => `[${key(k)}, ${value3(v)}]`).join(", ")}])`;
+var readonlyMapPretty = (key, value3) => (map17) => `new Map([${Array.from(map17.entries()).map(([k, v]) => `[${key(k)}, ${value3(v)}]`).join(", ")}])`;
 var readonlyMapEquivalence = (key, value3) => {
-  const arrayEquivalence = getEquivalence3(make3(([ka, va], [kb, vb]) => key(ka, kb) && value3(va, vb)));
-  return make3((a, b) => arrayEquivalence(Array.from(a.entries()), Array.from(b.entries())));
+  const arrayEquivalence = getEquivalence3(make(([ka, va], [kb, vb]) => key(ka, kb) && value3(va, vb)));
+  return make((a, b) => arrayEquivalence(Array.from(a.entries()), Array.from(b.entries())));
 };
-var readonlyMapParse = (decodeUnknown3) => (u, options, ast) => isMap(u) ? toComposite(decodeUnknown3(Array.from(u.entries()), options), (as4) => new Map(as4), ast, u) : fail9(new Type2(ast, u));
+var readonlyMapParse = (decodeUnknown3) => (u, options, ast) => isMap(u) ? toComposite(decodeUnknown3(Array.from(u.entries()), options), (as6) => new Map(as6), ast, u) : fail9(new Type2(ast, u));
 var mapFromSelf_ = (key, value3, description) => declare([key, value3], {
   decode: (Key2, Value2) => readonlyMapParse(decodeUnknown(Array$(Tuple(Key2, Value2)))),
   encode: (Key2, Value2) => readonlyMapParse(encodeUnknown(Array$(Tuple(Key2, Value2))))
@@ -22794,7 +23268,7 @@ function ReadonlyMap({
     encode: (a) => Array.from(a.entries())
   });
 }
-function map16({
+function map17({
   key,
   value: value3
 }) {
@@ -22841,14 +23315,14 @@ var MapFromRecord = ({
 });
 var setArbitrary = (item, ctx) => (fc) => {
   const items = fc.array(item(fc));
-  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map((as4) => new Set(as4));
+  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map((as6) => new Set(as6));
 };
 var readonlySetPretty = (item) => (set7) => `new Set([${Array.from(set7.values()).map((a) => item(a)).join(", ")}])`;
 var readonlySetEquivalence = (item) => {
   const arrayEquivalence = getEquivalence3(item);
-  return make3((a, b) => arrayEquivalence(Array.from(a.values()), Array.from(b.values())));
+  return make((a, b) => arrayEquivalence(Array.from(a.values()), Array.from(b.values())));
 };
-var readonlySetParse = (decodeUnknown3) => (u, options, ast) => isSet(u) ? toComposite(decodeUnknown3(Array.from(u.values()), options), (as4) => new Set(as4), ast, u) : fail9(new Type2(ast, u));
+var readonlySetParse = (decodeUnknown3) => (u, options, ast) => isSet(u) ? toComposite(decodeUnknown3(Array.from(u.values()), options), (as6) => new Set(as6), ast, u) : fail9(new Type2(ast, u));
 var setFromSelf_ = (value3, description) => declare([value3], {
   decode: (item) => readonlySetParse(decodeUnknown(Array$(item))),
   encode: (item) => readonlySetParse(encodeUnknown(Array$(item)))
@@ -22921,7 +23395,7 @@ class BigDecimalFromNumber extends (/* @__PURE__ */ transform2(Number$.annotatio
 var GreaterThanBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/GreaterThanBigDecimal");
 var greaterThanBigDecimal = (min4, annotations3) => (self) => {
   const formatted = format4(min4);
-  return self.pipe(filter8((a) => greaterThan4(a, min4), {
+  return self.pipe(filter9((a) => greaterThan4(a, min4), {
     schemaId: GreaterThanBigDecimalSchemaId,
     [GreaterThanBigDecimalSchemaId]: {
       min: min4
@@ -22934,7 +23408,7 @@ var greaterThanBigDecimal = (min4, annotations3) => (self) => {
 var GreaterThanOrEqualToBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/GreaterThanOrEqualToBigDecimal");
 var greaterThanOrEqualToBigDecimal = (min4, annotations3) => (self) => {
   const formatted = format4(min4);
-  return self.pipe(filter8((a) => greaterThanOrEqualTo3(a, min4), {
+  return self.pipe(filter9((a) => greaterThanOrEqualTo3(a, min4), {
     schemaId: GreaterThanOrEqualToBigDecimalSchemaId,
     [GreaterThanOrEqualToBigDecimalSchemaId]: {
       min: min4
@@ -22947,7 +23421,7 @@ var greaterThanOrEqualToBigDecimal = (min4, annotations3) => (self) => {
 var LessThanBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/LessThanBigDecimal");
 var lessThanBigDecimal = (max6, annotations3) => (self) => {
   const formatted = format4(max6);
-  return self.pipe(filter8((a) => lessThan7(a, max6), {
+  return self.pipe(filter9((a) => lessThan7(a, max6), {
     schemaId: LessThanBigDecimalSchemaId,
     [LessThanBigDecimalSchemaId]: {
       max: max6
@@ -22960,7 +23434,7 @@ var lessThanBigDecimal = (max6, annotations3) => (self) => {
 var LessThanOrEqualToBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/LessThanOrEqualToBigDecimal");
 var lessThanOrEqualToBigDecimal = (max6, annotations3) => (self) => {
   const formatted = format4(max6);
-  return self.pipe(filter8((a) => lessThanOrEqualTo3(a, max6), {
+  return self.pipe(filter9((a) => lessThanOrEqualTo3(a, max6), {
     schemaId: LessThanOrEqualToBigDecimalSchemaId,
     [LessThanOrEqualToBigDecimalSchemaId]: {
       max: max6
@@ -22971,7 +23445,7 @@ var lessThanOrEqualToBigDecimal = (max6, annotations3) => (self) => {
   }));
 };
 var PositiveBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/PositiveBigDecimal");
-var positiveBigDecimal = (annotations3) => (self) => self.pipe(filter8((a) => isPositive(a), {
+var positiveBigDecimal = (annotations3) => (self) => self.pipe(filter9((a) => isPositive(a), {
   schemaId: PositiveBigDecimalSchemaId,
   title: "positiveBigDecimal",
   description: `a positive BigDecimal`,
@@ -22981,7 +23455,7 @@ var PositiveBigDecimalFromSelf = /* @__PURE__ */ BigDecimalFromSelf.pipe(/* @__P
   identifier: "PositiveBigDecimalFromSelf"
 }));
 var NonNegativeBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/NonNegativeBigDecimal");
-var nonNegativeBigDecimal = (annotations3) => (self) => self.pipe(filter8((a) => a.value >= 0n, {
+var nonNegativeBigDecimal = (annotations3) => (self) => self.pipe(filter9((a) => a.value >= 0n, {
   schemaId: NonNegativeBigDecimalSchemaId,
   title: "nonNegativeBigDecimal",
   description: `a non-negative BigDecimal`,
@@ -22991,7 +23465,7 @@ var NonNegativeBigDecimalFromSelf = /* @__PURE__ */ BigDecimalFromSelf.pipe(/* @
   identifier: "NonNegativeBigDecimalFromSelf"
 }));
 var NegativeBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/NegativeBigDecimal");
-var negativeBigDecimal = (annotations3) => (self) => self.pipe(filter8((a) => isNegative(a), {
+var negativeBigDecimal = (annotations3) => (self) => self.pipe(filter9((a) => isNegative(a), {
   schemaId: NegativeBigDecimalSchemaId,
   title: "negativeBigDecimal",
   description: `a negative BigDecimal`,
@@ -23001,7 +23475,7 @@ var NegativeBigDecimalFromSelf = /* @__PURE__ */ BigDecimalFromSelf.pipe(/* @__P
   identifier: "NegativeBigDecimalFromSelf"
 }));
 var NonPositiveBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/schema/NonPositiveBigDecimal");
-var nonPositiveBigDecimal = (annotations3) => (self) => self.pipe(filter8((a) => a.value <= 0n, {
+var nonPositiveBigDecimal = (annotations3) => (self) => self.pipe(filter9((a) => a.value <= 0n, {
   schemaId: NonPositiveBigDecimalSchemaId,
   title: "nonPositiveBigDecimal",
   description: `a non-positive BigDecimal`,
@@ -23014,7 +23488,7 @@ var BetweenBigDecimalSchemaId = /* @__PURE__ */ Symbol.for("effect/SchemaId/Betw
 var betweenBigDecimal = (minimum, maximum, annotations3) => (self) => {
   const formattedMinimum = format4(minimum);
   const formattedMaximum = format4(maximum);
-  return self.pipe(filter8((a) => between3(a, {
+  return self.pipe(filter9((a) => between3(a, {
     minimum,
     maximum
   }), {
@@ -23038,10 +23512,10 @@ var clampBigDecimal = (minimum, maximum) => (self) => transform2(self, self.pipe
 });
 var chunkArbitrary = (item, ctx) => (fc) => {
   const items = fc.array(item(fc));
-  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map(fromIterable2);
+  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map(fromIterable3);
 };
 var chunkPretty = (item) => (c) => `Chunk(${toReadonlyArray(c).map(item).join(", ")})`;
-var chunkParse = (decodeUnknown3) => (u, options, ast) => isChunk(u) ? isEmpty(u) ? succeed9(empty4()) : toComposite(decodeUnknown3(toReadonlyArray(u), options), fromIterable2, ast, u) : fail9(new Type2(ast, u));
+var chunkParse = (decodeUnknown3) => (u, options, ast) => isChunk(u) ? isEmpty(u) ? succeed9(empty2()) : toComposite(decodeUnknown3(toReadonlyArray(u), options), fromIterable3, ast, u) : fail9(new Type2(ast, u));
 var ChunkFromSelf = (value3) => {
   return declare([value3], {
     decode: (item) => chunkParse(decodeUnknown(Array$(item))),
@@ -23059,13 +23533,13 @@ var ChunkFromSelf = (value3) => {
 function Chunk(value3) {
   return transform2(Array$(value3), ChunkFromSelf(typeSchema(asSchema(value3))), {
     strict: true,
-    decode: (i) => i.length === 0 ? empty4() : fromIterable2(i),
+    decode: (i) => i.length === 0 ? empty2() : fromIterable3(i),
     encode: (a) => toReadonlyArray(a)
   });
 }
 var nonEmptyChunkArbitrary = (item) => (fc) => array5(item(fc), {
   minLength: 1
-}).map((as4) => unsafeFromNonEmptyArray(as4));
+}).map((as6) => unsafeFromNonEmptyArray(as6));
 var nonEmptyChunkPretty = (item) => (c) => `NonEmptyChunk(${toReadonlyArray(c).map(item).join(", ")})`;
 var nonEmptyChunkParse = (decodeUnknown3) => (u, options, ast) => isChunk(u) && isNonEmpty(u) ? toComposite(decodeUnknown3(toReadonlyArray(u), options), unsafeFromNonEmptyArray, ast, u) : fail9(new Type2(ast, u));
 var NonEmptyChunkFromSelf = (value3) => {
@@ -23250,7 +23724,7 @@ var makeClass = ({
       }
       super(props, true);
     }
-    static [TypeId19] = variance5;
+    static [TypeId20] = variance5;
     static get ast() {
       let out = astCache.get(this);
       if (out) {
@@ -23258,7 +23732,7 @@ var makeClass = ({
       }
       const declaration = declare([schema], {
         decode: () => (input, _, ast) => input instanceof this || fallbackInstanceOf(input) ? succeed9(input) : fail9(new Type2(ast, input)),
-        encode: () => (input, options) => input instanceof this ? succeed9(input) : map15(encodeUnknown(typeSide)(input, options), (props) => new this(props, true))
+        encode: () => (input, options) => input instanceof this ? succeed9(input) : map16(encodeUnknown(typeSide)(input, options), (props) => new this(props, true))
       }, {
         identifier: identifier2,
         pretty: (pretty3) => (self) => `${identifier2}(${pretty3(self)})`,
@@ -23548,7 +24022,7 @@ var CauseFromSelf = ({
 function causeDecode(cause3) {
   switch (cause3._tag) {
     case "Empty":
-      return empty25;
+      return empty17;
     case "Fail":
       return fail3(cause3.error);
     case "Die":
@@ -23556,9 +24030,9 @@ function causeDecode(cause3) {
     case "Interrupt":
       return interrupt3(fiberIdDecode(cause3.fiberId));
     case "Sequential":
-      return sequential4(causeDecode(cause3.left), causeDecode(cause3.right));
+      return sequential2(causeDecode(cause3.left), causeDecode(cause3.right));
     case "Parallel":
-      return parallel4(causeDecode(cause3.left), causeDecode(cause3.right));
+      return parallel2(causeDecode(cause3.left), causeDecode(cause3.right));
   }
 }
 function causeEncode(cause3) {
@@ -23670,7 +24144,7 @@ var exitArbitrary = (value3, error, defect) => (fc) => fc.oneof(fc.record({
   value: value3(fc)
 })).map(exitDecode);
 var exitPretty = (value3, error) => (exit3) => exit3._tag === "Failure" ? `Exit.failCause(${causePretty(error)(exit3.cause)})` : `Exit.succeed(${value3(exit3.value)})`;
-var exitParse = (decodeUnknownValue, decodeUnknownCause) => (u, options, ast) => isExit(u) ? match9(u, {
+var exitParse = (decodeUnknownValue, decodeUnknownCause) => (u, options, ast) => isExit(u) ? match10(u, {
   onFailure: (cause3) => toComposite(decodeUnknownCause(cause3, options), failCause3, ast, u),
   onSuccess: (value3) => toComposite(decodeUnknownValue(value3, options), succeed3, ast, u)
 }) : fail9(new Type2(ast, u));
@@ -23722,14 +24196,14 @@ var Exit = ({
 };
 var hashSetArbitrary = (item, ctx) => (fc) => {
   const items = fc.array(item(fc));
-  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map(fromIterable5);
+  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map(fromIterable6);
 };
 var hashSetPretty = (item) => (set8) => `HashSet(${Array.from(set8).map((a) => item(a)).join(", ")})`;
 var hashSetEquivalence = (item) => {
   const arrayEquivalence = getEquivalence3(item);
-  return make3((a, b) => arrayEquivalence(Array.from(a), Array.from(b)));
+  return make((a, b) => arrayEquivalence(Array.from(a), Array.from(b)));
 };
-var hashSetParse = (decodeUnknown3) => (u, options, ast) => isHashSet2(u) ? toComposite(decodeUnknown3(Array.from(u), options), fromIterable5, ast, u) : fail9(new Type2(ast, u));
+var hashSetParse = (decodeUnknown3) => (u, options, ast) => isHashSet2(u) ? toComposite(decodeUnknown3(Array.from(u), options), fromIterable6, ast, u) : fail9(new Type2(ast, u));
 var HashSetFromSelf = (value3) => {
   return declare([value3], {
     decode: (item) => hashSetParse(decodeUnknown(Array$(item))),
@@ -23747,20 +24221,20 @@ var HashSetFromSelf = (value3) => {
 function HashSet(value3) {
   return transform2(Array$(value3), HashSetFromSelf(typeSchema(asSchema(value3))), {
     strict: true,
-    decode: (i) => fromIterable5(i),
+    decode: (i) => fromIterable6(i),
     encode: (a) => Array.from(a)
   });
 }
 var hashMapArbitrary = (key, value3, ctx) => (fc) => {
   const items = fc.array(fc.tuple(key(fc), value3(fc)));
-  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map(fromIterable6);
+  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map(fromIterable7);
 };
-var hashMapPretty = (key, value3) => (map17) => `HashMap([${Array.from(map17).map(([k, v]) => `[${key(k)}, ${value3(v)}]`).join(", ")}])`;
+var hashMapPretty = (key, value3) => (map18) => `HashMap([${Array.from(map18).map(([k, v]) => `[${key(k)}, ${value3(v)}]`).join(", ")}])`;
 var hashMapEquivalence = (key, value3) => {
-  const arrayEquivalence = getEquivalence3(make3(([ka, va], [kb, vb]) => key(ka, kb) && value3(va, vb)));
-  return make3((a, b) => arrayEquivalence(Array.from(a), Array.from(b)));
+  const arrayEquivalence = getEquivalence3(make(([ka, va], [kb, vb]) => key(ka, kb) && value3(va, vb)));
+  return make((a, b) => arrayEquivalence(Array.from(a), Array.from(b)));
 };
-var hashMapParse = (decodeUnknown3) => (u, options, ast) => isHashMap2(u) ? toComposite(decodeUnknown3(Array.from(u), options), fromIterable6, ast, u) : fail9(new Type2(ast, u));
+var hashMapParse = (decodeUnknown3) => (u, options, ast) => isHashMap2(u) ? toComposite(decodeUnknown3(Array.from(u), options), fromIterable7, ast, u) : fail9(new Type2(ast, u));
 var HashMapFromSelf = ({
   key,
   value: value3
@@ -23787,20 +24261,20 @@ var HashMap = ({
     value: typeSchema(asSchema(value3))
   }), {
     strict: true,
-    decode: (i) => fromIterable6(i),
+    decode: (i) => fromIterable7(i),
     encode: (a) => Array.from(a)
   });
 };
 var listArbitrary = (item, ctx) => (fc) => {
   const items = fc.array(item(fc));
-  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map(fromIterable7);
+  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map(fromIterable8);
 };
 var listPretty = (item) => (set8) => `List(${Array.from(set8).map((a) => item(a)).join(", ")})`;
 var listEquivalence = (item) => {
   const arrayEquivalence = getEquivalence3(item);
-  return make3((a, b) => arrayEquivalence(Array.from(a), Array.from(b)));
+  return make((a, b) => arrayEquivalence(Array.from(a), Array.from(b)));
 };
-var listParse = (decodeUnknown3) => (u, options, ast) => isList(u) ? toComposite(decodeUnknown3(Array.from(u), options), fromIterable7, ast, u) : fail9(new Type2(ast, u));
+var listParse = (decodeUnknown3) => (u, options, ast) => isList(u) ? toComposite(decodeUnknown3(Array.from(u), options), fromIterable8, ast, u) : fail9(new Type2(ast, u));
 var ListFromSelf = (value3) => {
   return declare([value3], {
     decode: (item) => listParse(decodeUnknown(Array$(item))),
@@ -23818,16 +24292,16 @@ var ListFromSelf = (value3) => {
 function List(value3) {
   return transform2(Array$(value3), ListFromSelf(typeSchema(asSchema(value3))), {
     strict: true,
-    decode: (i) => fromIterable7(i),
+    decode: (i) => fromIterable8(i),
     encode: (a) => Array.from(a)
   });
 }
 var sortedSetArbitrary = (item, ord, ctx) => (fc) => {
   const items = fc.array(item(fc));
-  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map((as4) => fromIterable11(as4, ord));
+  return (ctx.depthIdentifier !== undefined ? fc.oneof(ctx, fc.constant([]), items) : items).map((as6) => fromIterable12(as6, ord));
 };
 var sortedSetPretty = (item) => (set8) => `new SortedSet([${Array.from(values3(set8)).map((a) => item(a)).join(", ")}])`;
-var sortedSetParse = (decodeUnknown3, ord) => (u, options, ast) => isSortedSet(u) ? toComposite(decodeUnknown3(Array.from(values3(u)), options), (as4) => fromIterable11(as4, ord), ast, u) : fail9(new Type2(ast, u));
+var sortedSetParse = (decodeUnknown3, ord) => (u, options, ast) => isSortedSet(u) ? toComposite(decodeUnknown3(Array.from(values3(u)), options), (as6) => fromIterable12(as6, ord), ast, u) : fail9(new Type2(ast, u));
 var SortedSetFromSelf = (value3, ordA, ordI) => {
   return declare([value3], {
     decode: (item) => sortedSetParse(decodeUnknown(Array$(item)), ordA),
@@ -23846,7 +24320,7 @@ function SortedSet(value3, ordA) {
   const to = typeSchema(asSchema(value3));
   return transform2(Array$(value3), SortedSetFromSelf(to, ordA, ordA), {
     strict: true,
-    decode: (i) => fromIterable11(i, ordA),
+    decode: (i) => fromIterable12(i, ordA),
     encode: (a) => Array.from(values3(a))
   });
 }
@@ -23981,7 +24455,7 @@ var go2 = (ast, path) => {
     case "TupleType": {
       const elements = ast.elements.map((element2, i) => go2(element2.type, path.concat(i)));
       const rest = ast.rest.map((annotatedAST) => go2(annotatedAST.type, path));
-      return make3((a, b) => {
+      return make((a, b) => {
         if (!Array.isArray(a) || !Array.isArray(b)) {
           return false;
         }
@@ -24018,7 +24492,7 @@ var go2 = (ast, path) => {
       }
       const propertySignatures = ast.propertySignatures.map((ps) => go2(ps.type, path.concat(ps.name)));
       const indexSignatures = ast.indexSignatures.map((is2) => go2(is2.type, path));
-      return make3((a, b) => {
+      return make((a, b) => {
         if (!isRecord(a) || !isRecord(b)) {
           return false;
         }
@@ -24070,7 +24544,7 @@ var go2 = (ast, path) => {
       const searchTree = getSearchTree(ast.types, true);
       const ownKeys = Reflect.ownKeys(searchTree.keys);
       const len = ownKeys.length;
-      return make3((a, b) => {
+      return make((a, b) => {
         let candidates = [];
         if (len > 0 && isRecordOrArray(a)) {
           for (let i = 0;i < len; i++) {
@@ -24111,7 +24585,7 @@ var SymbolStruct = /* @__PURE__ */ TaggedStruct("symbol", {
 var SymbolFromStruct = /* @__PURE__ */ transformOrFail(SymbolStruct, SymbolFromSelf, {
   strict: true,
   decode: (i) => decodeSymbol(i.key),
-  encode: (a, _, ast) => map15(encodeSymbol(a, ast), (key) => SymbolStruct.make({
+  encode: (a, _, ast) => map16(encodeSymbol(a, ast), (key) => SymbolStruct.make({
     key
   }))
 });
@@ -24484,10 +24958,10 @@ var ReviewedStateLive = exports_Layer.effect(ReviewedState, exports_Effect.gen(f
       newSet.delete(callID);
       return newSet;
     }),
-    trackDecision: (callID, decision) => exports_Ref.update(decisionsRef, (map17) => new Map([...map17, [callID, decision]])),
-    getDecision: (callID) => exports_Ref.get(decisionsRef).pipe(exports_Effect.map((map17) => map17.get(callID))),
-    clearDecision: (callID) => exports_Ref.update(decisionsRef, (map17) => {
-      const newMap = new Map(map17);
+    trackDecision: (callID, decision) => exports_Ref.update(decisionsRef, (map18) => new Map([...map18, [callID, decision]])),
+    getDecision: (callID) => exports_Ref.get(decisionsRef).pipe(exports_Effect.map((map18) => map18.get(callID))),
+    clearDecision: (callID) => exports_Ref.update(decisionsRef, (map18) => {
+      const newMap = new Map(map18);
       newMap.delete(callID);
       return newMap;
     })
@@ -24631,15 +25105,30 @@ function handleToolExecuteAfter(input, output) {
 }
 
 // src/index.ts
+var FIBER_FAILURE_CAUSE = Symbol.for("effect/Runtime/FiberFailure/Cause");
+var HOOK_ERROR_PREFIX = {
+  BlockedCommandError: "auto-review blocked command: ",
+  BlockedEditError: "auto-review blocked edit: ",
+  RequiresHumanApprovalError: "auto-review requires manual approval: "
+};
 function resolveHookError(error) {
-  if (error instanceof BlockedCommandError) {
-    throw new Error(`auto-review blocked command: ${error.reason}`);
+  for (const [tag2, prefix] of Object.entries(HOOK_ERROR_PREFIX)) {
+    if (typeof error === "object" && error !== null && error._tag === tag2) {
+      throw new Error(`${prefix}${error.reason}`);
+    }
   }
-  if (error instanceof BlockedEditError) {
-    throw new Error(`auto-review blocked edit: ${error.reason}`);
-  }
-  if (error instanceof RequiresHumanApprovalError) {
-    throw new Error(`auto-review requires manual approval: ${error.reason}`);
+  if (typeof error === "object" && error !== null) {
+    const cause3 = error[FIBER_FAILURE_CAUSE];
+    if (cause3 && typeof cause3 === "object") {
+      const failureOpt = exports_Cause.failureOption(cause3);
+      if (exports_Option.isSome(failureOpt)) {
+        const inner = failureOpt.value;
+        const tag2 = inner._tag;
+        if (tag2 && tag2 in HOOK_ERROR_PREFIX) {
+          throw new Error(`${HOOK_ERROR_PREFIX[tag2]}${inner.reason}`);
+        }
+      }
+    }
   }
   throw error;
 }
@@ -24663,6 +25152,7 @@ var server = AutoReviewPlugin;
 var src_default = AutoReviewPlugin;
 export {
   server,
+  resolveHookError,
   src_default as default,
   AutoReviewPlugin
 };
